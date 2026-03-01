@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Stop Vola daemon + web UI gracefully
+VOLA_HOME="$(cd "$(dirname "$0")" && pwd)"
+cd "$VOLA_HOME"
+
+echo "Stopping Vola..."
+
+# Write permanent shutdown flag so watchdog won't restart
+touch state/shutdown_permanent.flag
+
+kill_pid() {
+    local pidfile="$1" label="$2"
+    if [ -f "$pidfile" ]; then
+        local pid
+        pid=$(cat "$pidfile")
+        if kill -0 "$pid" 2>/dev/null; then
+            kill "$pid" 2>/dev/null && echo "  ✓ $label stopped (PID $pid)"
+        else
+            echo "  – $label was not running"
+        fi
+        rm -f "$pidfile"
+    else
+        echo "  – No $label PID file found"
+    fi
+}
+
+kill_pid state/watchdog.pid "Watchdog"
+kill_pid state/ui.pid "Web UI"
+
+# Kill any stray runner.py processes
+pkill -f "daemon/runner.py" 2>/dev/null && echo "  ✓ Runner killed" || true
+
+echo "Vola stopped."

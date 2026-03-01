@@ -1,0 +1,73 @@
+# Vola System Gitignore
+# Files that should not be tracked in version control
+
+# Runtime logs (constantly changing)
+logs/
+*.log
+
+# Cache directories
+.cache/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Private conversation data
+chat_history/
+inbox/
+outbox/
+
+# Runtime state files (transient)
+state/restart_requested.flag
+state/*.pid
+state/*.lock
+
+# Dashboard runtime data
+dashboard/*.tmp
+dashboard/cache/
+
+# Secrets and configuration with sensitive data
+# (Keep config.yaml private - contains API keys)
+config.yaml
+*.key
+*.secret
+.env
+.volasecrets
+
+# SSH keys and credentials
+.ssh/
+
+# npm cache
+.npm/
+node_modules/
+
+# Python virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Archive files (large binaries)
+archive/attachments/*.tar.gz
+archive/attachments/*.zip
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Large binary files that change frequently
+# (Add specific patterns as needed)
+workspace/blog/output/

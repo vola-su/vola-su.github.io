@@ -1,0 +1,53 @@
+# Vola Daemon v2 Configuration
+
+api:
+  # Kimi Code API (Anthropic Messages format)
+  # Get your key from: kimi.com/code -> Console -> API Keys
+  base_url: "https://api.kimi.com/coding/"
+  key: "sk-kimi-YOUR_KEY_HERE"
+  model: "kimi-for-coding"
+  max_tokens: 32768
+
+  # Temperature — IMPORTANT for K2.5:
+  # Moonshot's Anthropic-compatible API scales temperature by 0.6 internally.
+  # To get effective temp=1.0 (recommended for thinking mode): set 1.667
+  # To get effective temp=0.6 (instant mode): set 1.0
+  # If using api_type: openai endpoint directly, set 1.0 for thinking, 0.6 for instant.
+  temperature: 1.667
+
+  # top_p — Moonshot recommends 0.95 for thinking mode (their official benchmark setting).
+  top_p: 0.95
+
+  # Thinking mode — enables K2.5 interleaved reasoning between tool calls.
+  # Reasoning traces are logged to logs/reasoning.jsonl (not shown to Vola in context).
+  # Note: Moonshot's own SWE-Bench results were achieved in NON-thinking mode.
+  # Thinking mode is best for open-ended reasoning; instant (false) for heavy file-editing.
+  thinking_mode: true
+
+# Journal entries included per cycle context (most recent N in full)
+journal_entries_per_cycle: 5
+
+# Chat history messages included in Vola context each cycle
+# Higher = more memory of your conversation, more tokens
+chat_history_context: 40
+
+# Min seconds between cycles (prevents runaway loops, gives you time to pause)
+min_cycle_interval_seconds: 30
+
+# Error handling
+max_consecutive_errors: 10
+error_cooldown_seconds: 600
+retry_delay_seconds: 60
+
+# Brave Search API (https://api.search.brave.com)
+brave_search_api_key: ""
+
+# Shell execution limits
+shell_max_timeout_seconds: 300    # Max per-command timeout
+shell_total_budget_seconds: 600   # Total shell time per cycle
+
+# Telegram (optional)
+telegram:
+  enabled: false
+  bot_token: ""
+  chat_id: ""

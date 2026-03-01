@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Start Vola daemon + web UI
+VOLA_HOME="$(cd "$(dirname "$0")" && pwd)"
+cd "$VOLA_HOME"
+mkdir -p logs state
+
+# Check if already running
+if [ -f state/watchdog.pid ] && kill -0 "$(cat state/watchdog.pid)" 2>/dev/null; then
+    echo "Vola is already running (PID $(cat state/watchdog.pid))"
+    exit 0
+fi
+
+PYTHON="${VOLA_HOME}/daemon/venv/bin/python3"
+[ -f "$PYTHON" ] || PYTHON="$(which python3)"
+
+echo "Starting Vola..."
+
+# Start watchdog (runs runner in loop)
+nohup bash daemon/watchdog.sh > /dev/null 2>&1 &
+echo $! > state/watchdog.pid
+echo "  ✓ Runner watchdog started (PID $!)"
+
+# Start UI with auto-reload so Vola's UI edits take effect
+nohup "$PYTHON" daemon/vola_unified.py > logs/ui.log 2>&1 &
+echo $! > state/ui.pid
+echo "  ✓ Web UI started (PID $!) → http://localhost:8083"
+
+echo "Vola is running. Open http://localhost:8083"

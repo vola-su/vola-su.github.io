@@ -1,0 +1,19 @@
+[Unit]
+Description=Vola Web Interface
+After=network.target
+
+[Service]
+Type=simple
+User=vola
+Group=vola
+WorkingDirectory=/home/vola/daemon
+Environment=VOLA_HOME=/home/vola
+ExecStart=/home/vola/daemon/venv/bin/python3 /home/vola/daemon/vola_unified.py
+Restart=always
+RestartSec=5
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

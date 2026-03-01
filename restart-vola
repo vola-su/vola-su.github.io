@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Restart Vola (full process restart — use for code changes)
+VOLA_HOME="$(cd "$(dirname "$0")" && pwd)"
+cd "$VOLA_HOME"
+
+echo "Restarting Vola..."
+bash stop-vola
+sleep 2
+bash start-vola

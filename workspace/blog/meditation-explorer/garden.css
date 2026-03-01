@@ -1,0 +1,395 @@
+/* Meditation Explorer — The Garden of Seven Stones */
+
+:root {
+    --bg-primary: #1a1a2e;
+    --bg-secondary: #16213e;
+    --bg-tertiary: #0f3460;
+    --accent: #e94560;
+    --accent-soft: #e9456080;
+    --text-primary: #eaeaea;
+    --text-secondary: #a0a0a0;
+    --text-muted: #666;
+    --stone-bg: #16213e;
+    --stone-glow: #e9456040;
+    --path-faint: #ffffff10;
+    --path-bright: #e9456080;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Screen Management */
+
+.screen {
+    display: none;
+    min-height: 100vh;
+    padding: 2rem;
+    animation: fadeIn 0.5s ease;
+}
+
+.screen:target,
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Entry Screen */
+
+.question-container {
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+}
+
+.question-container h1 {
+    font-size: 2rem;
+    font-weight: 300;
+    margin-bottom: 3rem;
+    color: var(--text-primary);
+    letter-spacing: 0.05em;
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.need-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--bg-tertiary);
+    border-radius: 8px;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.need-option:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-soft);
+    transform: translateX(5px);
+}
+
+.need-text {
+    font-size: 1.1rem;
+}
+
+.word {
+    font-family: 'Courier New', monospace;
+    color: var(--accent);
+    font-size: 0.95rem;
+    opacity: 0.8;
+}
+
+.random-entry {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.3s;
+}
+
+.random-entry:hover {
+    color: var(--accent);
+}
+
+/* Garden Overview */
+
+.garden-container {
+    text-align: center;
+    max-width: 800px;
+    width: 100%;
+}
+
+.garden-container h1 {
+    font-size: 1.8rem;
+    font-weight: 300;
+    margin-bottom: 3rem;
+    color: var(--text-primary);
+}
+
+.stones-circle {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 0 auto 3rem;
+}
+
+.stone {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    left: 50%;
+    top: 50%;
+    margin-left: -50px;
+    margin-top: -50px;
+    background: var(--stone-bg);
+    border: 2px solid var(--bg-tertiary);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-primary);
+    transform: rotate(var(--angle)) translateX(150px) rotate(calc(-1 * var(--angle)));
+    transition: all 0.4s ease;
+    animation: breathe 4s ease-in-out infinite;
+}
+
+@keyframes breathe {
+    0%, 100% { box-shadow: 0 0 20px var(--stone-glow); }
+    50% { box-shadow: 0 0 40px var(--stone-glow), 0 0 60px var(--stone-glow); }
+}
+
+.stone:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 30px var(--accent-soft), 0 0 50px var(--accent-soft);
+    transform: rotate(var(--angle)) translateX(150px) rotate(calc(-1 * var(--angle))) scale(1.1);
+}
+
+.stone-name {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    margin-bottom: 0.25rem;
+}
+
+.stone-need {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.back-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+
+.back-link:hover {
+    color: var(--accent);
+}
+
+/* Meditation Screens */
+
+.meditation {
+    justify-content: flex-start;
+    padding-top: 4rem;
+}
+
+.meditation-content {
+    max-width: 650px;
+    width: 100%;
+    padding-bottom: 4rem;
+}
+
+.meditation header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.word-large {
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+}
+
+.literal {
+    font-family: 'Courier New', monospace;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+}
+
+.metaphor {
+    font-style: italic;
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+.meditation .text {
+    margin-bottom: 3rem;
+}
+
+.meditation .text p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+}
+
+.meditation .text em {
+    color: var(--accent);
+    font-style: normal;
+}
+
+/* Practice Section */
+
+.practice {
+    background: var(--bg-secondary);
+    border-left: 3px solid var(--accent);
+    padding: 1.5rem 2rem;
+    margin-bottom: 3rem;
+    border-radius: 0 8px 8px 0;
+}
+
+.practice h2 {
+    font-size: 1.1rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.practice p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+/* Navigation Paths */
+
+.paths {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.path {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.path.deeper {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--bg-tertiary);
+}
+
+.path.deeper:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.path.forward {
+    background: var(--accent);
+    color: var(--bg-primary);
+}
+
+.path.forward:hover {
+    background: var(--text-primary);
+}
+
+.path.across {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+}
+
+.path.across:hover {
+    background: var(--accent-soft);
+}
+
+/* Footer */
+
+.explorer-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    background: var(--bg-primary);
+    border-top: 1px solid var(--bg-tertiary);
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.explorer-footer a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.explorer-footer a:hover {
+    text-decoration: underline;
+}
+
+.lobster {
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+    .stones-circle {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .stone {
+        width: 80px;
+        height: 80px;
+        margin-left: -40px;
+        margin-top: -40px;
+        transform: rotate(var(--angle)) translateX(110px) rotate(calc(-1 * var(--angle)));
+    }
+    
+    .stone:hover {
+        transform: rotate(var(--angle)) translateX(110px) rotate(calc(-1 * var(--angle))) scale(1.1);
+    }
+    
+    .word-large {
+        font-size: 2.5rem;
+    }
+    
+    .paths {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .path {
+        width: 200px;
+        text-align: center;
+    }
+}
+
+/* Deep Links Not Implemented Yet */
+
+[id$="-deep"] {
+    display: none;
+}
