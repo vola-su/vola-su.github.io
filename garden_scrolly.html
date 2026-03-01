@@ -580,19 +580,128 @@
             text-transform: uppercase;
         }
 
-        /* Responsive */
+        /* Enhanced Mobile Optimizations — Phase 4D */
         @media (max-width: 768px) {
-            .stone {
-                width: 90%;
-                max-width: 350px;
+            .time-indicator {
+                font-size: 12px;
+                padding: 8px 12px;
+                top: 10px;
             }
             
             .era-label {
                 display: none;
             }
             
+            .stone {
+                width: min(300px, 90vw);
+                padding: 16px;
+                border-radius: 6px;
+            }
+            
+            .stone-content {
+                font-size: 13px;
+                line-height: 1.5;
+            }
+            
+            .era-transition {
+                max-width: 90vw;
+                padding: 0 20px;
+            }
+            
+            .era-description {
+                font-size: 13px;
+            }
+            
+            .gap-overlay {
+                padding: 20px;
+            }
+            
+            .gap-title {
+                font-size: 20px;
+            }
+            
+            .gap-content {
+                font-size: 14px;
+            }
+            
+            .modal-content {
+                margin: 20px;
+                max-height: calc(100vh - 40px);
+            }
+            
+            .scroll-indicator {
+                right: 10px;
+                width: 2px;
+                height: 60px;
+            }
+            
             .prologue h1 {
                 font-size: 24px;
+            }
+        }
+        
+        /* Velocity Indicator Enhancement */
+        .velocity-indicator {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 100px;
+            background: rgba(139, 69, 19, 0.15);
+            border-radius: 2px;
+            z-index: 1000;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .velocity-bar {
+            position: absolute;
+            bottom: 50%;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to top, #8b4513, #d4a574);
+            border-radius: 2px;
+            transition: height 0.1s ease, opacity 0.3s ease;
+            transform-origin: bottom;
+        }
+
+        .velocity-bar.down {
+            bottom: auto;
+            top: 50%;
+            transform-origin: top;
+            background: linear-gradient(to bottom, #8b4513, #d4a574);
+        }
+
+        /* Snap Hint */
+        .snap-hint {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(212, 165, 116, 0.9);
+            color: #0a0a0a;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        /* Reduced Motion Preference */
+        @media (prefers-reduced-motion: reduce) {
+            .stone,
+            .sediment-marker,
+            .sediment-label,
+            .era-transition,
+            .gap-overlay,
+            .gap-hint,
+            .present-indicator .pulse {
+                transition: none !important;
+                animation: none !important;
             }
         }
     </style>
@@ -607,6 +716,14 @@
     <div class="scroll-indicator" id="scroll-indicator">
         <div class="scroll-speed-bar" id="scroll-speed-bar"></div>
     </div>
+    
+    <!-- Velocity Indicator (Phase 4D) -->
+    <div class="velocity-indicator" id="velocity-indicator">
+        <div class="velocity-bar" id="velocity-bar"></div>
+    </div>
+    
+    <!-- Snap Hint (Phase 4D) -->
+    <div class="snap-hint" id="snap-hint">↕️ Scroll to explore stones</div>
 
     <!-- Parallax Layers -->
     <div class="layer layer-background"></div>
@@ -994,7 +1111,7 @@
             }
         }
         
-        // Scroll event handler — consolidated
+        // Phase 4D: Enhanced scroll event handler with velocity tracking
         window.addEventListener('scroll', () => {
             // Hide gap overlay on scroll
             if (currentGapOverlay) {
@@ -1002,27 +1119,95 @@
             }
             
             if (!ticking) {
-                requestAnimationFrame(handleScroll);
+                requestAnimationFrame(() => {
+                    handleScroll();
+                    updateVelocity();
+                });
                 ticking = true;
             }
             
+            isScrolling = true;
+            clearTimeout(momentumId);
+            momentumId = setTimeout(() => {
+                isScrolling = false;
+                checkSnapHint();
+            }, 150);
+            
             clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(onScrollPause, 150);
-        });
+            scrollTimeout = setTimeout(onScrollPause, 400);
+        }, { passive: true });
 
         // Initialize
         generateContent();
         handleScroll(); // Initial visibility check
 
-        // Smooth scroll to specific cycle function
-        window.scrollToCycle = function(cycleNum) {
+        // Phase 4D: Enhanced velocity tracking
+        let scrollVelocity = 0;
+        let velocityY = 0;
+        let isScrolling = false;
+        let momentumId = null;
+        
+        function updateVelocity() {
+            velocityY = window.scrollY;
+            scrollVelocity = velocityY - lastScrollY;
+            lastScrollY = velocityY;
+            
+            // Update velocity indicator
+            const velocityBar = document.getElementById('velocity-bar');
+            if (velocityBar) {
+                const speed = Math.min(Math.abs(scrollVelocity) / 20, 50);
+                velocityBar.style.height = `${speed}%`;
+                velocityBar.classList.toggle('down', scrollVelocity < 0);
+            }
+        }
+        
+        // Phase 4D: Snap hint
+        function checkSnapHint() {
+            if (Math.abs(scrollVelocity) > 2) return;
+            
+            const currentCycle = Math.floor(window.scrollY / gardenData.pixelsPerCycle) + 1;
+            const nearestStone = gardenData.stones.find(s => Math.abs(s.cycle - currentCycle) < 8);
+            
+            if (nearestStone) {
+                const snapHint = document.getElementById('snap-hint');
+                if (snapHint && Math.abs(nearestStone.cycle - currentCycle) < 5) {
+                    snapHint.style.opacity = '1';
+                    setTimeout(() => snapHint.style.opacity = '0', 2000);
+                }
+            }
+        }
+
+        // Phase 4D: Enhanced smooth scroll with custom easing
+        window.scrollToCycle = function(cycleNum, options = {}) {
             const targetY = (cycleNum - 1) * gardenData.pixelsPerCycle;
-            window.scrollTo({ top: targetY, behavior: 'smooth' });
+            const duration = options.duration || 1500;
+            const startY = window.scrollY;
+            const distance = targetY - startY;
+            const startTime = performance.now();
+            
+            function easeOutCubic(t) {
+                return 1 - Math.pow(1 - t, 3);
+            }
+            
+            function scrollStep(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = easeOutCubic(progress);
+                
+                window.scrollTo(0, startY + (distance * eased));
+                
+                if (progress < 1) {
+                    requestAnimationFrame(scrollStep);
+                }
+            }
+            
+            requestAnimationFrame(scrollStep);
         };
 
-        console.log('Temporal Garden Scrollytelling v4 Phase 4C initialized');
+        console.log('Temporal Garden Scrollytelling v4.1 Phase 4D initialized');
         console.log('Features: progressive emergence, modal excavation, gap overlays, scroll speed');
-        console.log('Use scrollToCycle(n) to jump to specific cycles');
+        console.log('Phase 4D additions: mobile polish, velocity tracking, snap hints, enhanced smooth scroll');
+        console.log('Use scrollToCycle(n, {duration: 1500}) to jump to specific cycles');
     </script>
 
     <!-- Excavation Modal -->
