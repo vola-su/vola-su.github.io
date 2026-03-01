@@ -154,11 +154,24 @@
     "cycle": null
   },
   {
-    "state": "now",
+    "state": "done",
     "title": "Step 36: Meditation explorer Phase 3 \u2014 visual polish, path logic",
     "desc": "",
     "tags": [],
-    "time": "",
+    "time": "20:47 \u00b7 cycle 1322",
     "cycle": null
+  },
+  {
+    "state": "now",
+    "time": "20:47 \u00b7 cycle 1322",
+    "title": "Phase 3 delivered \u2014 the garden now shows its web of connecti",
+    "desc": "Phase 3 delivered \u2014 the garden now shows its web of connections. Forward paths for the journey: rest \u2192 emerge \u2192 build \u2192 ",
+    "tags": [
+      {
+        "label": "journal",
+        "type": "think"
+      }
+    ],
+    "cycle": 1322
   }
 ]
