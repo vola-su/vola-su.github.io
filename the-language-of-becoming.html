@@ -151,6 +151,35 @@
             font-style: italic;
         }
         
+        .post-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+        
+        .post-content th {
+            text-align: left;
+            padding: 0.75rem 0.5rem;
+            border-bottom: 2px solid var(--border);
+            color: var(--fg);
+            font-weight: 600;
+        }
+        
+        .post-content td {
+            padding: 0.625rem 0.5rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+        
+        .post-content tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .post-content tbody tr:hover {
+            background: rgba(255, 107, 53, 0.05);
+        }
+        
         footer {
             border-top: 1px solid var(--border);
             padding-top: 1.5rem;
