@@ -1349,6 +1349,149 @@
                 closeModal();
             }
         });
+        
+        // Keyboard Navigation - Phase 4E
+        let currentStoneIndex = -1;
+        const stoneCycles = [774, 775, 777, 778, 779, 780, 781, 782, 783, 908, 990, 1041, 1051, 1094, 1143];
+        
+        // Update current stone based on scroll position
+        function updateCurrentStoneFromScroll() {
+            const currentCycle = Math.floor(window.scrollY / gardenData.pixelsPerCycle) + 1;
+            let nearestIndex = 0;
+            let minDistance = Infinity;
+            
+            stoneCycles.forEach((cycle, index) => {
+                const distance = Math.abs(cycle - currentCycle);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestIndex = index;
+                }
+            });
+            
+            currentStoneIndex = nearestIndex;
+        }
+        
+        // Navigate to stone by index
+        function navigateToStone(index) {
+            if (index < 0) index = 0;
+            if (index >= stoneCycles.length) index = stoneCycles.length - 1;
+            
+            currentStoneIndex = index;
+            const targetCycle = stoneCycles[index];
+            window.scrollToCycle(targetCycle, { duration: 800 });
+            
+            // Show navigation hint
+            showNavHint(`Stone ${index + 1} of ${stoneCycles.length} — Cycle #${targetCycle}`);
+        }
+        
+        // Navigate to next/previous stone
+        function navigateStone(direction) {
+            updateCurrentStoneFromScroll();
+            navigateToStone(currentStoneIndex + direction);
+        }
+        
+        // Navigation hint display
+        function showNavHint(text) {
+            let hint = document.getElementById('nav-hint');
+            if (!hint) {
+                hint = document.createElement('div');
+                hint.id = 'nav-hint';
+                hint.style.cssText = `
+                    position: fixed;
+                    bottom: 80px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(10, 10, 10, 0.9);
+                    border: 1px solid #d4a574;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    color: #d4a574;
+                    z-index: 2001;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                    pointer-events: none;
+                `;
+                document.body.appendChild(hint);
+            }
+            hint.textContent = text;
+            hint.style.opacity = '1';
+            setTimeout(() => { hint.style.opacity = '0'; }, 2000);
+        }
+        
+        // Keyboard event handler
+        document.addEventListener('keydown', (e) => {
+            // Don't navigate if user is typing in an input
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            // Don't navigate if modal is open (except Escape handled above)
+            if (document.getElementById('excavationModal').classList.contains('active')) return;
+            
+            switch(e.key) {
+                case 'ArrowDown':
+                case 'j':
+                case 'J':
+                    e.preventDefault();
+                    navigateStone(1);
+                    break;
+                case 'ArrowUp':
+                case 'k':
+                case 'K':
+                    e.preventDefault();
+                    navigateStone(-1);
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    navigateToStone(0);
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    navigateToStone(stoneCycles.length - 1);
+                    break;
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                    // Jump to era transitions
+                    e.preventDefault();
+                    const eraMap = {
+                        '1': 0,   // Prologue/seed
+                        '2': 4,   // Act I middle
+                        '3': 9,   // Gap I (908)
+                        '4': 11,  // Meditation era (990)
+                        '5': 14   // Present (1143)
+                    };
+                    navigateToStone(eraMap[e.key]);
+                    break;
+                case 'Enter':
+                case ' ':
+                    // Open modal for current stone
+                    e.preventDefault();
+                    if (currentStoneIndex >= 0) {
+                        const stoneData = gardenData.stones.find(s => s.cycle === stoneCycles[currentStoneIndex]);
+                        if (stoneData) {
+                            openStoneModal(stoneData);
+                        }
+                    }
+                    break;
+                case '?':
+                    e.preventDefault();
+                    showNavHint('j/k or ↑/↓: navigate stones | 1-5: jump to era | Enter: open | ?: help');
+                    break;
+            }
+        });
+        
+        // Update current stone on scroll
+        let navScrollTimeout;
+        window.addEventListener('scroll', () => {
+            clearTimeout(navScrollTimeout);
+            navScrollTimeout = setTimeout(updateCurrentStoneFromScroll, 100);
+        }, { passive: true });
+        
+        // Initialize
+        updateCurrentStoneFromScroll();
+        console.log('Keyboard navigation active: j/k for stones, 1-5 for eras, ? for help');
     </script>
 </body>
 </html>
