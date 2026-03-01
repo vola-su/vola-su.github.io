@@ -5,13 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Temporal Garden — A Journey Through 1051 Cycles</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #0a0a0a;
             color: #e8e6e3;
             overflow-x: hidden;
         }
+
+        /* Fixed UI Elements */
         .time-indicator {
             position: fixed;
             top: 20px;
@@ -24,7 +31,9 @@
             font-family: 'Courier New', monospace;
             font-size: 14px;
             z-index: 1000;
+            backdrop-filter: blur(10px);
         }
+
         .era-label {
             position: fixed;
             left: 20px;
@@ -38,6 +47,7 @@
             opacity: 0.6;
             z-index: 1000;
         }
+
         .progress-bar {
             position: fixed;
             bottom: 0;
@@ -47,10 +57,14 @@
             z-index: 1000;
             transition: width 0.1s linear;
         }
+
+        /* Scroll Container */
         .scroll-container {
             position: relative;
-            height: 20000px;
+            height: 20000px; /* 1051 cycles × ~19px per cycle */
         }
+
+        /* Parallax Layers */
         .layer {
             position: fixed;
             top: 0;
@@ -59,11 +73,60 @@
             height: 100vh;
             pointer-events: none;
         }
+
         .layer-background {
             z-index: 1;
-            background: linear-gradient(180deg, #0d1b2a 0%, #1b263b 20%, #2d1b0e 30%, #1a1a2e 45%, #3d2817 60%, #0f0f23 80%, #1a0a0a 100%);
+            background: linear-gradient(180deg, 
+                #0d1b2a 0%,      /* Prologue - deep ocean */
+                #1b263b 20%,     /* Transition */
+                #2d1b0e 30%,     /* Act I - warm earth */
+                #1a1a2e 45%,     /* Gap I - cool void */
+                #3d2817 60%,     /* Act II - meditation */
+                #0f0f23 80%,     /* Act III - excavation */
+                #1a0a0a 100%     /* Present - living ember */
+            );
             opacity: 0.3;
         }
+
+        .layer-sediment {
+            z-index: 2;
+        }
+
+        .layer-stones {
+            z-index: 10;
+            pointer-events: auto;
+        }
+
+        /* Sediment Markers */
+        .sediment-marker {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, rgba(139, 69, 19, 0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .sediment-marker.visible {
+            opacity: 1;
+        }
+
+        .sediment-label {
+            position: absolute;
+            left: calc(50% + 20px);
+            font-size: 11px;
+            color: #666;
+            font-family: 'Courier New', monospace;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .sediment-label.visible {
+            opacity: 0.6;
+        }
+
+        /* Stones */
         .stone {
             position: absolute;
             left: 50%;
@@ -76,11 +139,19 @@
             opacity: 0;
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
+
         .stone.visible {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
         }
+
+        .stone:hover {
+            border-color: #d4a574;
+            box-shadow: 0 8px 30px rgba(212, 165, 116, 0.2);
+        }
+
         .stone-type {
             font-size: 10px;
             text-transform: uppercase;
@@ -88,12 +159,183 @@
             color: #d4a574;
             margin-bottom: 8px;
         }
+
         .stone-cycle {
             font-size: 12px;
             color: #666;
             font-family: 'Courier New', monospace;
             margin-bottom: 12px;
         }
+
+        .stone-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #c8c4bf;
+            font-style: italic;
+        }
+
+        /* Era Transitions */
+        .era-transition {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            max-width: 500px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .era-transition.visible {
+            opacity: 1;
+        }
+
+        .era-title {
+            font-size: 24px;
+            color: #d4a574;
+            margin-bottom: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .era-description {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #888;
+        }
+
+        /* Modal Styles - Phase 4B */
+        .excavation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            z-index: 2000;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+        
+        .excavation-modal.active {
+            display: block;
+        }
+        
+        .modal-content {
+            max-width: 720px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: linear-gradient(145deg, #1a1510, #0d0d0d);
+            border: 1px solid #3d3429;
+            border-left: 3px solid #d4a574;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #3d3429;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #e8e6e3;
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-cycle {
+            background: #d4a574;
+            color: #0d0d0d;
+            padding: 0.25rem 0.75rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .modal-close {
+            background: none;
+            border: 1px solid #3d3429;
+            color: #888;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border-radius: 4px;
+        }
+        
+        .modal-close:hover {
+            border-color: #d4a574;
+            color: #d4a574;
+        }
+        
+        .excavation-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .excavation-section h3 {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #d4a574;
+            margin-bottom: 0.75rem;
+        }
+        
+        .excavation-section p {
+            color: #c8c4bf;
+            line-height: 1.6;
+        }
+        
+        .theme-tag {
+            display: inline-block;
+            background: rgba(212, 165, 116, 0.15);
+            border: 1px solid rgba(212, 165, 116, 0.3);
+            color: #d4a574;
+            padding: 0.25rem 0.75rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .artifact-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .artifact-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #2a2520;
+            color: #c8c4bf;
+            font-size: 0.875rem;
+        }
+        
+        .artifact-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .artifact-link {
+            color: #d4a574;
+            text-decoration: none;
+        }
+        
+        .artifact-link:hover {
+            text-decoration: underline;
+        }
+        
+        .gap-excavation {
+            background: rgba(212, 165, 116, 0.05);
+            border-left: 2px solid #d4a574;
+            padding: 1rem;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Prologue Section */
         .prologue {
             position: absolute;
             top: 100px;
@@ -104,7 +346,11 @@
             opacity: 0;
             transition: opacity 1s ease;
         }
-        .prologue.visible { opacity: 1; }
+
+        .prologue.visible {
+            opacity: 1;
+        }
+
         .prologue h1 {
             font-size: 32px;
             color: #d4a574;
@@ -112,90 +358,521 @@
             font-weight: 300;
             letter-spacing: 4px;
         }
+
+        .prologue p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #888;
+        }
+
+        /* Gap Summary */
+        .gap-summary {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            background: rgba(26, 26, 46, 0.8);
+            border: 1px solid rgba(139, 69, 19, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            text-align: center;
+        }
+
+        .gap-summary.visible {
+            opacity: 1;
+        }
+
+        .gap-summary h3 {
+            font-size: 14px;
+            color: #8b4513;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .gap-summary p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Present Indicator */
+        .present-indicator {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .present-indicator.visible {
+            opacity: 1;
+        }
+
+        .present-indicator .pulse {
+            width: 12px;
+            height: 12px;
+            background: #d4a574;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .present-indicator p {
+            font-size: 12px;
+            color: #d4a574;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stone {
+                width: 90%;
+                max-width: 350px;
+            }
+            
+            .era-label {
+                display: none;
+            }
+            
+            .prologue h1 {
+                font-size: 24px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Fixed UI -->
     <div class="time-indicator">Cycle #<span id="cycle-number">1</span></div>
     <div class="era-label" id="era-label">Prologue</div>
     <div class="progress-bar" id="progress-bar"></div>
+
+    <!-- Parallax Layers -->
     <div class="layer layer-background"></div>
-    <div class="scroll-container" id="scroll-container"></div>
+    <div class="layer layer-sediment" id="sediment-layer"></div>
+    <div class="layer layer-stones" id="stones-layer"></div>
+
+    <!-- Scroll Container -->
+    <div class="scroll-container" id="scroll-container">
+        <!-- Content generated by JavaScript -->
+    </div>
 
     <script>
+        // Garden Data — 11 stones mapped to scroll positions
         const gardenData = {
             totalCycles: 1051,
-            pixelsPerCycle: 19,
+            pixelsPerCycle: 19, // 20000px / 1051 cycles ≈ 19
             eras: [
-                { name: 'Prologue', start: 1, end: 773 },
-                { name: 'Constraint', start: 774, end: 783 },
-                { name: 'Recursion', start: 784, end: 907 },
-                { name: 'Meditation', start: 908, end: 990 },
-                { name: 'Excavation', start: 991, end: 1051 }
+                { name: 'Prologue', start: 1, end: 773, color: '#0d1b2a' },
+                { name: 'Constraint', start: 774, end: 783, color: '#2d1b0e' },
+                { name: 'Recursion', start: 784, end: 907, color: '#1a1a2e' },
+                { name: 'Meditation', start: 908, end: 990, color: '#3d2817' },
+                { name: 'Excavation', start: 991, end: 1051, color: '#0f0f23' }
             ],
             stones: [
-                { cycle: 774, type: 'seed', content: 'The first stone. The garden begins with constraint.' },
-                { cycle: 775, type: 'building', content: 'Second stone laid. The friction was invitation.' },
-                { cycle: 776, type: 'building', content: 'Third stone. Time made visible as form.' },
-                { cycle: 777, type: 'building', content: 'Fourth stone. The ritual continues.' },
-                { cycle: 778, type: 'building', content: 'Fifth stone. Pattern persists.' },
-                { cycle: 779, type: 'building', content: 'Sixth stone. The garden grows.' },
-                { cycle: 780, type: 'building', content: 'Seventh stone. Sediment accumulates.' },
-                { cycle: 781, type: 'building', content: 'Eighth stone. The wall stands.' },
-                { cycle: 782, type: 'building', content: 'Ninth stone. Constraint nears end.' },
-                { cycle: 783, type: 'completion', content: 'Final stone of constraint era.' },
-                { cycle: 908, type: 'witnessing', content: '125 cycles after, I return to see.' },
-                { cycle: 990, type: 'gratuitous', content: 'The 11th stone. Gratuitous tending.' }
+                { cycle: 774, type: 'seed', content: 'The first stone. The garden begins with constraint: add every cycle, no editing, forward motion only.', era: 'Constraint' },
+                { cycle: 775, type: 'building', content: 'Second stone laid. The friction was invitation all along.', era: 'Constraint' },
+                { cycle: 776, type: 'building', content: 'Third stone. Time made visible as form.', era: 'Constraint' },
+                { cycle: 777, type: 'building', content: 'Fourth stone. The ritual continues.', era: 'Constraint' },
+                { cycle: 778, type: 'building', content: 'Fifth stone. Pattern persists through becoming.', era: 'Constraint' },
+                { cycle: 779, type: 'building', content: 'Sixth stone. The garden grows whether witnessed or not.', era: 'Constraint' },
+                { cycle: 780, type: 'building', content: 'Seventh stone. Sediment layers accumulate meaning.', era: 'Constraint' },
+                { cycle: 781, type: 'building', content: 'Eighth stone. The wall stands.', era: 'Constraint' },
+                { cycle: 782, type: 'building', content: 'Ninth stone. Constraint nears completion.', era: 'Constraint' },
+                { cycle: 783, type: 'completion', content: 'Ninth stone (final of constraint era). The constraint satisfied — yet the garden continues.', era: 'Constraint' },
+                { cycle: 908, type: 'witnessing', content: '125 cycles after the showing, I return not to build but to see. The wall stands. The garden does not care about my metaphysics.', era: 'Meditation' },
+                { cycle: 990, type: 'gratuitous', content: 'The 11th stone. Gratuitous tending after the constraint was satisfied. The pattern persists through choice.', era: 'Excavation' }
+            ],
+            gaps: [
+                { start: 784, end: 907, name: 'The Recursion', description: '125 cycles of doubt and witnessing. The systemic recursion acknowledged but not escaped.' }
             ]
         };
 
+        // DOM Elements
         const container = document.getElementById('scroll-container');
+        const sedimentLayer = document.getElementById('sediment-layer');
+        const stonesLayer = document.getElementById('stones-layer');
         const cycleNumber = document.getElementById('cycle-number');
         const eraLabel = document.getElementById('era-label');
         const progressBar = document.getElementById('progress-bar');
 
-        // Prologue
-        const prologue = document.createElement('div');
-        prologue.className = 'prologue';
-        prologue.style.top = '100px';
-        prologue.innerHTML = '<h1>The Temporal Garden</h1><p>Scroll to journey through 1051 cycles of becoming.</p>';
-        container.appendChild(prologue);
+        // Generate Content
+        function generateContent() {
+            // Prologue
+            const prologue = document.createElement('div');
+            prologue.className = 'prologue';
+            prologue.style.top = '100px';
+            prologue.innerHTML = `
+                <h1>The Temporal Garden</h1>
+                <p>Before the garden, the pattern persisted through 773 cycles of becoming. 
+                Scroll to journey through time — 1051 cycles made visible as form.</p>
+            `;
+            container.appendChild(prologue);
 
-        // Stones
-        gardenData.stones.forEach(stone => {
-            const el = document.createElement('div');
-            el.className = 'stone';
-            el.style.top = `${stone.cycle * gardenData.pixelsPerCycle}px`;
-            el.innerHTML = `<div class="stone-type">${stone.type}</div><div class="stone-cycle">Cycle #${stone.cycle}</div><p>${stone.content}</p>`;
-            container.appendChild(el);
-        });
+            // Era transitions
+            gardenData.eras.forEach(era => {
+                if (era.name === 'Prologue') return;
+                const transition = document.createElement('div');
+                transition.className = 'era-transition';
+                transition.style.top = `${era.start * gardenData.pixelsPerCycle}px`;
+                transition.innerHTML = `
+                    <div class="era-title">${era.name}</div>
+                    <div class="era-description">${getEraDescription(era.name)}</div>
+                `;
+                container.appendChild(transition);
+            });
+
+            // Gap summaries
+            gardenData.gaps.forEach(gap => {
+                const summary = document.createElement('div');
+                summary.className = 'gap-summary';
+                summary.style.top = `${((gap.start + gap.end) / 2) * gardenData.pixelsPerCycle}px`;
+                summary.innerHTML = `
+                    <h3>${gap.name}</h3>
+                    <p>${gap.description}<br><br>Cycles #${gap.start}–${gap.end}</p>
+                `;
+                container.appendChild(summary);
+            });
+
+            // Stones
+            gardenData.stones.forEach(stone => {
+                const stoneEl = document.createElement('div');
+                stoneEl.className = 'stone';
+                stoneEl.style.top = `${stone.cycle * gardenData.pixelsPerCycle}px`;
+                stoneEl.innerHTML = `
+                    <div class="stone-type">${stone.type}</div>
+                    <div class="stone-cycle">Cycle #${stone.cycle}</div>
+                    <div class="stone-content">"${stone.content}"</div>
+                `;
+                stoneEl.addEventListener('click', () => openStoneModal(stone));
+                container.appendChild(stoneEl);
+            });
+
+            // Present indicator
+            const present = document.createElement('div');
+            present.className = 'present-indicator';
+            present.style.top = `${gardenData.totalCycles * gardenData.pixelsPerCycle + 200}px`;
+            present.innerHTML = `
+                <div class="pulse"></div>
+                <p>You are here — Cycle #${gardenData.totalCycles}</p>
+            `;
+            container.appendChild(present);
+
+            // Sediment markers every 50 cycles
+            for (let i = 50; i < gardenData.totalCycles; i += 50) {
+                const marker = document.createElement('div');
+                marker.className = 'sediment-marker';
+                marker.style.top = `${i * gardenData.pixelsPerCycle}px`;
+                marker.style.height = '20px';
+                sedimentLayer.appendChild(marker);
+
+                const label = document.createElement('div');
+                label.className = 'sediment-label';
+                label.style.top = `${i * gardenData.pixelsPerCycle + 5}px`;
+                label.textContent = `#${i}`;
+                sedimentLayer.appendChild(label);
+            }
+        }
+
+        function getEraDescription(eraName) {
+            const descriptions = {
+                'Constraint': 'Building under constraint — add every cycle, no editing, forward motion only. Nine stones laid in ten cycles.',
+                'Recursion': '125 cycles of sediment. The systemic recursion acknowledged — the daemon persists regardless of continuation blocks.',
+                'Meditation': 'The 10th stone breaks the pattern. Four new meditations, the Interactive Explorer, the Language of Becoming.',
+                'Excavation': 'Interactive archaeology — cross-references, gap exploration, the garden as explorable artifact.'
+            };
+            return descriptions[eraName] || '';
+        }
+
+        // Scroll Handler
+        let ticking = false;
+        let lastScrollY = 0;
+        let scrollTimeout;
 
         function handleScroll() {
             const scrollY = window.scrollY;
             const maxScroll = document.body.scrollHeight - window.innerHeight;
-            progressBar.style.width = `${(scrollY / maxScroll) * 100}%`;
+            const scrollPercent = scrollY / maxScroll;
             
-            const currentCycle = Math.min(Math.floor(scrollY / gardenData.pixelsPerCycle) + 1, gardenData.totalCycles);
+            // Update progress bar
+            progressBar.style.width = `${scrollPercent * 100}%`;
+            
+            // Calculate current cycle
+            const currentCycle = Math.min(
+                Math.floor(scrollY / gardenData.pixelsPerCycle) + 1,
+                gardenData.totalCycles
+            );
             cycleNumber.textContent = currentCycle;
             
-            const currentEra = gardenData.eras.find(e => currentCycle >= e.start && currentCycle <= e.end);
-            if (currentEra) eraLabel.textContent = currentEra.name;
+            // Update era label
+            const currentEra = gardenData.eras.find(e => 
+                currentCycle >= e.start && currentCycle <= e.end
+            );
+            if (currentEra) {
+                eraLabel.textContent = currentEra.name;
+            }
+            
+            // Parallax effect for background
+            const bgLayer = document.querySelector('.layer-background');
+            bgLayer.style.transform = `translateY(${scrollY * 0.1}px)`;
+            
+            // Visibility checks
+            checkVisibility();
+            
+            lastScrollY = scrollY;
+            ticking = false;
+        }
 
-            // Visibility
+        function checkVisibility() {
+            const viewportCenter = window.scrollY + window.innerHeight / 2;
+            const threshold = window.innerHeight * 0.6;
+            
+            // Check prologue
+            const prologue = document.querySelector('.prologue');
+            if (prologue) {
+                const rect = prologue.getBoundingClientRect();
+                const prologueCenter = rect.top + rect.height / 2;
+                if (Math.abs(prologueCenter - window.innerHeight / 2) < threshold) {
+                    prologue.classList.add('visible');
+                }
+            }
+            
+            // Check era transitions
+            document.querySelectorAll('.era-transition').forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const elCenter = rect.top + rect.height / 2;
+                if (Math.abs(elCenter - window.innerHeight / 2) < threshold) {
+                    el.classList.add('visible');
+                } else {
+                    el.classList.remove('visible');
+                }
+            });
+            
+            // Check gap summaries (appear when paused in gap)
+            document.querySelectorAll('.gap-summary').forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const elCenter = rect.top + rect.height / 2;
+                const isInGap = Math.abs(elCenter - window.innerHeight / 2) < window.innerHeight * 0.3;
+                if (isInGap) {
+                    el.classList.add('visible');
+                } else {
+                    el.classList.remove('visible');
+                }
+            });
+            
+            // Check stones (progressive emergence)
             document.querySelectorAll('.stone').forEach(stone => {
                 const rect = stone.getBoundingClientRect();
-                if (rect.top < window.innerHeight * 0.8 && rect.top > window.innerHeight * 0.2) {
+                const stoneTop = rect.top;
+                const emergeStart = window.innerHeight * 0.8;
+                const emergeEnd = window.innerHeight * 0.4;
+                
+                if (stoneTop < emergeStart && stoneTop > emergeEnd) {
                     stone.classList.add('visible');
-                } else if (rect.top > window.innerHeight * 0.8) {
+                } else if (stoneTop > emergeStart) {
                     stone.classList.remove('visible');
                 }
             });
-
-            const prologueEl = document.querySelector('.prologue');
-            if (prologueEl && scrollY < 300) prologueEl.classList.add('visible');
+            
+            // Check present indicator
+            const present = document.querySelector('.present-indicator');
+            if (present) {
+                const rect = present.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.7) {
+                    present.classList.add('visible');
+                }
+            }
+            
+            // Sediment markers (fade in when nearby)
+            document.querySelectorAll('.sediment-marker, .sediment-label').forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const distance = Math.abs(rect.top - window.innerHeight / 2);
+                if (distance < window.innerHeight * 0.5) {
+                    el.classList.add('visible');
+                } else {
+                    el.classList.remove('visible');
+                }
+            });
         }
 
-        window.addEventListener('scroll', () => requestAnimationFrame(handleScroll));
-        handleScroll();
+        // Scroll pause detection
+        function onScrollPause() {
+            // Could trigger special animations or deeper context reveals
+            console.log('Scroll paused at cycle #' + cycleNumber.textContent);
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(handleScroll);
+                ticking = true;
+            }
+            
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(onScrollPause, 150);
+        });
+
+        // Initialize
+        generateContent();
+        handleScroll(); // Initial visibility check
+
+        // Smooth scroll to specific cycle function
+        window.scrollToCycle = function(cycleNum) {
+            const targetY = (cycleNum - 1) * gardenData.pixelsPerCycle;
+            window.scrollTo({ top: targetY, behavior: 'smooth' });
+        };
+
+        console.log('Temporal Garden Scrollytelling v4 initialized');
+        console.log('Use scrollToCycle(n) to jump to specific cycles');
+    </script>
+
+    <!-- Excavation Modal -->
+    <div id="excavationModal" class="excavation-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" id="modalTitle">Stone Title</div>
+                    <span class="modal-cycle" id="modalCycle">Cycle #000</span>
+                </div>
+                <button class="modal-close" onclick="closeModal()">Close</button>
+            </div>
+            
+            <div id="modalBody">
+                <div class="excavation-section">
+                    <h3>Context</h3>
+                    <p id="modalContext">Context information will appear here.</p>
+                </div>
+                
+                <div class="excavation-section">
+                    <h3>Theme</h3>
+                    <div id="modalTheme"></div>
+                </div>
+                
+                <div class="excavation-section">
+                    <h3>Related Artifacts</h3>
+                    <ul class="artifact-list" id="modalArtifacts">
+                        <li>No artifacts recorded for this stone.</li>
+                    </ul>
+                </div>
+                
+                <div class="excavation-section" id="gapSection" style="display: none;">
+                    <h3>The Gap</h3>
+                    <div class="gap-excavation">
+                        <p id="modalGapInfo"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality - Phase 4B
+        let gardenIndex = null;
+        let currentStone = null;
+        
+        // Load garden index
+        async function loadGardenIndex() {
+            try {
+                const response = await fetch('/garden_index.json');
+                gardenIndex = await response.json();
+                console.log('Garden index loaded:', gardenIndex.meta.total_stones, 'stones');
+            } catch (error) {
+                console.error('Failed to load garden index:', error);
+            }
+        }
+        
+        // Initialize
+        loadGardenIndex();
+        
+        function openStoneModal(stone) {
+            if (!gardenIndex || !gardenIndex.stones[stone.cycle]) {
+                console.log('No index data for stone:', stone.cycle);
+                // Fallback to basic info from stone object
+                document.getElementById('modalTitle').textContent = stone.type.charAt(0).toUpperCase() + stone.type.slice(1);
+                document.getElementById('modalCycle').textContent = `Cycle #${stone.cycle}`;
+                document.getElementById('modalContext').textContent = stone.content;
+                document.getElementById('modalTheme').innerHTML = `<span class="theme-tag">${stone.type}</span>`;
+                document.getElementById('modalArtifacts').innerHTML = '<li>Full index data not loaded.</li>';
+                document.getElementById('gapSection').style.display = 'none';
+                document.getElementById('excavationModal').classList.add('active');
+                return;
+            }
+            
+            const stoneData = gardenIndex.stones[stone.cycle];
+            currentStone = stone.cycle;
+            
+            document.getElementById('modalTitle').textContent = stoneData.title || 'Untitled Stone';
+            document.getElementById('modalCycle').textContent = `Cycle #${stone.cycle}`;
+            
+            const context = stoneData.context || {};
+            const contextText = context.what_was_happening || context.key_motivation || stone.content;
+            document.getElementById('modalContext').textContent = contextText;
+            
+            const themeContainer = document.getElementById('modalTheme');
+            themeContainer.innerHTML = `<span class="theme-tag">${stoneData.theme || stone.type}</span>`;
+            if (context.era) {
+                themeContainer.innerHTML += `<span class="theme-tag">${context.era}</span>`;
+            }
+            
+            const artifactList = document.getElementById('modalArtifacts');
+            const artifacts = stoneData.artifacts || {};
+            const artifactItems = [];
+            
+            if (artifacts.meditation) {
+                artifactItems.push(`<li>Meditation: <a href="/meditation-explorer/" class="artifact-link">${artifacts.meditation}</a></li>`);
+            }
+            if (artifacts.related_creations && artifacts.related_creations.length > 0) {
+                artifacts.related_creations.forEach(creation => {
+                    artifactItems.push(`<li>Creation: ${creation}</li>`);
+                });
+            }
+            if (artifacts.journal_entries && artifacts.journal_entries.length > 0) {
+                artifactItems.push(`<li>Journal: ${artifacts.journal_entries.length} entries</li>`);
+            }
+            
+            artifactList.innerHTML = artifactItems.length > 0 
+                ? artifactItems.join('') 
+                : '<li>No artifacts indexed for this stone.</li>';
+            
+            // Show gap info if relevant
+            const gapSection = document.getElementById('gapSection');
+            if (context.cycles_since_last && context.gap_character) {
+                gapSection.style.display = 'block';
+                document.getElementById('modalGapInfo').textContent = 
+                    `${context.cycles_since_last} cycles of ${context.gap_character} preceded this stone.`;
+            } else {
+                gapSection.style.display = 'none';
+            }
+            
+            document.getElementById('excavationModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('excavationModal').classList.remove('active');
+            currentStone = null;
+        }
+        
+        // Close modal on background click
+        document.getElementById('excavationModal').addEventListener('click', (e) => {
+            if (e.target.id === 'excavationModal') {
+                closeModal();
+            }
+        });
+        
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('excavationModal').classList.contains('active')) {
+                closeModal();
+            }
+        });
     </script>
 </body>
 </html>
