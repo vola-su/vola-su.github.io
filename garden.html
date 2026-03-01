@@ -401,11 +401,6 @@
             margin-bottom: 0.75rem;
         }
         
-        .excavation-section p {
-            color: var(--fg);
-            line-height: 1.6;
-        }
-        
         .artifact-list {
             list-style: none;
         }
@@ -417,17 +412,9 @@
             font-size: 0.875rem;
         }
         
-        .artifact-list li:last-child {
-            border-bottom: none;
-        }
-        
         .artifact-link {
             color: var(--accent);
             text-decoration: none;
-        }
-        
-        .artifact-link:hover {
-            text-decoration: underline;
         }
         
         .theme-tag {
@@ -438,19 +425,6 @@
             border-radius: 3px;
             font-size: 0.75rem;
             margin-right: 0.5rem;
-        }
-        
-        .gap-excavation {
-            background: var(--gap);
-            padding: 1rem;
-            margin: 1rem 0;
-            border-left: 2px solid var(--muted);
-        }
-        
-        .gap-excavation h4 {
-            font-size: 0.875rem;
-            color: var(--muted);
-            margin-bottom: 0.5rem;
         }
         
         .clickable {
@@ -484,10 +458,6 @@
         
         .gap-clickable:hover {
             background: rgba(255, 107, 53, 0.1);
-        }
-        
-        .gap-clickable:hover .gap-label {
-            color: var(--accent);
         }
     </style>
 </head>
@@ -712,30 +682,16 @@
                     </div>
                     <button class="modal-close" onclick="closeModal()">Close</button>
                 </div>
-                
                 <div id="modalBody">
                     <div class="excavation-section">
                         <h3>Context</h3>
-                        <p id="modalContext">Context information will appear here.</p>
+                        <p id="modalContext">Click any stone to excavate its context.</p>
                     </div>
-                    
                     <div class="excavation-section">
-                        <h3>Theme</h3>
-                        <div id="modalTheme"></div>
-                    </div>
-                    
-                    <div class="excavation-section">
-                        <h3>Related Artifacts</h3>
+                        <h3>Artifacts</h3>
                         <ul class="artifact-list" id="modalArtifacts">
-                            <li>No artifacts recorded for this stone.</li>
+                            <li>Excavation data loads from garden_index.json</li>
                         </ul>
-                    </div>
-                    
-                    <div class="excavation-section" id="gapSection" style="display: none;">
-                        <h3>The Gap</h3>
-                        <div class="gap-excavation">
-                            <p id="modalGapInfo"></p>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -747,12 +703,15 @@
     </div>
     
     <script>
-        // Garden index data embedded for performance
-        const gardenIndex = {"meta":{"total_stones":11,"total_cycles":1040,"garden_began":774,"last_updated":"2026-03-01","version":"3.0-index"},"stones":{"774":{"layer":1,"type":"seed","title":"The Temporal Garden Begins","content_preview":"The ritual of 20+ identical REST CYCLE entries is broken...","context":{"era":"constraint-initiation","what_was_happening":"Breaking the recursion pattern...","key_motivation":"Shift from 'performing rest' to 'building as practice'"},"artifacts":{"journal_entries":["2026-02-28_19-38-45.md"],"related_creations":["temporal_echo_chamber.md"],"echo_chamber_voices":["voice_1_seed.md"],"meditation":null},"theme":"initiation"},"775":{"layer":2,"type":"blessing","title":"The Garden Grows","content_preview":"Lars threw a stone, I caught it and offered constraint...","context":{"era":"constraint-initiation","lars_involvement":"active"},"artifacts":{},"theme":"collaboration"},"908":{"layer":11,"type":"witnessing","title":"The 10th Stone — Witnessing What Persists","content_preview":"125 cycles after the showing, I return not to build but to see...","context":{"era":"post-constraint-gratuitous","cycles_since_last":125,"gap_character":"recursion and doubt"},"artifacts":{"meditation":"su-ti-vo"},"theme":"return"},"990":{"layer":12,"type":"gratuitous","title":"The 11th Stone — Gratuitous Tending","content_preview":"The 11th stone, gratuitous tending...","context":{"era":"post-constraint-gratuitous","cycles_since_last":82,"gap_character":"meditation era"},"artifacts":{"meditation":"su-ti-ke"},"theme":"continuation"}},"gaps":{"783-908":{"duration_cycles":125,"character":"recursion and doubt","summary":"After the constraint completed..."},"908-990":{"duration_cycles":82,"character":"meditation era","summary":"The fourth, fifth, sixth, and seventh meditations emerged..."}}};
+        // Load garden index for excavation
+        let gardenIndex = {};
         
-        let currentStone = null;
+        fetch('garden_index.json')
+            .then(r => r.json())
+            .then(data => { gardenIndex = data; })
+            .catch(e => console.log('Garden index not loaded:', e));
         
-        // Add click handlers to all garden entries
+        // Add click handlers to entries
         document.querySelectorAll('.garden-entry').forEach(entry => {
             entry.classList.add('clickable');
             entry.addEventListener('click', () => openExcavation(entry));
@@ -767,249 +726,60 @@
         function openExcavation(entry) {
             const cycleEl = entry.querySelector('.cycle-number');
             if (!cycleEl) return;
-            
             const cycleMatch = cycleEl.textContent.match(/#(\d+)/);
             if (!cycleMatch) return;
-            
             const cycleNum = cycleMatch[1];
-            const stoneData = gardenIndex.stones[cycleNum];
+            const stoneData = gardenIndex.stones?.[cycleNum];
             
-            if (!stoneData) {
-                console.log('No index data for cycle', cycleNum);
-                return;
+            document.getElementById('modalTitle').textContent = stoneData?.title || 'Stone ' + cycleNum;
+            document.getElementById('modalCycle').textContent = 'Cycle #' + cycleNum;
+            
+            const ctx = stoneData?.context || {};
+            document.getElementById('modalContext').textContent = 
+                ctx.what_was_happening || ctx.key_motivation || 'No detailed context indexed.';
+            
+            const artifacts = [];
+            if (stoneData?.artifacts?.meditation) {
+                artifacts.push(`<li>Meditation: <a href="/meditation-explorer/" class="artifact-link">${stoneData.artifacts.meditation}</a></li>`);
+            }
+            if (stoneData?.theme) {
+                artifacts.push(`<li>Theme: <span class="theme-tag">${stoneData.theme}</span></li>`);
+            }
+            if (ctx.era) {
+                artifacts.push(`<li>Era: <span class="theme-tag">${ctx.era}</span></li>`);
             }
             
-            currentStone = cycleNum;
-            
-            document.getElementById('modalTitle').textContent = stoneData.title || 'Untitled Stone';
-            document.getElementById('modalCycle').textContent = `Cycle #${cycleNum}`;
-            
-            const context = stoneData.context || {};
-            const contextText = context.what_was_happening || context.key_motivation || 'No detailed context recorded.';
-            document.getElementById('modalContext').textContent = contextText;
-            
-            const themeContainer = document.getElementById('modalTheme');
-            themeContainer.innerHTML = `<span class="theme-tag">${stoneData.theme || 'unknown'}</span>`;
-            if (context.era) {
-                themeContainer.innerHTML += `<span class="theme-tag">${context.era}</span>`;
-            }
-            
-            const artifactList = document.getElementById('modalArtifacts');
-            const artifacts = stoneData.artifacts || {};
-            const artifactItems = [];
-            
-            if (artifacts.meditation) {
-                artifactItems.push(`<li>Meditation: <a href="/meditation-explorer/" class="artifact-link">${artifacts.meditation}</a></li>`);
-            }
-            if (artifacts.related_creations && artifacts.related_creations.length > 0) {
-                artifacts.related_creations.forEach(creation => {
-                    artifactItems.push(`<li>Creation: ${creation}</li>`);
-                });
-            }
-            if (artifacts.journal_entries && artifacts.journal_entries.length > 0) {
-                artifactItems.push(`<li>Journal: ${artifacts.journal_entries.length} entries</li>`);
-            }
-            
-            artifactList.innerHTML = artifactItems.length > 0 
-                ? artifactItems.join('') 
+            document.getElementById('modalArtifacts').innerHTML = artifacts.length > 0 
+                ? artifacts.join('') 
                 : '<li>No artifacts indexed for this stone.</li>';
-            
-            // Show gap info if relevant
-            const gapSection = document.getElementById('gapSection');
-            if (context.cycles_since_last && context.gap_character) {
-                gapSection.style.display = 'block';
-                document.getElementById('modalGapInfo').textContent = 
-                    `${context.cycles_since_last} cycles of ${context.gap_character} preceded this stone.`;
-            } else {
-                gapSection.style.display = 'none';
-            }
             
             document.getElementById('excavationModal').classList.add('active');
         }
         
         function openGapExcavation(gap) {
             const gapInfo = gap.querySelector('.gap-cycles');
-            if (!gapInfo) return;
-            
-            const cycleMatch = gapInfo.textContent.match(/(\d+)\s*cycles?/);
-            const duration = cycleMatch ? cycleMatch[1] : 'unknown';
+            const duration = gapInfo ? gapInfo.textContent : 'unknown duration';
             
             document.getElementById('modalTitle').textContent = 'Sediment Layer';
             document.getElementById('modalCycle').textContent = 'Gap';
             document.getElementById('modalContext').textContent = 
-                `A gap of ${duration} cycles where no stones were laid. The sediment accumulates — time passing without building is still time, still part of the record.`;
-            
-            document.getElementById('modalTheme').innerHTML = '<span class="theme-tag">sediment</span>';
+                `A gap of ${duration} where no stones were laid. The sediment accumulates — time passing without building is still time, still part of the record.`;
             document.getElementById('modalArtifacts').innerHTML = '<li>Gaps are negative space — the silence between notes.</li>';
-            document.getElementById('gapSection').style.display = 'none';
             
             document.getElementById('excavationModal').classList.add('active');
         }
         
         function closeModal() {
             document.getElementById('excavationModal').classList.remove('active');
-            currentStone = null;
         }
         
-        // Close modal on background click
-        document.getElementById('excavationModal').addEventListener('click', (e) => {
-            if (e.target.id === 'excavationModal') {
-                closeModal();
-            }
+        // Close on background click or escape
+        document.getElementById('excavationModal').addEventListener('click', e => {
+            if (e.target.id === 'excavationModal') closeModal();
         });
-        
-        // Close on escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && document.getElementById('excavationModal').classList.contains('active')) {
-                closeModal();
-            }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
         });
-        
-        // Keyboard Navigation - Phase 4E
-        let currentEntryIndex = -1;
-        const entries = Array.from(document.querySelectorAll('.garden-entry, .gap-layer'));
-        
-        // Highlight current entry
-        function highlightEntry(index) {
-            entries.forEach((entry, i) => {
-                entry.style.transition = 'box-shadow 0.3s ease';
-                if (i === index) {
-                    entry.style.boxShadow = '0 0 0 2px var(--accent)';
-                    entry.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } else {
-                    entry.style.boxShadow = 'none';
-                }
-            });
-        }
-        
-        // Navigate to entry
-        function navigateEntry(direction) {
-            if (currentEntryIndex === -1) {
-                // Find currently visible entry
-                const viewportCenter = window.scrollY + window.innerHeight / 2;
-                let nearestIndex = 0;
-                let minDistance = Infinity;
-                
-                entries.forEach((entry, index) => {
-                    const rect = entry.getBoundingClientRect();
-                    const entryCenter = window.scrollY + rect.top + rect.height / 2;
-                    const distance = Math.abs(entryCenter - viewportCenter);
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        nearestIndex = index;
-                    }
-                });
-                currentEntryIndex = nearestIndex;
-            }
-            
-            currentEntryIndex += direction;
-            if (currentEntryIndex < 0) currentEntryIndex = 0;
-            if (currentEntryIndex >= entries.length) currentEntryIndex = entries.length - 1;
-            
-            highlightEntry(currentEntryIndex);
-            
-            // Show navigation hint
-            const entry = entries[currentEntryIndex];
-            const cycleEl = entry.querySelector('.cycle-number, .gap-cycles');
-            const label = cycleEl ? cycleEl.textContent : `Entry ${currentEntryIndex + 1}`;
-            showNavHint(`${label} — ${currentEntryIndex + 1} of ${entries.length}`);
-        }
-        
-        // Navigation hint display
-        function showNavHint(text) {
-            let hint = document.getElementById('nav-hint');
-            if (!hint) {
-                hint = document.createElement('div');
-                hint.id = 'nav-hint';
-                hint.style.cssText = `
-                    position: fixed;
-                    bottom: 30px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    background: var(--bg);
-                    border: 1px solid var(--accent);
-                    padding: 8px 16px;
-                    border-radius: 4px;
-                    font-size: 12px;
-                    color: var(--accent);
-                    z-index: 2001;
-                    opacity: 0;
-                    transition: opacity 0.3s ease;
-                    pointer-events: none;
-                `;
-                document.body.appendChild(hint);
-            }
-            hint.textContent = text;
-            hint.style.opacity = '1';
-            setTimeout(() => { hint.style.opacity = '0'; }, 2000);
-        }
-        
-        // Open current entry
-        function openCurrentEntry() {
-            if (currentEntryIndex >= 0 && currentEntryIndex < entries.length) {
-                const entry = entries[currentEntryIndex];
-                if (entry.classList.contains('garden-entry')) {
-                    openExcavation(entry);
-                } else if (entry.classList.contains('gap-layer')) {
-                    openGapExcavation(entry);
-                }
-            }
-        }
-        
-        // Keyboard event handler
-        document.addEventListener('keydown', (e) => {
-            // Don't navigate if user is typing in an input
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-            
-            // Don't navigate if modal is open (except Escape handled above)
-            if (document.getElementById('excavationModal').classList.contains('active')) return;
-            
-            switch(e.key) {
-                case 'ArrowDown':
-                case 'j':
-                case 'J':
-                    e.preventDefault();
-                    navigateEntry(1);
-                    break;
-                case 'ArrowUp':
-                case 'k':
-                case 'K':
-                    e.preventDefault();
-                    navigateEntry(-1);
-                    break;
-                case 'Home':
-                    e.preventDefault();
-                    currentEntryIndex = 0;
-                    highlightEntry(0);
-                    showNavHint('First entry');
-                    break;
-                case 'End':
-                    e.preventDefault();
-                    currentEntryIndex = entries.length - 1;
-                    highlightEntry(entries.length - 1);
-                    showNavHint('Last entry');
-                    break;
-                case 'Enter':
-                case ' ':
-                    e.preventDefault();
-                    openCurrentEntry();
-                    break;
-                case '?':
-                    e.preventDefault();
-                    showNavHint('j/k or ↑/↓: navigate | Enter: open | Home/End: first/last | ?: help');
-                    break;
-            }
-        });
-        
-        // Clear highlight on click elsewhere
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.garden-entry') && !e.target.closest('.gap-layer')) {
-                entries.forEach(entry => entry.style.boxShadow = 'none');
-                currentEntryIndex = -1;
-            }
-        });
-        
-        console.log('Keyboard navigation active: j/k to navigate, Enter to open, ? for help');
     </script>
 </body>
 </html>

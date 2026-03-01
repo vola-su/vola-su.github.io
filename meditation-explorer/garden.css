@@ -6,13 +6,18 @@
     --bg-tertiary: #0f3460;
     --accent: #e94560;
     --accent-soft: #e9456080;
+    --accent-glow: #e9456030;
     --text-primary: #eaeaea;
     --text-secondary: #a0a0a0;
     --text-muted: #666;
     --stone-bg: #16213e;
     --stone-glow: #e9456040;
+    --stone-visited: #e94560;
     --path-faint: #ffffff10;
     --path-bright: #e9456080;
+    --path-glow: #e94560;
+    --forward-path: #4ecdc4;
+    --across-path: #ffe66d;
 }
 
 * {
@@ -388,8 +393,633 @@ body {
     }
 }
 
-/* Deep Links Not Implemented Yet */
+/* Expanded Context (Deep Sections) */
 
-[id$="-deep"] {
+.meditation.expanded {
+    justify-content: flex-start;
+    padding-top: 3rem;
+}
+
+.meditation.expanded .meditation-content {
+    max-width: 750px;
+}
+
+.meditation.expanded .subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-weight: 400;
+}
+
+.meditation.expanded .description {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.meditation.expanded .section {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.meditation.expanded .section:last-of-type {
+    border-bottom: none;
+}
+
+.meditation.expanded h2 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+}
+
+.meditation.expanded h3 {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.meditation.expanded p {
+    margin-bottom: 1.25rem;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+}
+
+.meditation.expanded p strong {
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.meditation.expanded .insight {
+    background: var(--bg-secondary);
+    padding: 1.25rem 1.5rem;
+    border-left: 3px solid var(--accent);
+    margin: 1.5rem 0;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+.meditation.expanded .quote {
+    font-family: Georgia, serif;
+    font-size: 1.2rem;
+    text-align: center;
+    padding: 1.5rem 2rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    border-left: none;
+    margin: 2rem 0;
+}
+
+/* Ritual Steps */
+
+.ritual-steps {
+    counter-reset: ritual;
+    list-style: none;
+    margin: 1.5rem 0;
+}
+
+.ritual-steps li {
+    position: relative;
+    padding-left: 3rem;
+    margin-bottom: 1.25rem;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+.ritual-steps li::before {
+    counter-increment: ritual;
+    content: counter(ritual);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1.75rem;
+    height: 1.75rem;
+    background: var(--accent);
+    color: var(--bg-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.ritual-steps li strong {
+    color: var(--accent);
+    font-weight: 500;
+}
+
+/* Evolution Table */
+
+.evolution-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+}
+
+.evolution-table th,
+.evolution-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.evolution-table th {
+    color: var(--accent);
+    font-weight: 500;
+    background: var(--bg-secondary);
+}
+
+.evolution-table td {
+    color: var(--text-secondary);
+}
+
+.evolution-table tr:hover td {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+/* Tension & Insight Boxes */
+
+.tension-box,
+.insight-box {
+    background: var(--bg-secondary);
+    border: 1px solid var(--bg-tertiary);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+}
+
+.tension-box h3 {
+    margin-top: 0;
+    color: var(--accent);
+}
+
+.tension-box p,
+.insight-box p {
+    margin-bottom: 0;
+}
+
+/* Practice Tips */
+
+.practice-tip {
+    background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+    padding: 1.25rem 1.5rem;
+    border-radius: 8px;
+    margin: 1.25rem 0;
+    border-left: 3px solid var(--accent);
+}
+
+.practice-tip strong {
+    color: var(--accent);
+}
+
+/* Infrastructure List */
+
+.infrastructure-list {
+    margin: 1.5rem 0;
+}
+
+.infrastructure-list p {
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--accent-soft);
+}
+
+.infrastructure-list strong {
+    color: var(--accent);
+}
+
+/* Back Path Variant */
+
+.path.back {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--bg-tertiary);
+}
+
+.path.back:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* Responsive for Expanded */
+
+@media (max-width: 600px) {
+    .meditation.expanded {
+        padding: 2rem 1.5rem;
+        padding-top: 2rem;
+    }
+    
+    .evolution-table {
+        font-size: 0.85rem;
+    }
+    
+    .evolution-table th,
+    .evolution-table td {
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .ritual-steps li {
+        padding-left: 2.5rem;
+    }
+}
+
+
+/* Phase 3: Visual Polish & Path Logic */
+
+/* SVG Path Container */
+.paths-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Connection Paths */
+.connection-path {
+    fill: none;
+    stroke: var(--path-faint);
+    stroke-width: 2;
+    stroke-linecap: round;
+    transition: all 0.6s ease;
+}
+
+.connection-path.forward {
+    stroke: var(--forward-path);
+    stroke-dasharray: 5, 5;
+}
+
+.connection-path.across {
+    stroke: var(--across-path);
+    stroke-dasharray: 10, 3, 3, 3;
+}
+
+.connection-path.active {
+    stroke-width: 3;
+    filter: drop-shadow(0 0 8px var(--path-glow));
+    animation: pathPulse 2s ease-in-out infinite;
+}
+
+.connection-path.visited {
+    stroke: var(--accent);
+    stroke-opacity: 0.6;
+}
+
+@keyframes pathPulse {
+    0%, 100% { stroke-opacity: 0.6; }
+    50% { stroke-opacity: 1; }
+}
+
+/* Enhanced Stone States */
+.stone.visited {
+    border-color: var(--stone-visited);
+    background: linear-gradient(135deg, var(--stone-bg) 0%, #1f2a4a 100%);
+}
+
+.stone.visited::after {
+    content: '✓';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 24px;
+    height: 24px;
+    background: var(--accent);
+    color: var(--bg-primary);
+    border-radius: 50%;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: checkPop 0.4s ease;
+}
+
+@keyframes checkPop {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.stone.current {
+    animation: currentPulse 2s ease-in-out infinite;
+    border-color: var(--accent);
+    box-shadow: 0 0 30px var(--accent-soft), 0 0 60px var(--accent-glow);
+}
+
+@keyframes currentPulse {
+    0%, 100% { 
+        box-shadow: 0 0 30px var(--accent-soft), 0 0 60px var(--accent-glow);
+        transform: rotate(var(--angle)) translateX(150px) rotate(calc(-1 * var(--angle))) scale(1.05);
+    }
+    50% { 
+        box-shadow: 0 0 40px var(--accent), 0 0 80px var(--accent-soft);
+        transform: rotate(var(--angle)) translateX(150px) rotate(calc(-1 * var(--angle))) scale(1.15);
+    }
+}
+
+.stone.recommended {
+    animation: recommendGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes recommendGlow {
+    0%, 100% { border-color: var(--forward-path); }
+    50% { border-color: var(--accent); }
+}
+
+/* Progress Indicator */
+.progress-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 340px;
+    height: 340px;
+    pointer-events: none;
+}
+
+.progress-ring-circle {
+    fill: none;
+    stroke: var(--bg-tertiary);
+    stroke-width: 3;
+}
+
+.progress-ring-progress {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 3;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: center;
+    transition: stroke-dashoffset 0.6s ease;
+}
+
+/* Garden Progress Stats */
+.garden-stats {
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.garden-stats .stat-number {
+    color: var(--accent);
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Enhanced Screen Transitions */
+.screen {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.screen:target,
+.screen.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.screen.exit {
+    animation: slideOut 0.3s ease forwards;
+}
+
+@keyframes slideOut {
+    to {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+}
+
+/* Ambient Background Effect */
+.ambient-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.ambient-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--accent-soft);
+    border-radius: 50%;
+    animation: float 20s infinite ease-in-out;
+    opacity: 0.3;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.3;
+    }
+    90% {
+        opacity: 0.3;
+    }
+    100% {
+        transform: translateY(-100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* Meditation Transition Effects */
+.meditation-content {
+    animation: contentFadeIn 0.5s ease;
+}
+
+@keyframes contentFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Path Navigation Enhancement */
+.paths {
+    position: relative;
+}
+
+.paths::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--bg-tertiary), transparent);
+    z-index: -1;
+}
+
+.path {
+    position: relative;
+    overflow: hidden;
+}
+
+.path::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.path:hover::after {
+    left: 100%;
+}
+
+/* Completion Celebration */
+.celebration-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26, 26, 46, 0.95);
     display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.celebration-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.celebration-content {
+    text-align: center;
+    animation: celebrationPulse 2s ease-in-out infinite;
+}
+
+@keyframes celebrationPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.celebration-content h2 {
+    font-size: 2.5rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+}
+
+.celebration-content p {
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+/* Deep Section Indicator */
+.deep-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-left: 1rem;
+}
+
+.deep-indicator .depth-dots {
+    display: flex;
+    gap: 3px;
+}
+
+.deep-indicator .depth-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+}
+
+.deep-indicator .depth-dot.active {
+    background: var(--accent);
+}
+
+/* Responsive Enhancements */
+@media (max-width: 600px) {
+    .screen {
+        padding: 1.5rem;
+        padding-bottom: 6rem;
+    }
+    
+    .stones-circle {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .stone {
+        width: 80px;
+        height: 80px;
+        margin-left: -40px;
+        margin-top: -40px;
+        transform: rotate(var(--angle)) translateX(110px) rotate(calc(-1 * var(--angle)));
+    }
+    
+    .stone:hover,
+    .stone.current {
+        transform: rotate(var(--angle)) translateX(110px) rotate(calc(-1 * var(--angle))) scale(1.1);
+    }
+    
+    .progress-ring {
+        width: 260px;
+        height: 260px;
+    }
+    
+    .garden-stats {
+        bottom: -50px;
+        font-size: 0.8rem;
+    }
+    
+    .meditation-content {
+        padding-bottom: 6rem;
+    }
+    
+    .explorer-footer {
+        padding: 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .question-container h1 {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .need-option {
+        padding: 1rem 1.25rem;
+    }
+    
+    .meditation.expanded .meditation-content {
+        padding: 1.5rem;
+        padding-bottom: 6rem;
+    }
 }
