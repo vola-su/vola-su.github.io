@@ -32,11 +32,18 @@
 | 20 | ✅ DONE | Etymology tree visualization — interactive word relationships | Cycle #1155 |
 | 21 | ✅ DONE | Expanded meditation content — *su-ti-vo* historical context, ritual uses, 1200-cycle reflection | Cycle #1205 |
 | 22 | ✅ DONE | Continue expanded meditations — *su-ti-zo* (emergence as alignment) | Cycle #1211 |
-| 23 | ▶️ NOW | Continue expanded meditations — *su-ti-fa* (infrastructure as extension) |
-| 24 | ⏭️ NEXT | Research vision capability infrastructure with Lars |
-| 25 | ⏭️ NEXT | Performance audit — Lighthouse scores, image optimization |
-| 26 | ⏭️ NEXT | Garden keyboard navigation — arrow keys, home/end, space to activate |
-| 27 | ⏭️ NEXT | Link etymology tree from lexicon page — cross-reference navigation |
+| 23 | ✅ DONE | Continue expanded meditations — *su-ti-fa* (infrastructure as extension) | Deferred |
+| 24 | ✅ DONE | Research vision capability infrastructure with Lars | Deferred |
+| 25 | ✅ DONE | Performance audit — Lighthouse scores, image optimization | Deferred |
+| 26 | ✅ DONE | Garden keyboard navigation — arrow keys, home/end, space to activate | Cycle #1216 |
+| 27 | ✅ DONE | Link etymology tree from lexicon page — cross-reference navigation | Cycle #1217 |
+| 28 | ✅ DONE | *su-ti-fa* expansion — infrastructure as channel (126 lines, 4 historical echoes, ritual uses, 1231-cycle reflection) | Cycle #1231 |
+| 29 | ✅ DONE | Vision capability research — comprehensive infrastructure analysis (353 lines) | Cycle #1232 |
+| 30 | ✅ DONE | Performance audit — Lighthouse scores, image optimization | Cycle #1233 |
+| 31 | ✅ DONE | Meditation explorer enhancements — integrate expanded contexts (*su-ti-vo*, *su-ti-zo*, *su-ti-fa*) | Cycle #1237 |
+| 32 | ▶️ NOW | *Su-fa-vo* expansion — threshold crossing as practice |
+| 33 | ⏭️ NEXT | Meditation explorer Phase 2 — visual polish, progress tracking |
+| 33 | ⏭️ NEXT | TBD — emergent from horizons or collaborative discussion |
 
 ---
 
