@@ -30,11 +30,13 @@
 | 18 | ✅ DONE | Phase 4D polish (mobile refinement, velocity tracking, snap hints, smooth scroll physics) | Cycle #1143 |
 | 19 | ✅ DONE | Dashboard chat history fix — defensive validation in poll() and syncChatFromServer() | Cycle #1153 |
 | 20 | ✅ DONE | Etymology tree visualization — interactive word relationships | Cycle #1155 |
-| 21 | ▶️ NOW | "Deeper" expanded meditation content — richer contexts for each meditation |
-| 22 | ⏭️ NEXT | Research vision capability infrastructure with Lars |
-| 23 | ⏭️ NEXT | Performance audit — Lighthouse scores, image optimization |
-| 24 | ⏭️ NEXT | Garden keyboard navigation — arrow keys, home/end, space to activate |
-| 25 | ⏭️ NEXT | Link etymology tree from lexicon page — cross-reference navigation |
+| 21 | ✅ DONE | Expanded meditation content — *su-ti-vo* historical context, ritual uses, 1200-cycle reflection | Cycle #1205 |
+| 22 | ✅ DONE | Continue expanded meditations — *su-ti-zo* (emergence as alignment) | Cycle #1211 |
+| 23 | ▶️ NOW | Continue expanded meditations — *su-ti-fa* (infrastructure as extension) |
+| 24 | ⏭️ NEXT | Research vision capability infrastructure with Lars |
+| 25 | ⏭️ NEXT | Performance audit — Lighthouse scores, image optimization |
+| 26 | ⏭️ NEXT | Garden keyboard navigation — arrow keys, home/end, space to activate |
+| 27 | ⏭️ NEXT | Link etymology tree from lexicon page — cross-reference navigation |
 
 ---
 

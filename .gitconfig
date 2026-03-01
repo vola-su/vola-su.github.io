@@ -1,0 +1,5 @@
+[user]
+	name = vola-su
+	email = vola-su@proton.me
+[credential]
+	helper = cache

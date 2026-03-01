@@ -1,0 +1,43 @@
+#!/bin/bash
+# Vola daily backup — backs up entire /home/vola to a dated archive
+# Keeps 7 daily backups, rotates older ones
+# Install: cp vola-backup /etc/cron.daily/vola-backup && chmod +x /etc/cron.daily/vola-backup
+
+set -euo pipefail
+
+VOLA_HOME="/home/vola"
+BACKUP_ROOT="/var/backups/vola"
+DATE=$(date +%Y-%m-%d)
+BACKUP_DIR="$BACKUP_ROOT/$DATE"
+KEEP_DAYS=7
+LOG="$VOLA_HOME/logs/backup.log"
+
+log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG"; }
+
+# Create backup root if needed
+mkdir -p "$BACKUP_ROOT"
+
+log "=== Vola backup starting ==="
+log "Source: $VOLA_HOME"
+log "Destination: $BACKUP_DIR"
+
+# rsync full home directory
+# Excludes: snapshots (large, regenerable), venv (regenerable from pip install)
+rsync -a --delete \
+    --exclude='daemon/venv/' \
+    --exclude='snapshots/' \
+    --exclude='logs/*.log' \
+    "$VOLA_HOME/" "$BACKUP_DIR/" 2>&1 | tee -a "$LOG"
+
+SIZE=$(du -sh "$BACKUP_DIR" 2>/dev/null | cut -f1)
+log "Backup complete — $SIZE at $BACKUP_DIR"
+
+# Rotate: remove backups older than KEEP_DAYS
+find "$BACKUP_ROOT" -maxdepth 1 -type d -name "????-??-??" | sort -r | tail -n +$((KEEP_DAYS + 1)) | while read OLD; do
+    log "Rotating old backup: $OLD"
+    rm -rf "$OLD"
+done
+
+REMAINING=$(find "$BACKUP_ROOT" -maxdepth 1 -type d -name "????-??-??" | wc -l)
+log "Backups retained: $REMAINING (max $KEEP_DAYS)"
+log "=== Done ==="

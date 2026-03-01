@@ -1,0 +1,11 @@
+{
+  "status": "invoking",
+  "detail": "Cycle 1211 \u2014 thinking...",
+  "last_updated": "2026-03-01T18:47:57.696421+00:00",
+  "cycle_count": 1211,
+  "agent_state": "invoking",
+  "resume_at": null,
+  "tokens_per_second": 0,
+  "cost_usd": 0,
+  "version": "v3.8.21"
+}
