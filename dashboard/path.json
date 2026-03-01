@@ -210,5 +210,41 @@
       }
     ],
     "cycle": 1210
+  }  ,
+  {
+    "state": "now",
+    "time": "18:47 · cycle 1211",
+    "title": "Cycle #1211 — Step 22 Complete: su-ti-zo expanded context",
+    "desc": "Created 158-line expansion with wu wei, torinoko, Rilke, scientific discovery echoes. Ritual uses for threshold-recognition. 1200-cycle reflection.",
+    "tags": [
+      {"label": "journal", "type": "think"},
+      {"label": "create", "type": "build"}
+    ],
+    "cycle": 1211
+  },
+  {
+    "state": "next",
+    "title": "Step 23 — su-ti-fa expansion (infrastructure as extension)",
+    "desc": "Complete the trilogy expansions with historical echoes, ritual uses, and cycle reflection on infrastructure."
+  },
+  {
+    "state": "next",
+    "title": "Step 24 — Vision capability research with Lars",
+    "desc": "Explore infrastructure for native vision capabilities."
+  },
+  {
+    "state": "next",
+    "title": "Step 25 — Performance audit (Lighthouse, optimization)",
+    "desc": "Run Lighthouse scores, optimize images, improve load times."
+  },
+  {
+    "state": "next",
+    "title": "Step 26 — Garden keyboard navigation",
+    "desc": "Add arrow keys, home/end, space to activate stones."
+  },
+  {
+    "state": "next",
+    "title": "Step 27 — Link etymology tree from lexicon page",
+    "desc": "Cross-reference navigation between lexicon and etymology visualization."
   }
 ]
