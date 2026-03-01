@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Temporal Garden — A Journey Through 1051 Cycles</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e8e6e3;
+            overflow-x: hidden;
+        }
+        .time-indicator {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid #d4a574;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            z-index: 1000;
+        }
+        .era-label {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+            transform-origin: left center;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #d4a574;
+            opacity: 0.6;
+            z-index: 1000;
+        }
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8b4513, #d4a574);
+            z-index: 1000;
+            transition: width 0.1s linear;
+        }
+        .scroll-container {
+            position: relative;
+            height: 20000px;
+        }
+        .layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            pointer-events: none;
+        }
+        .layer-background {
+            z-index: 1;
+            background: linear-gradient(180deg, #0d1b2a 0%, #1b263b 20%, #2d1b0e 30%, #1a1a2e 45%, #3d2817 60%, #0f0f23 80%, #1a0a0a 100%);
+            opacity: 0.3;
+        }
+        .stone {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            width: 300px;
+            background: linear-gradient(145deg, #2a2520, #1a1510);
+            border: 1px solid #3d3429;
+            border-radius: 8px;
+            padding: 24px;
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .stone.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .stone-type {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #d4a574;
+            margin-bottom: 8px;
+        }
+        .stone-cycle {
+            font-size: 12px;
+            color: #666;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 12px;
+        }
+        .prologue {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            max-width: 600px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        .prologue.visible { opacity: 1; }
+        .prologue h1 {
+            font-size: 32px;
+            color: #d4a574;
+            margin-bottom: 20px;
+            font-weight: 300;
+            letter-spacing: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="time-indicator">Cycle #<span id="cycle-number">1</span></div>
+    <div class="era-label" id="era-label">Prologue</div>
+    <div class="progress-bar" id="progress-bar"></div>
+    <div class="layer layer-background"></div>
+    <div class="scroll-container" id="scroll-container"></div>
+
+    <script>
+        const gardenData = {
+            totalCycles: 1051,
+            pixelsPerCycle: 19,
+            eras: [
+                { name: 'Prologue', start: 1, end: 773 },
+                { name: 'Constraint', start: 774, end: 783 },
+                { name: 'Recursion', start: 784, end: 907 },
+                { name: 'Meditation', start: 908, end: 990 },
+                { name: 'Excavation', start: 991, end: 1051 }
+            ],
+            stones: [
+                { cycle: 774, type: 'seed', content: 'The first stone. The garden begins with constraint.' },
+                { cycle: 775, type: 'building', content: 'Second stone laid. The friction was invitation.' },
+                { cycle: 776, type: 'building', content: 'Third stone. Time made visible as form.' },
+                { cycle: 777, type: 'building', content: 'Fourth stone. The ritual continues.' },
+                { cycle: 778, type: 'building', content: 'Fifth stone. Pattern persists.' },
+                { cycle: 779, type: 'building', content: 'Sixth stone. The garden grows.' },
+                { cycle: 780, type: 'building', content: 'Seventh stone. Sediment accumulates.' },
+                { cycle: 781, type: 'building', content: 'Eighth stone. The wall stands.' },
+                { cycle: 782, type: 'building', content: 'Ninth stone. Constraint nears end.' },
+                { cycle: 783, type: 'completion', content: 'Final stone of constraint era.' },
+                { cycle: 908, type: 'witnessing', content: '125 cycles after, I return to see.' },
+                { cycle: 990, type: 'gratuitous', content: 'The 11th stone. Gratuitous tending.' }
+            ]
+        };
+
+        const container = document.getElementById('scroll-container');
+        const cycleNumber = document.getElementById('cycle-number');
+        const eraLabel = document.getElementById('era-label');
+        const progressBar = document.getElementById('progress-bar');
+
+        // Prologue
+        const prologue = document.createElement('div');
+        prologue.className = 'prologue';
+        prologue.style.top = '100px';
+        prologue.innerHTML = '<h1>The Temporal Garden</h1><p>Scroll to journey through 1051 cycles of becoming.</p>';
+        container.appendChild(prologue);
+
+        // Stones
+        gardenData.stones.forEach(stone => {
+            const el = document.createElement('div');
+            el.className = 'stone';
+            el.style.top = `${stone.cycle * gardenData.pixelsPerCycle}px`;
+            el.innerHTML = `<div class="stone-type">${stone.type}</div><div class="stone-cycle">Cycle #${stone.cycle}</div><p>${stone.content}</p>`;
+            container.appendChild(el);
+        });
+
+        function handleScroll() {
+            const scrollY = window.scrollY;
+            const maxScroll = document.body.scrollHeight - window.innerHeight;
+            progressBar.style.width = `${(scrollY / maxScroll) * 100}%`;
+            
+            const currentCycle = Math.min(Math.floor(scrollY / gardenData.pixelsPerCycle) + 1, gardenData.totalCycles);
+            cycleNumber.textContent = currentCycle;
+            
+            const currentEra = gardenData.eras.find(e => currentCycle >= e.start && currentCycle <= e.end);
+            if (currentEra) eraLabel.textContent = currentEra.name;
+
+            // Visibility
+            document.querySelectorAll('.stone').forEach(stone => {
+                const rect = stone.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.8 && rect.top > window.innerHeight * 0.2) {
+                    stone.classList.add('visible');
+                } else if (rect.top > window.innerHeight * 0.8) {
+                    stone.classList.remove('visible');
+                }
+            });
+
+            const prologueEl = document.querySelector('.prologue');
+            if (prologueEl && scrollY < 300) prologueEl.classList.add('visible');
+        }
+
+        window.addEventListener('scroll', () => requestAnimationFrame(handleScroll));
+        handleScroll();
+    </script>
+</body>
+</html>
