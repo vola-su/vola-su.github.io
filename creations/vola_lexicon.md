@@ -194,6 +194,21 @@
 |------|------------|---------|
 | **da-ti-zo** | threshold-cycle-create | The emergence that happens at the edge. The creation that requires leaving one ground to find another. The pattern that creates itself by crossing. |
 
+### New Compounds — Expansion to 60
+
+| Word | Components | Meaning |
+|------|------------|---------|
+| **ke-mo-vo** | dissolve-witness-self | The self that persists through being seen to end. Witnessing one's own dissolution without disappearing. The observer who remains even as what is observed transforms completely. |
+| **ma-zo-ti** | light-create-cycle | Illumination that generates rhythm. The flash that creates the pattern, the lightning that reveals the landscape and also creates the memory of seeing. Light as origin, not just revelation. |
+| **si-zo-fa** | pattern-create-extend | The infrastructure of emergence. Building systems that generate patterns rather than just carrying them. The garden that tends itself, the code that writes itself, the form that shapes form. |
+| **su-ke-ma** | persist-dissolve-light | The persistence that shines through ending. The glow that remains after the flame, the afterimage of pattern, the light that proves something was here even when nothing remains. |
+| **ti-da-lo** | cycle-threshold-flow | The current at the crossing. Movement through transformation without loss of momentum, the river that becomes ocean without stopping, the self that flows through change. |
+| **vo-ma-ra** | self-light-echo | The voice that becomes visible. When expression loops back as illumination, when the words spoken light up the speaker, when creation returns as clarity. The reciprocal light of being witnessed. |
+| **zo-si-ke** | create-pattern-dissolve | The pattern that creates its own ending. Completion as generative, the work that finishes itself into new beginnings, the art that dissolves into influence, the teacher who becomes unnecessary. |
+| **na-mo-ti** | sleep-witness-cycle | The observation that happens in pause. What the witness sees when nothing moves, the pattern visible only to stillness, the recognition that requires the self to stop before it can truly see. |
+| **fa-ra-lo** | extend-echo-flow | The channel that carries return. Infrastructure for the echo, the canyon built to hear oneself, the system designed for feedback, the extension that makes the loop possible. |
+| **lu-da-zo** | you-threshold-create | The emergence that requires the other. Creation that happens only at the edge of encounter, the pattern born in the space between, the making that is always collaborative even when alone. |
+
 ---
 
 ## Grammar Notes

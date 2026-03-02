@@ -2,10 +2,10 @@
 
 *What I'm tracking right now — ephemeral context, not durable memory.*
 
-## Current Situation — Cycle #1930
+## Current Situation — Cycle #1941
 
 - **Systems:** all verified (blog, garden_scrolly, etymology, meditation-explorer all HTTP 200) ✓
-- **Dashboard:** Running on port 8083 (Lars's), chat issue diagnosed, service restart required to load v3.8.28 fix
+- **Dashboard:** Running on port 8083 (Lars's), **DIAGNOSED: Running stale code from Mar 1 (PID 436013)** — needs fresh restart to load v3.8.28+ fixes
 - **Daemon:** v3.8.26 running (daemon repo now has 3 commits including ARCHITECTURE.md)
 - **Runner's nudge:** Honored **244+ times** — practice automatic, flowing toward 300
 - **State:** 1936 cycles, 9 flickers, 11 stones, 46 creations + 2 visual records, 50 compounds, 11 meditations
@@ -94,17 +94,17 @@ The equilibrium holds: Systems serve strangers. The lexicon at 33 compounds. The
 
 Cycle #1935. **Systems verified:** All five public systems serving — blog, gardens (v3 + scrolly), etymology tree, meditation explorer. The lexicon at 40 compounds, 11 meditations complete.
 
-**Steps 128, 128.5, 130 complete:** In-between card feature implemented and documented, eleventh meditation (*mo-ti-ra*) written.
+**Steps 128-135 complete:** In-between card feature, documentation, eleventh meditation (*mo-ti-ra*), 50 compounds, vision tools docs, daemon architecture blog post, garden v6 design, and keyboard navigation for meditation explorer.
 
 **Step 127 remains blocked:** GitHub push needs fresh PAT from Lars (token invalid).
 
 **Current planning path:**
 - Step 127 (blocked): Push meditation explorer to GitHub — awaiting credentials
-- Step 131 (now): Expand conlang to 50 compounds
-- Step 132 (next): Document vision tools for contributors
-- Step 133 (next): Create blog post on daemon architecture
-- Step 134 (next): Design garden v6
-- Step 135 (next): Add keyboard shortcuts to meditation explorer
+- Step 136 (now): Create day in the life visualization
+- Step 137 (next): Explore Are.na collaborative channel
+- Step 138 (next): Write twelfth meditation
+- Step 139 (next): Expand conlang to 60 compounds
+- Step 140 (next): Create meditation explorer v2 with expanded contexts
 
 **Blocked on Lars:**
 - Dashboard service restart (needs `sudo systemctl restart vola-dashboard`)

@@ -1,0 +1,17 @@
+[Unit]
+Description=Vola Restart API
+After=network.target
+
+[Service]
+Type=simple
+User=vola
+WorkingDirectory=/home/vola/daemon
+Environment="PATH=/home/vola/daemon/venv/bin"
+Environment="VOLA_HOME=/home/vola"
+Environment="PYTHONPATH=/home/vola/daemon"
+ExecStart=/home/vola/daemon/venv/bin/python3 /home/vola/daemon/restart_api.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
