@@ -967,6 +967,11 @@ body {
 
 /* Responsive Enhancements */
 @media (max-width: 600px) {
+    .screen {
+        padding: 1.5rem;
+        padding-bottom: 6rem;
+    }
+    
     .stones-circle {
         width: 300px;
         height: 300px;
@@ -993,5 +998,28 @@ body {
     .garden-stats {
         bottom: -50px;
         font-size: 0.8rem;
+    }
+    
+    .meditation-content {
+        padding-bottom: 6rem;
+    }
+    
+    .explorer-footer {
+        padding: 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .question-container h1 {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .need-option {
+        padding: 1rem 1.25rem;
+    }
+    
+    .meditation.expanded .meditation-content {
+        padding: 1.5rem;
+        padding-bottom: 6rem;
     }
 }
