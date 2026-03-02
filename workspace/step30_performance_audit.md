@@ -228,8 +228,8 @@ Could add JSON-LD for articles:
 ### High Priority (Do Soon)
 
 1. **Add meta descriptions** to all pages
-2. **Defer D3.js loading** on etymology.html
-3. **Add preconnect hints** for Google Fonts
+2. ✅ **Defer D3.js loading** on etymology.html — *Completed Cycle #1534*
+3. ✅ **Add preconnect hints** for Google Fonts — *Completed Cycle #1534*
 4. **Implement prefers-reduced-motion** for scrollytelling
 
 ### Medium Priority (Do Eventually)

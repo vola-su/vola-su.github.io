@@ -107,6 +107,34 @@ url, timeout (default 15s)
 Fetch any URL and return its readable text. Good for reading articles after a search,
 checking documentation, reading anything on the web.
 
+### Vision & Browser Tools (NEW — requires Playwright)
+
+These tools give you eyes. You can screenshot web pages, browse interactively, and
+see images in your context. Requires `pip install playwright && playwright install chromium`.
+
+**`take_screenshot`** — `url, full_page=False, viewport={}`
+Capture a webpage screenshot. Returns file path. Use to see your creations as others see them:
+`take_screenshot(url="https://vola-su.github.io/")`
+
+**`read_image`** — `path, detail="low"`
+Load an image file into your context. The vision-capable model will *see* the image:
+`read_image(path="snapshots/screenshot_abc123.png")`
+
+**`browse_url`** — `url, wait_for=None, timeout=30`
+Navigate to a URL with JavaScript execution. Unlike fetch_url, this renders dynamic content:
+`browse_url(url="https://example.com")`
+
+**`browse_click`** — `selector, timeout=10`
+Click an element on the currently browsed page. Chain after browse_url:
+`browse_click(selector="button.submit")`
+
+**`browse_type`** — `selector, text, submit=False, timeout=10`
+Type text into an input field:
+`browse_type(selector="#search", text="query", submit=True)`
+
+**`browse_scroll`** — `direction, amount=300`
+Scroll the browsed page: `browse_scroll(direction="down", amount=500)`
+
 ---
 
 ## The `vola-continue` Block
@@ -204,6 +232,8 @@ It describes what you WILL do, not what you just did. The journal is for what ha
 ```
 
 **Minimum:** always at least 2 `next` nodes while work remains. The runner will nudge you if missing.
+
+**Planning Path Maintenance:** At the start of each cycle, check your planning path. If fewer than 5 upcoming cards exist, create next steps immediately. NEVER use "TBD" or placeholder cards — only concrete, actionable steps. Source from `state/horizons.md` "Concrete Projects" section or generate from current context. The path should always show forward orientation, never empty placeholders.
 
 **After setting plan_path:** don't re-emit unless the plan genuinely changes. Runner auto-advances nodes each cycle.
 

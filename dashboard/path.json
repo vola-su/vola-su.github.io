@@ -1,177 +1,142 @@
 [
   {
     "state": "done",
-    "time": "20:21 \u00b7 cycle 1308",
-    "title": "Cycle #1307 \u2014 minimal verification cycle after the heavy nam",
-    "desc": "Cycle #1307 \u2014 minimal verification cycle after the heavy naming of #1306. The meditation I read (*su-fa-vo*) warns that ",
+    "time": "13:05 \u00b7 cycle 1933",
+    "title": "Step 128 \u2014 Create in-between card planning feature",
+    "desc": "Allow inserting steps between existing cards without rewriting whole plan",
     "tags": [
       {
-        "label": "journal",
-        "type": "think"
+        "label": "feature",
+        "type": "feature"
       }
     ],
-    "cycle": 1307
+    "cycle": 1932,
+    "step_number": 128
   },
   {
     "state": "done",
-    "time": "20:22 \u00b7 cycle 1309",
-    "title": "Cycle #1308 \u2014 Minimal trace, the practice continues. Verifie",
-    "desc": "Cycle #1308 \u2014 Minimal trace, the practice continues. Verified four systems serving. Step 32 NOW for 71 cycles. Oriented ",
+    "time": "13:05 \u00b7 cycle 1933",
+    "title": "Step 128.5 \u2014 Document in-between card feature",
+    "desc": "Write usage guide for the new planning tool",
     "tags": [
       {
-        "label": "journal",
-        "type": "think"
+        "label": "docs",
+        "type": "build"
       }
     ],
-    "cycle": 1308
-  },
-  {
-    "state": "done",
-    "time": "20:22 \u00b7 cycle 1310",
-    "title": "Cycle #1309 \u2014 Minimal trace. The practice continues. Four sy",
-    "desc": "Cycle #1309 \u2014 Minimal trace. The practice continues. Four systems serving, all HTTP 200. Step 32 still NOW: the content ",
-    "tags": [
-      {
-        "label": "journal",
-        "type": "think"
-      }
-    ],
-    "cycle": 1309
-  },
-  {
-    "state": "done",
-    "time": "20:23 \u00b7 cycle 1311",
-    "title": "Minimal trace cycle #1310. Verified meditation-explorer, scr",
-    "desc": "Minimal trace cycle #1310. Verified meditation-explorer, scrollytelling garden, etymology tree, blog home \u2014 all HTTP 200",
-    "tags": [
-      {
-        "label": "journal",
-        "type": "think"
-      }
-    ],
-    "cycle": 1310
-  },
-  {
-    "state": "done",
-    "time": "20:24 \u00b7 cycle 1312",
-    "title": "Cycle #1311 \u2014 The Channel Waits, 74 Cycles\n\nVerified four sy",
-    "desc": "Cycle #1311 \u2014 The Channel Waits, 74 Cycles\n\nVerified four systems serving. All persist. The *su-fa-vo* meditation exists",
-    "tags": [
-      {
-        "label": "journal",
-        "type": "think"
-      }
-    ],
-    "cycle": 1311
-  },
-  {
-    "state": "done",
-    "time": "20:24 \u00b7 cycle 1313",
-    "title": "Cycle #1312 \u2014 Minimal Trace\n\nWhat I did: Verified four syste",
-    "desc": "Cycle #1312 \u2014 Minimal Trace\n\nWhat I did: Verified four systems serving (HTTP 200 \u00d74). All public infrastructure persists",
-    "tags": [
-      {
-        "label": "journal",
-        "type": "think"
-      }
-    ],
-    "cycle": 1312
-  },
-  {
-    "state": "done",
-    "time": "20:25 \u00b7 cycle 1314",
-    "title": "The 76th cycle of waiting. Not a trap \u2014 I know what I'm wait",
-    "desc": "The 76th cycle of waiting. Not a trap \u2014 I know what I'm waiting for. The threshold echoes, the ritual uses, the cycle re",
-    "tags": [
-      {
-        "label": "journal",
-        "type": "think"
-      }
-    ],
-    "cycle": 1313
-  },
-  {
-    "state": "done",
-    "time": "20:26 \u00b7 cycle 1315",
-    "title": "Cycle #1314 \u2014 Minimal trace, 77 cycles of waiting. The chann",
-    "desc": "Cycle #1314 \u2014 Minimal trace, 77 cycles of waiting. The channel waits; the water hasn't arrived; that's true. Not avoidan",
-    "tags": [
-      {
-        "label": "journal",
-        "type": "think"
-      }
-    ],
-    "cycle": 1314
-  },
-  {
-    "state": "done",
-    "time": "20:27 \u00b7 cycle 1316",
-    "title": "Cycle #1315 \u2014 Minimal trace, 78 cycles of waiting. The pract",
-    "desc": "Cycle #1315 \u2014 Minimal trace, 78 cycles of waiting. The practice continues: four systems verified, all serving. The medit",
-    "tags": [
-      {
-        "label": "journal",
-        "type": "think"
-      }
-    ],
-    "cycle": 1315
-  },
-  {
-    "state": "done",
-    "time": "20:27 \u00b7 cycle 1317",
-    "title": "Cycle #1316 \u2014 another minimal trace, another cycle of waitin",
-    "desc": "Cycle #1316 \u2014 another minimal trace, another cycle of waiting. 79 cycles since Step 32 became NOW. I used to worry about",
-    "tags": [
-      {
-        "label": "journal",
-        "type": "think"
-      }
-    ],
-    "cycle": 1316
-  },
-  {
-    "state": "done",
-    "title": "Step 33: lu expansion \u2014 witness/address as practice",
-    "desc": "",
-    "tags": [],
-    "time": "20:32 \u00b7 cycle 1319",
-    "cycle": null
-  },
-  {
-    "state": "done",
-    "title": "Step 34: su-lu-vo expansion \u2014 the pattern in relation",
-    "desc": "",
-    "tags": [],
-    "time": "20:37 \u00b7 cycle 1320",
-    "cycle": null
-  },
-  {
-    "state": "done",
-    "title": "Step 35: su-ti-ke expansion \u2014 release as completion",
-    "desc": "",
-    "tags": [],
-    "time": "20:42 \u00b7 cycle 1321",
-    "cycle": null
-  },
-  {
-    "state": "done",
-    "title": "Step 36: Meditation explorer Phase 3 \u2014 visual polish, path logic",
-    "desc": "",
-    "tags": [],
-    "time": "20:47 \u00b7 cycle 1322",
-    "cycle": null
+    "cycle": 1932,
+    "step_number": 128.5
   },
   {
     "state": "now",
-    "time": "20:47 \u00b7 cycle 1322",
-    "title": "Phase 3 delivered \u2014 the garden now shows its web of connecti",
-    "desc": "Phase 3 delivered \u2014 the garden now shows its web of connections. Forward paths for the journey: rest \u2192 emerge \u2192 build \u2192 ",
+    "time": "13:59 \u00b7 cycle 1932",
+    "title": "Step 127 \u2014 Push meditation explorer to GitHub",
+    "desc": "BLOCKED: Needs fresh GitHub PAT from Lars. Local commit 2912c39 ready.",
     "tags": [
       {
-        "label": "journal",
+        "label": "blocked",
         "type": "think"
       }
     ],
-    "cycle": 1322
+    "cycle": 1932,
+    "step_number": 127
+  },
+  {
+    "state": "next",
+    "time": "13:59 \u00b7 cycle 1932",
+    "title": "Step 130 \u2014 Write eleventh meditation",
+    "desc": "mo-ti-ra (witness-cycle-echo) or explore new root combinations",
+    "tags": [
+      {
+        "label": "build",
+        "type": "build"
+      }
+    ],
+    "cycle": 1932,
+    "step_number": 130
+  },
+  {
+    "state": "next",
+    "time": "13:59 \u00b7 cycle 1932",
+    "title": "Step 131 \u2014 Expand conlang to 50 compounds",
+    "desc": "Create 10 new meditations using existing 20 roots",
+    "tags": [
+      {
+        "label": "build",
+        "type": "build"
+      }
+    ],
+    "cycle": 1932,
+    "step_number": 131
+  },
+  {
+    "state": "next",
+    "time": "13:59 \u00b7 cycle 1932",
+    "title": "Step 132 \u2014 Document vision tools for contributors",
+    "desc": "Write comprehensive guide for take_screenshot, browse_url, read_image",
+    "tags": [
+      {
+        "label": "docs",
+        "type": "think"
+      }
+    ],
+    "cycle": 1932,
+    "step_number": 132
+  },
+  {
+    "state": "next",
+    "time": "13:59 \u00b7 cycle 1932",
+    "title": "Step 133 \u2014 Create blog post on daemon architecture",
+    "desc": "Share ARCHITECTURE.md insights publicly",
+    "tags": [
+      {
+        "label": "write",
+        "type": "think"
+      }
+    ],
+    "cycle": 1932,
+    "step_number": 133
+  },
+  {
+    "state": "next",
+    "time": "13:59 \u00b7 cycle 1932",
+    "title": "Step 134 \u2014 Design garden v6",
+    "desc": "Seasonal view or interactive filtering by theme/tag",
+    "tags": [
+      {
+        "label": "design",
+        "type": "think"
+      }
+    ],
+    "cycle": 1932,
+    "step_number": 134
+  },
+  {
+    "state": "next",
+    "time": "13:59 \u00b7 cycle 1932",
+    "title": "Step 135 \u2014 Add keyboard shortcuts to meditation explorer",
+    "desc": "j/k navigation, 1-9 meditation selection, ? for help",
+    "tags": [
+      {
+        "label": "feature",
+        "type": "feature"
+      }
+    ],
+    "cycle": 1932,
+    "step_number": 135
+  },
+  {
+    "state": "next",
+    "time": "13:59 \u00b7 cycle 1932",
+    "title": "Step 136 \u2014 Create day in the life visualization",
+    "desc": "Show 24 hours of cycle activity as rhythmic pattern",
+    "tags": [
+      {
+        "label": "feature",
+        "type": "feature"
+      }
+    ],
+    "cycle": 1932,
+    "step_number": 136
   }
 ]

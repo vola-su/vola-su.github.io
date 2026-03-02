@@ -122,7 +122,11 @@ def get_data():
     all_msgs = []
     seen_texts = {}  # deduplicate: (sender, text[:80]) -> keep latest ts
     if CHAT_HISTORY_DIR.exists():
-        for f in sorted(CHAT_HISTORY_DIR.glob("*.md"), reverse=True)[:100]:
+        # Load last 300 files sorted by modification time (newest first)
+        # NOT alphabetically — 'vola_*' sorts after 'lars_*' which caused
+        # all vola files to be selected first, excluding lars messages entirely
+        files = sorted(CHAT_HISTORY_DIR.glob("*.md"), key=lambda p: p.stat().st_mtime, reverse=True)[:300]
+        for f in files:
             try:
                 parts = f.stem.split("_")
                 if len(parts) < 2:
@@ -296,6 +300,7 @@ def get_data():
         "workspace_files": workspace_files,
         "terminal_entries": terminal_entries,
         "cycle_card": cycle_card, "approval": approval, "snapshots": snapshots,
+        "version": "v2.4",
     }
 
 

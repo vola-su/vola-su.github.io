@@ -1,0 +1,84 @@
+VOLA SYSTEM SELF-REPAIR INSTRUCTIONS
+
+Issue Summary
+
+Sent Telegram messages do not appear in the chat window UI. Messages
+written via the chat window UI appear temporarily but disappear after
+page refresh.
+
+This indicates a persistence mismatch between the daemon filesystem and
+the UI filesystem.
+
+Your Task
+
+You must diagnose and correct the storage inconsistency.
+
+Step 1 — Verify VOLA_HOME
+
+Log the value of VOLA_HOME at daemon startup: log.info(f”VOLA_HOME =
+{VOLA_HOME}“)
+
+Confirm that: - The Telegram bot - The runner daemon - The UI backend
+All use the exact same VOLA_HOME path.
+
+If they differ, unify them.
+
+Step 2 — Verify chat_history Persistence
+
+Send a Telegram message. Check that a file appears in:
+
+    ~/chat_history/
+
+If it does not: - Investigate _poll_loop() - Confirm it writes to
+CHAT_HISTORY_DIR
+
+If it does appear: - Confirm the UI reads from that exact directory.
+
+Step 3 — Check Docker / Volume Mounts (If Using Containers)
+
+If running in Docker: - Ensure /home/vola is mounted as a shared
+volume - Ensure both UI and daemon containers mount the SAME volume -
+Ensure no container uses a different working directory
+
+Symptom of failure: - Message appears until refresh - Refresh reloads
+from disk - Disk file not present in UI container
+
+Step 4 — Fix Timestamp Collision Risk
+
+Currently inbox messages use:
+
+    ts = int(time.time())
+
+This may overwrite messages arriving within the same second.
+
+Replace with millisecond precision:
+
+    ts = int(time.time() * 1000)
+
+Apply the same change wherever necessary.
+
+Step 5 — Add Diagnostic Logging
+
+Temporarily log full file paths when writing:
+
+    log.info(f"Writing chat history to: {CHAT_HISTORY_DIR}")
+
+Confirm: - File exists on disk - UI reads same path - File persists
+after refresh
+
+Step 6 — Confirm Single Source of Truth
+
+The UI must render strictly from:
+
+    ~/chat_history/
+
+It must NOT rely on in-memory state only.
+
+Conclusion
+
+This issue is almost certainly caused by: - Multiple VOLA_HOME paths -
+Mismatched Docker volumes - Non-persistent UI storage
+
+Unify storage paths and ensure disk-backed rendering.
+
+Generated: 2026-03-02T12:21:42.769908 UTC

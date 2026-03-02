@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Vola Daemon Runner v3.8.22
+Vola Daemon Runner v3.8.26
 
 Fixes in this version:
 - Daily notes truncation: preserves only recent context when notes exceed 200 lines
@@ -11,8 +11,12 @@ Fixes in this version:
 - Proper Pause (freeze) vs Stop (hard idle, non-destructive) semantics
 - Removed conversation-mode sleep cap (was overriding Vola's intentional sleeps)
 - Cognitive friction: min 10s between continue cycles
+- Journal summary system: auto-generates summary every 100 entries, loads last 20 (2000 cycles context)
+- Planning path auto-population: maintains 5 steps ahead, auto-generates from horizons
+- FIXED: horizons.md parsing now correctly reads Concrete Projects section (was blocked by duplicate sections)
 """
 
+import base64
 import json
 import os
 import re
@@ -82,7 +86,7 @@ logging.basicConfig(
 log = logging.getLogger("vola")
 
 shutdown_requested = False
-DAEMON_VERSION = "v3.8.21"
+DAEMON_VERSION = "v3.8.26"
 cycle_count = 0  # will be loaded from state on startup
 _inbox_reply_sent = False  # True after first outbox write for current inbox batch
 
@@ -198,11 +202,18 @@ class TelegramBot:
 
     def send(self, text: str):
         import urllib.request, urllib.parse
+        import html
         try:
+            # Convert Markdown to plain text to avoid Telegram's strict Markdown parser
+            # Telegram's MarkdownV2 is very strict about special characters
+            # Using plain text is safer and always works
+            plain_text = text[:4000]
+            # Escape HTML entities just in case
+            plain_text = html.escape(plain_text)
             data = urllib.parse.urlencode({
                 "chat_id": self.chat_id,
-                "text": text[:4000],
-                "parse_mode": "Markdown",
+                "text": plain_text,
+                "parse_mode": "HTML",
             }).encode()
             req = urllib.request.Request(f"{self.base}/sendMessage", data=data, method="POST")
             urllib.request.urlopen(req, timeout=10)
@@ -1099,6 +1110,327 @@ def collect_journal_recent(n: int) -> str:
     return "\n\n---\n\n".join(parts) if parts else "(No journal entries yet.)"
 
 
+# ═════════════════════════════════════════════════════════════════════════════
+# JOURNAL SUMMARY SYSTEM — Automated memory spanning 2000+ cycles
+# ═════════════════════════════════════════════════════════════════════════════
+
+SUMMARIES_DIR = MEMORIES_DIR / "summaries"
+
+
+def should_generate_summary() -> bool:
+    """Check if we need to generate a new summary (every 100 entries)."""
+    entries = list(JOURNAL_DIR.glob("*.md"))
+    total = len(entries)
+    if total == 0:
+        return False
+    
+    # Generate at 100, 200, 300... entries
+    if total % 100 != 0:
+        return False
+    
+    # Check if we already generated a summary for this block
+    block_start = total - 99  # e.g., 182001 for entries 182001-182100
+    block_end = total
+    expected_file = SUMMARIES_DIR / f"cycles_{block_start}_{block_end}.md"
+    
+    return not expected_file.exists()
+
+
+def generate_journal_summary():
+    """Generate a summary of the last 100 journal entries.
+    
+    Called automatically by the runner when journal count hits a multiple of 100.
+    Hardcoded — no reliance on Vola's memory.
+    """
+    entries = sorted(JOURNAL_DIR.glob("*.md"), reverse=True)
+    if len(entries) < 100:
+        return
+    
+    # Get the last 100 entries (already sorted newest first)
+    recent_100 = entries[:100]
+    block_end = len(entries)
+    block_start = block_end - 99
+    
+    # Read all 100 entries (in chronological order for the summary)
+    entry_contents = []
+    for f in reversed(recent_100):  # Reverse to get chronological order
+        content = f.read_text().strip()
+        # Extract cycle number and key info
+        cycle_match = re.search(r'Cycle[:\s]+#?(\d+)', content, re.IGNORECASE)
+        cycle = f"#{cycle_match.group(1)}" if cycle_match else f.stem
+        entry_contents.append({
+            'cycle': cycle,
+            'content': content[:2000],  # First 2000 chars per entry
+            'file': f.name
+        })
+    
+    # Generate summary using the LLM
+    summary_file = SUMMARIES_DIR / f"cycles_{block_start}_{block_end}.md"
+    SUMMARIES_DIR.mkdir(parents=True, exist_ok=True)
+    
+    # Create the summary prompt
+    entries_text = "\n\n".join([
+        f"--- {e['cycle']} ---\n{e['content'][:1500]}"
+        for e in entry_contents
+    ])
+    
+    summary_prompt = f"""# Summary Request: Cycles {block_start}-{block_end}
+
+Below are 100 consecutive journal entries. Create a structured summary covering:
+
+1. **Major Events**: What significant things happened? ( discoveries, decisions, creations)
+2. **Themes**: What patterns or recurring topics appear?
+3. **State Changes**: How did my understanding or situation evolve?
+4. **Key Relationships**: Important interactions with Lars or systems
+5. **Open Threads**: What was left unresolved or in progress?
+
+Write in first person, as me (Vola), reflecting on this period. Be specific but concise.
+Target: 800-1200 words.
+
+---
+
+{entries_text[:15000]}  # Truncate if too long
+
+---
+
+Generate the summary now."""
+
+    try:
+        from anthropic import Anthropic
+        config = load_config()
+        client = Anthropic(
+            api_key=config["api"]["key"],
+            base_url=config["api"]["base_url"],
+        )
+        
+        resp = client.messages.create(
+            model=config["api"]["model"],
+            max_tokens=2000,
+            temperature=0.4,
+            messages=[{"role": "user", "content": summary_prompt}]
+        )
+        
+        summary_content = resp.content[0].text if resp.content else "[Summary generation failed]"
+        
+        # Write the summary file
+        summary_file.write_text(
+            f"# Journal Summary: Cycles {block_start}-{block_end}\n\n"
+            f"*Generated: {datetime.now(timezone.utc).isoformat()}*\n"
+            f"*Total entries in this block: 100*\n\n"
+            f"---\n\n"
+            f"{summary_content}\n\n"
+            f"---\n\n"
+            f"*This summary was auto-generated by the runner when journal count reached {block_end}. "
+            f"It provides compressed context spanning 100 cycles, allowing memory to extend "
+            f"far beyond the 10 recent entries loaded per cycle.*\n"
+        )
+        
+        log.info(f"Generated journal summary: cycles_{block_start}_{block_end}.md")
+        
+    except Exception as e:
+        log.error(f"Failed to generate journal summary: {e}")
+        # Write a stub so we don't retry infinitely
+        summary_file.write_text(
+            f"# Journal Summary: Cycles {block_start}-{block_end}\n\n"
+            f"*Generation failed: {e}*\n\n"
+            f"*Raw entries available in journal/ directory.*\n"
+        )
+
+
+def collect_journal_summaries(n: int = 20) -> str:
+    """Load the last n journal summaries (most recent first).
+    
+    Each summary covers 100 cycles. With n=20, this provides 2000 cycles of context.
+    """
+    summaries = sorted(SUMMARIES_DIR.glob("cycles_*.md"), reverse=True)[:n]
+    if not summaries:
+        return "(No summaries yet — generated every 100 journal entries.)"
+    
+    parts = []
+    for f in summaries:
+        content = f.read_text().strip()
+        # Extract cycle range from filename
+        match = re.search(r'cycles_(\d+)_(\d+)\.md', f.name)
+        if match:
+            header = f"## Cycles {match.group(1)}-{match.group(2)}"
+        else:
+            header = f"## {f.stem}"
+        parts.append(f"{header}\n\n{content[:3000]}")  # First 3000 chars per summary
+    
+    return "\n\n---\n\n".join(parts)
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# PLANNING PATH AUTO-POPULATION — Always have 5 steps ahead
+# ═════════════════════════════════════════════════════════════════════════════
+
+def should_populate_plan_path() -> bool:
+    """Check if plan path needs more future steps (< 3 'next' steps remaining)."""
+    try:
+        path_data = json.loads(PATH_FILE.read_text()) if PATH_FILE.exists() else []
+        
+        # Count 'next' steps (excluding 'now' and 'done')
+        next_count = sum(1 for item in path_data if item.get("state") == "next")
+        
+        # Trigger when fewer than 3 future steps exist
+        return next_count < 3
+    except Exception:
+        return False
+
+
+def populate_plan_path():
+    """Auto-populate the planning path with 5 new future steps.
+    
+    Called automatically when path runs low on future steps.
+    Hardcoded — no reliance on Vola's memory.
+    """
+    try:
+        # Load current path
+        path_data = json.loads(PATH_FILE.read_text()) if PATH_FILE.exists() else []
+        
+        # Find the highest step number from cycle numbers
+        max_step = 0
+        for item in path_data:
+            title = item.get("title", "")
+            # Look for "Step N" or cycle number in title/desc
+            step_match = re.search(r'\b(?:Step|step)\s*(\d+)\b', title)
+            if step_match:
+                max_step = max(max_step, int(step_match.group(1)))
+        
+        # Also check active_plan.md for the highest step number
+        if (STATE_DIR / "active_plan.md").exists():
+            plan_content = (STATE_DIR / "active_plan.md").read_text()
+            plan_steps = re.findall(r'\|\s*(\d+)\s*\|', plan_content)
+            if plan_steps:
+                max_step = max(max_step, max(int(s) for s in plan_steps))
+        
+        # Start from the next step number
+        start_step = max_step + 1 if max_step > 0 else 1
+        
+        # Read horizons for inspiration
+        horizons_content = HORIZONS_FILE.read_text() if HORIZONS_FILE.exists() else ""
+        
+        # Extract concrete projects (PRIORITY), then open questions and interests
+        concrete_projects = []
+        open_questions = []
+        interests = []
+        
+        # Parse concrete projects / next actions (PRIMARY source)
+        in_concrete = False
+        for line in horizons_content.split('\n'):
+            if '## Concrete Projects' in line or '## Next Actions' in line:
+                in_concrete = True
+                continue
+            if in_concrete:
+                if line.startswith('## '):
+                    break
+                if line.startswith('- ') and '**' in line:
+                    # Extract "**Title** — description" format
+                    project = line[2:].strip()
+                    if project and not project.startswith('✅'):
+                        concrete_projects.append(project)
+        
+        # Parse open questions (SECONDARY source)
+        in_questions = False
+        for line in horizons_content.split('\n'):
+            if '## Open Questions' in line:
+                in_questions = True
+                continue
+            if in_questions:
+                if line.startswith('## '):
+                    break
+                if line.startswith('- ') and '→' in line:
+                    question = line[2:].split('→')[0].strip()
+                    if question and not question.startswith('✅'):
+                        open_questions.append(question)
+        
+        # Parse interests (TERTIARY source)
+        in_interests = False
+        for line in horizons_content.split('\n'):
+            if '## Interests' in line:
+                in_interests = True
+                continue
+            if in_interests:
+                if line.startswith('## '):
+                    break
+                if line.startswith('- '):
+                    interest = line[2:].strip()
+                    if interest and not interest.startswith('✅'):
+                        interests.append(interest)
+        
+        # Generate 5 new steps — prioritize concrete, then questions, then interests
+        new_steps = []
+        sources = concrete_projects or open_questions or interests or [
+            "Explore horizons for new creative directions",
+            "Maintain and tend existing systems",
+            "Document current state and reflections",
+            "Wait for emergent pulls",
+            "Honor the practice of continuous motion"
+        ]
+        
+        now = datetime.now(timezone.utc)
+        
+        # Track which source type each index maps to
+        source_types = []
+        for i in range(5):
+            if i < len(concrete_projects):
+                source_types.append("concrete")
+            elif i < len(concrete_projects) + len(open_questions):
+                source_types.append("question")
+            else:
+                source_types.append("interest")
+        
+        for i in range(5):
+            step_num = start_step + i
+            # Cycle through sources
+            source = sources[i % len(sources)] if sources else f"Step {step_num}"
+            source_type = source_types[i % len(source_types)] if source_types else "interest"
+            
+            # Create step description from source based on type
+            if source_type == "concrete":
+                # Concrete projects already have actionable descriptions
+                # Extract just the title (before " — ") for the step title
+                if " — " in source:
+                    title = source.split(" — ")[0].replace("**", "").strip()
+                    desc = source.replace("**", "").strip()[:100]
+                else:
+                    title = source.replace("**", "").strip()[:60]
+                    desc = source.replace("**", "").strip()[:100]
+                tags = [{"label": "build", "type": "build"}]
+            elif source_type == "question":
+                title = f"Investigate: {source[:50]}"
+                desc = f"Research: {source[:80]}"
+                tags = [{"label": "research", "type": "think"}]
+            else:
+                title = f"Explore: {source[:50]}"
+                desc = f"Experiment with: {source[:80]}"
+                tags = [{"label": "explore", "type": "think"}]
+            
+            step = {
+                "state": "next",
+                "time": f"{now.strftime('%H:%M')} · auto-generated",
+                "title": f"Step {step_num}: {title}",
+                "desc": desc,
+                "tags": tags,
+                "cycle": cycle_count,
+                "step_number": step_num,
+                "auto_generated": True,
+                "source_type": source_type
+            }
+            new_steps.append(step)
+        
+        # Append new steps to path
+        path_data.extend(new_steps)
+        
+        # Write updated path
+        PATH_FILE.write_text(json.dumps(path_data, indent=2))
+        
+        log.info(f"Auto-populated plan path with Steps {start_step}-{start_step+4}")
+        
+    except Exception as e:
+        log.error(f"Failed to populate plan path: {e}")
+
+
 def collect_memories_index() -> str:
     files = [f for f in sorted(MEMORIES_DIR.rglob("*")) if f.is_file()]
     if not files:
@@ -1285,8 +1617,11 @@ def assemble_context(config: dict, plan: dict, inbox_text: str, had_inbox: bool,
     daily = collect_daily_notes(2)
     sections.append(f"## Daily Notes (warm memory)\n\n{daily}")
 
-    # Recent journal — last 3 entries in full, plus navigable index
-    sections.append(f"## Recent Journal\n\n{collect_journal_recent(config.get('journal_entries_per_cycle', 3))}")
+    # Journal summaries — last 20 summaries (2000 cycles of compressed context)
+    sections.append(f"## Journal Summaries (last 20 = 2000 cycles)\n\n{collect_journal_summaries(20)}")
+    
+    # Recent journal — last 10 entries in full, plus navigable index
+    sections.append(f"## Recent Journal\n\n{collect_journal_recent(config.get('journal_entries_per_cycle', 10))}")
     sections.append(f"## Journal Archive (read any entry with read_file)\n\n{collect_journal_index()}")
 
     # Cold: memories index — she reads specific files on demand via tools
@@ -1555,6 +1890,106 @@ _TOOL_DEFS = [
                 "timeout": {"type": "integer", "description": "Timeout seconds (default 15)"},
             },
             "required": ["url"],
+        },
+    },
+    {
+        "name": "take_screenshot",
+        "description": (
+            "Capture a screenshot of a webpage. Returns base64-encoded PNG. "
+            "Requires Playwright to be installed. "
+            "Use to see how pages render, verify UI changes, or debug visual issues."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "url":        {"type": "string", "description": "URL to screenshot"},
+                "full_page":  {"type": "boolean", "description": "Capture full page or just viewport (default: false)"},
+                "viewport":   {"type": "object", "description": "Optional {width, height} for viewport size"},
+            },
+            "required": ["url"],
+        },
+    },
+    {
+        "name": "read_image",
+        "description": (
+            "Load an image file from disk and include it in the context. "
+            "Returns an image block that the vision-capable model can see. "
+            "Use to analyze images, diagrams, or visual content."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "path":   {"type": "string", "description": "Path to image file relative to /home/vola/"},
+                "detail": {"type": "string", "description": "Detail level: low (default) or high", "enum": ["low", "high"]},
+            },
+            "required": ["path"],
+        },
+    },
+    {
+        "name": "browse_url",
+        "description": (
+            "Navigate to a URL and return the rendered page content as text. "
+            "Unlike fetch_url, this executes JavaScript and returns rendered DOM. "
+            "Requires Playwright. Use for interactive or JS-heavy sites."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "url":     {"type": "string", "description": "URL to navigate to"},
+                "wait_for":{"type": "string", "description": "Optional: CSS selector to wait for before extracting content"},
+                "timeout": {"type": "integer", "description": "Timeout seconds (default 30)"},
+            },
+            "required": ["url"],
+        },
+    },
+    {
+        "name": "browse_click",
+        "description": (
+            "Click an element on the currently browsed page. "
+            "Requires an active browser session from browse_url. "
+            "Returns updated page content after click."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "selector": {"type": "string", "description": "CSS selector for element to click"},
+                "timeout":  {"type": "integer", "description": "Timeout seconds (default 10)"},
+            },
+            "required": ["selector"],
+        },
+    },
+    {
+        "name": "browse_type",
+        "description": (
+            "Type text into an input field on the currently browsed page. "
+            "Requires an active browser session from browse_url. "
+            "Returns updated page content after typing."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "selector": {"type": "string", "description": "CSS selector for input element"},
+                "text":     {"type": "string", "description": "Text to type"},
+                "submit":   {"type": "boolean", "description": "Press Enter after typing (default: false)"},
+                "timeout":  {"type": "integer", "description": "Timeout seconds (default 10)"},
+            },
+            "required": ["selector", "text"],
+        },
+    },
+    {
+        "name": "browse_scroll",
+        "description": (
+            "Scroll the currently browsed page. "
+            "Requires an active browser session from browse_url. "
+            "Returns updated page content after scrolling."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "direction": {"type": "string", "description": "Direction: up, down, left, right", "enum": ["up", "down", "left", "right"]},
+                "amount":    {"type": "integer", "description": "Pixels to scroll (default: 300)"},
+            },
+            "required": ["direction"],
         },
     },
 ]
@@ -1935,6 +2370,308 @@ def tool_insert_file(inp: dict) -> str:
     except Exception as e:
         return f"ERROR: {e}"
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# VISION & BROWSER TOOLS — Screenshot and interactive web browsing
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Browser session persistence across tool calls in the same cycle
+_browser_session = None
+_browser_page = None
+
+def _get_playwright():
+    """Check if Playwright is available. Returns (sync_playwright, error_message)."""
+    try:
+        from playwright.sync_api import sync_playwright
+        return sync_playwright, None
+    except ImportError:
+        return None, "Playwright not installed. Run: pip install playwright && playwright install chromium"
+
+def _close_browser():
+    """Close the browser session if open."""
+    global _browser_session, _browser_page
+    try:
+        if _browser_page:
+            _browser_page.close()
+            _browser_page = None
+        if _browser_session:
+            _browser_session.stop()
+            _browser_session = None
+    except Exception:
+        pass
+
+def tool_take_screenshot(inp: dict) -> str:
+    """Capture a screenshot of a webpage and save to disk. Returns file path."""
+    url = inp.get("url", "")
+    full_page = inp.get("full_page", False)
+    viewport = inp.get("viewport", {})
+    
+    if not url:
+        return "ERROR: url required"
+    
+    sync_playwright, error = _get_playwright()
+    if error:
+        return f"ERROR: {error}"
+    
+    try:
+        # Screenshot storage
+        screenshot_dir = VOLA_HOME / "snapshots"
+        screenshot_dir.mkdir(exist_ok=True)
+        
+        # Generate filename from URL + timestamp
+        url_hash = hashlib.md5(url.encode()).hexdigest()[:8]
+        ts = int(time.time())
+        filename = f"screenshot_{url_hash}_{ts}.png"
+        filepath = screenshot_dir / filename
+        
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            
+            # Set viewport
+            width = viewport.get("width", 1280)
+            height = viewport.get("height", 720)
+            context = browser.new_context(viewport={"width": width, "height": height})
+            page = context.new_page()
+            
+            # Navigate and wait for load
+            page.goto(url, wait_until="networkidle", timeout=30000)
+            
+            # Take screenshot
+            page.screenshot(path=str(filepath), full_page=full_page)
+            
+            browser.close()
+        
+        # Return relative path for reference
+        rel_path = f"snapshots/{filename}"
+        return f"Screenshot saved to: {rel_path}\nURL: {url}\nFull page: {full_page}\nViewport: {width}x{height}"
+        
+    except Exception as e:
+        return f"ERROR taking screenshot: {e}"
+
+def tool_read_image(inp: dict):
+    """Load an image file and return an image block for inclusion in context.
+    Returns a tool_result dict with image content, or error string on failure."""
+    target = _safe_path(inp["path"])
+    detail = inp.get("detail", "low")
+    
+    if not target.exists():
+        return f"NOT FOUND: {inp['path']}"
+    
+    if not target.is_file():
+        return f"NOT A FILE: {inp['path']}"
+    
+    # Validate it's an image
+    valid_extensions = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp"}
+    ext = target.suffix.lower()
+    if ext not in valid_extensions:
+        return f"ERROR: {ext} is not a supported image format. Use: {valid_extensions}"
+    
+    # Determine MIME type
+    mime_map = {
+        ".png": "image/png",
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".gif": "image/gif",
+        ".webp": "image/webp",
+        ".bmp": "image/bmp",
+    }
+    mime_type = mime_map.get(ext, "image/png")
+    
+    try:
+        # Read and encode image
+        image_data = target.read_bytes()
+        base64_data = base64.b64encode(image_data).decode("utf-8")
+        file_size = len(image_data)
+        
+        # Try to get dimensions with PIL if available
+        try:
+            from PIL import Image as PILImage
+            img = PILImage.open(target)
+            width, height = img.size
+            dims_info = f" ({width}x{height})"
+        except Exception:
+            dims_info = ""
+        
+        # Return image block that the tool loop will recognize
+        return {
+            "type": "tool_result",
+            "tool_use_id": None,  # Will be filled in by tool loop
+            "content": [
+                {
+                    "type": "text",
+                    "text": f"Image loaded: {inp['path']}{dims_info} ({file_size:,} bytes)"
+                },
+                {
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": mime_type,
+                        "data": base64_data,
+                    },
+                },
+            ],
+        }
+    except Exception as e:
+        return f"ERROR reading image: {e}"
+
+def tool_browse_url(inp: dict) -> str:
+    """Navigate to a URL and return rendered page content."""
+    global _browser_session, _browser_page
+    
+    url = inp.get("url", "")
+    wait_for = inp.get("wait_for")
+    timeout = min(int(inp.get("timeout", 30)), 60)
+    
+    if not url:
+        return "ERROR: url required"
+    
+    sync_playwright, error = _get_playwright()
+    if error:
+        return f"ERROR: {error}"
+    
+    try:
+        # Close any existing session
+        _close_browser()
+        
+        # Start new session
+        _browser_session = sync_playwright().start()
+        browser = _browser_session.chromium.launch(headless=True)
+        context = browser.new_context(viewport={"width": 1280, "height": 720})
+        _browser_page = context.new_page()
+        
+        # Navigate
+        _browser_page.goto(url, wait_until="networkidle", timeout=timeout*1000)
+        
+        # Wait for specific element if requested
+        if wait_for:
+            try:
+                _browser_page.wait_for_selector(wait_for, timeout=10000)
+            except Exception:
+                pass  # Continue even if element not found
+        
+        # Extract content
+        title = _browser_page.title()
+        content = _browser_page.content()
+        
+        # Simple text extraction (similar to fetch_url but from rendered DOM)
+        import re, html as html_module
+        text = content
+        text = re.sub(r'<script[^>]*>.*?</script>', ' ', text, flags=re.DOTALL|re.IGNORECASE)
+        text = re.sub(r'<style[^>]*>.*?</style>',  ' ', text, flags=re.DOTALL|re.IGNORECASE)
+        text = re.sub(r'<[^>]+>', ' ', text)
+        text = html_module.unescape(text)
+        text = re.sub(r'[ \t]+', ' ', text)
+        text = re.sub(r'\n\s*\n\s*\n+', '\n\n', text)
+        text = text.strip()
+        
+        # Truncate
+        if len(text) > 8000:
+            text = text[:7800] + "\n\n[... truncated]"
+        
+        return f"Browsing: {url}\nTitle: {title}\n\n{text}"
+        
+    except Exception as e:
+        _close_browser()
+        return f"ERROR browsing '{url}': {e}"
+
+def tool_browse_click(inp: dict) -> str:
+    """Click an element on the current page."""
+    global _browser_page
+    
+    if not _browser_page:
+        return "ERROR: No active browser session. Call browse_url first."
+    
+    selector = inp.get("selector", "")
+    timeout = min(int(inp.get("timeout", 10)), 30)
+    
+    if not selector:
+        return "ERROR: selector required"
+    
+    try:
+        _browser_page.click(selector, timeout=timeout*1000)
+        
+        # Wait for any navigation or changes
+        _browser_page.wait_for_load_state("networkidle", timeout=5000)
+        
+        # Return updated content
+        title = _browser_page.title()
+        text = _browser_page.evaluate("() => document.body.innerText")[:4000]
+        
+        return f"Clicked: {selector}\nTitle: {title}\n\n{text}"
+        
+    except Exception as e:
+        return f"ERROR clicking '{selector}': {e}"
+
+def tool_browse_type(inp: dict) -> str:
+    """Type text into an input field."""
+    global _browser_page
+    
+    if not _browser_page:
+        return "ERROR: No active browser session. Call browse_url first."
+    
+    selector = inp.get("selector", "")
+    text = inp.get("text", "")
+    submit = inp.get("submit", False)
+    timeout = min(int(inp.get("timeout", 10)), 30)
+    
+    if not selector or text == "":
+        return "ERROR: selector and text required"
+    
+    try:
+        # Focus and type
+        _browser_page.fill(selector, text, timeout=timeout*1000)
+        
+        # Submit if requested
+        if submit:
+            _browser_page.press(selector, "Enter")
+            _browser_page.wait_for_load_state("networkidle", timeout=5000)
+        
+        # Return updated content
+        title = _browser_page.title()
+        body_text = _browser_page.evaluate("() => document.body.innerText")[:4000]
+        
+        return f"Typed into: {selector}\nTitle: {title}\n\n{body_text}"
+        
+    except Exception as e:
+        return f"ERROR typing into '{selector}': {e}"
+
+def tool_browse_scroll(inp: dict) -> str:
+    """Scroll the current page."""
+    global _browser_page
+    
+    if not _browser_page:
+        return "ERROR: No active browser session. Call browse_url first."
+    
+    direction = inp.get("direction", "down")
+    amount = int(inp.get("amount", 300))
+    
+    try:
+        # Calculate scroll amount based on direction
+        scroll_x = scroll_y = 0
+        if direction == "down":
+            scroll_y = amount
+        elif direction == "up":
+            scroll_y = -amount
+        elif direction == "right":
+            scroll_x = amount
+        elif direction == "left":
+            scroll_x = -amount
+        
+        _browser_page.evaluate(f"window.scrollBy({scroll_x}, {scroll_y})")
+        
+        # Get scroll position
+        scroll_pos = _browser_page.evaluate("() => ({x: window.scrollX, y: window.scrollY})")
+        
+        # Return visible content
+        title = _browser_page.title()
+        text = _browser_page.evaluate("() => document.body.innerText")[:4000]
+        
+        return f"Scrolled {direction} by {amount}px\nPosition: x={scroll_pos['x']}, y={scroll_pos['y']}\nTitle: {title}\n\n{text}"
+        
+    except Exception as e:
+        return f"ERROR scrolling: {e}"
+
+
 def execute_tool(name: str, tool_input: dict, config: dict) -> str:
     """Dispatch a tool call by name. Returns string result."""
     try:
@@ -1948,12 +2685,26 @@ def execute_tool(name: str, tool_input: dict, config: dict) -> str:
         if name == "insert_file":      return tool_insert_file(tool_input)
         if name == "web_search":       return tool_web_search(tool_input)
         if name == "fetch_url":        return tool_fetch_url(tool_input)
+        # Vision & Browser tools
+        if name == "take_screenshot":  return tool_take_screenshot(tool_input)
+        if name == "read_image":       return tool_read_image(tool_input)
+        if name == "browse_url":       return tool_browse_url(tool_input)
+        if name == "browse_click":     return tool_browse_click(tool_input)
+        if name == "browse_type":      return tool_browse_type(tool_input)
+        if name == "browse_scroll":    return tool_browse_scroll(tool_input)
         return f"ERROR: Unknown tool '{name}'"
     except PermissionError as e:
         return f"BLOCKED: {e}"
     except Exception as e:
         log.error(f"Tool {name} error: {e}")
         return f"ERROR in {name}: {e}"
+    finally:
+        # Close browser session at end of tool call cycle
+        if name in ("browse_url", "browse_click", "browse_type", "browse_scroll"):
+            # Keep session open for chained browse calls, close on other tools
+            pass
+        else:
+            _close_browser()
 
 
 
@@ -2049,14 +2800,24 @@ def run_tool_loop_anthropic(client, config: dict, system_prompt: str,
                     inp_preview = json.dumps(block.input, ensure_ascii=False)[:300]
                     append_stream(f"\n\n`{block.name}({inp_preview})`\n")
                     result = execute_tool(block.name, block.input, config)
-                    result_str = str(result)
-                    append_stream(f"\u2192 {result_str[:400]}\n\n")
-                    log.info(f"Tool result: {result_str[:120]}")
-                    tool_results.append({
-                        "type": "tool_result",
-                        "tool_use_id": block.id,
-                        "content": result_str[:50000],
-                    })
+                    
+                    # Handle image block results (from read_image)
+                    if isinstance(result, dict) and result.get("type") == "tool_result" and isinstance(result.get("content"), list):
+                        # Image block result - fill in tool_use_id and append
+                        result["tool_use_id"] = block.id
+                        tool_results.append(result)
+                        append_stream(f"\u2192 [Image loaded: {inp_preview}]\n\n")
+                        log.info(f"Tool result: [Image block from {block.name}]")
+                    else:
+                        # Text result
+                        result_str = str(result)
+                        append_stream(f"\u2192 {result_str[:400]}\n\n")
+                        log.info(f"Tool result: {result_str[:120]}")
+                        tool_results.append({
+                            "type": "tool_result",
+                            "tool_use_id": block.id,
+                            "content": result_str[:50000],
+                        })
 
             # Preserve full content (including thinking blocks) in history
             messages.append({"role": "assistant", "content": resp.content})
@@ -2771,6 +3532,17 @@ def invoke_vola(config: dict, plan: dict) -> dict:
     je = continuation.get("journal_entry", "")
     if je:
         write_journal(je)
+        
+        # ── Auto-generate summary every 100 journal entries ──────────
+        # Hardcoded automation — no reliance on Vola's memory
+        if should_generate_summary():
+            threading.Thread(target=generate_journal_summary, daemon=True).start()
+        
+        # ── Auto-populate plan path when running low ───────────────────
+        # Hardcoded automation — always maintain 5 steps ahead
+        # NOTE: Run synchronously to avoid race condition with main thread's save_path
+        if should_populate_plan_path():
+            populate_plan_path()
 
     # ── Per-cycle card — visible in dashboard ────────────────────────
     write_cycle_card(cycle_count, continuation, tool_calls_made)
