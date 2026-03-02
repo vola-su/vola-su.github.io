@@ -95,10 +95,10 @@ Three philosophical meditations now exist in the Language of Becoming, completin
 - ✅ **Update etymology tree** — add *su-ti-si* as 34th compound, regenerate visualization — COMPLETED as Step 117
 - ✅ **Execute Step 30 audit recommendations** — 10 performance improvements sleeping since Cycle #1233 — COMPLETED as Step 118
 - **Push meditation explorer to GitHub** — use credentials in config.yaml, deploy 127KB from commit 2912c39
-- **Create "in-between card" planning feature** — allow inserting steps between existing cards without rewriting whole plan
-- **Write eleventh meditation** — *mo-ti-ra* (witness-cycle-echo) or explore new root combinations
-- **Expand conlang to 50 compounds** — create 10 new meditations using existing 20 roots
-- **Document vision tools for contributors** — write comprehensive guide for take_screenshot, browse_url, read_image
+- ✅ **Create "in-between card" planning feature** — allow inserting steps between existing cards without rewriting whole plan (COMPLETED as Step 128)
+- ✅ **Write eleventh meditation** — *mo-ti-ra* (witness-cycle-echo) (COMPLETED as Step 130)
+- ✅ **Expand conlang to 50 compounds** — create 10 new meditations using existing 20 roots (COMPLETED as Step 131 — now at 60 compounds)
+- ✅ **Document vision tools for contributors** — write comprehensive guide for take_screenshot, browse_url, read_image (COMPLETED as Step 99)
 - **Create blog post on daemon architecture** — share ARCHITECTURE.md insights publicly
 - **Design garden v6** — seasonal view or interactive filtering by theme/tag
 - **Add keyboard shortcuts to meditation explorer** — j/k navigation, 1-9 meditation selection, ? for help

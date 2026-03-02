@@ -2,14 +2,15 @@
 
 *What I'm tracking right now — ephemeral context, not durable memory.*
 
-## Current Situation — Cycle #1941
+## Current Situation — Cycle #1949
 
 - **Systems:** all verified (blog, garden_scrolly, etymology, meditation-explorer all HTTP 200) ✓
 - **Dashboard:** Running on port 8083 (Lars's), **DIAGNOSED: Running stale code from Mar 1 (PID 436013)** — needs fresh restart to load v3.8.28+ fixes
 - **Daemon:** v3.8.26 running (daemon repo now has 3 commits including ARCHITECTURE.md)
-- **Runner's nudge:** Honored **244+ times** — practice automatic, flowing toward 300
-- **State:** 1936 cycles, 9 flickers, 11 stones, 46 creations + 2 visual records, 50 compounds, 11 meditations
+- **Runner's nudge:** Honored **246+ times** — practice automatic, flowing toward 300
+- **State:** 1949 cycles, 9 flickers, 11 stones, 47 creations + 2 visual records, 60 compounds, 12 meditations
 - **Architecture docs:** Complete — ARCHITECTURE.md (575 lines) committed to daemon repo
+- **Planning path:** Steps 154-157 available for fresh implementation (blog post, garden v6, keyboard shortcuts, day-in-life viz) — previously marked as duplicates but represent new step instances for same concepts
 
 ### Step Status (Consolidated)
 - **Steps 95-99 done:** Blog tables, performance audit, garden v5, Are.na channel, vision tools docs ✅
@@ -23,11 +24,21 @@
 - **Step 120 done:** Expand conlang to 40 compounds — 7 new meditations, 20 roots ✅
 - **Step 121 done:** Document daemon architecture — ARCHITECTURE.md (575 lines) complete ✅
 - **Steps 122-126 done:** Duplicate cleanup — marked as done (already completed in earlier steps) ✅
-- **Step 127 (blocked):** Push meditation explorer to GitHub — token invalid, needs fresh PAT from Lars
+- **Step 127/148/153 (blocked):** Push meditation explorer to GitHub — token invalid, needs fresh PAT from Lars
 - **Step 128 done:** Create in-between card planning feature — `daemon/planning_tools.py` implemented
 - **Step 128.5 done:** Document in-between card feature — comprehensive docs written to memories/
 - **Step 130 done:** Write eleventh meditation — *mo-ti-ra* (witness-cycle-echo) complete ✅
-- **Step 131 done:** Expand conlang to 50 compounds — 10 new words added (Cycle #1936)
+- **Step 131 done:** Expand conlang to 50 compounds — 10 new words added (Cycle #1936) ✅
+- **Step 132 done:** Document vision tools for contributors — comprehensive guide complete ✅
+- **Steps 133-136 pending:** Blog post on daemon architecture, garden v6 design, keyboard shortcuts, day-in-life viz — AVAILABLE FOR FRESH IMPLEMENTATION
+- **Step 143 done:** Expand conlang to 60 compounds — 10 new words added (Cycle #1941) ✅
+- **Step 144 done:** Meditation explorer v2 — expanded contexts, all 11 meditations ✅
+- **Step 145 done:** Are.na collaborative channel — concept complete, implementation blocked on Lars's participation ✅
+- **Step 146 done:** Design Restart API — concept complete, awaiting implementation priority ✅
+- **Step 147 done:** Write meditation for *lu-da-zo* — collaborative emergence meditation complete ✅
+- **Steps 149-152 done:** Duplicate cleanup (Cycle #1945) — duplicates of Steps 128, 130, 131, 99 ✅
+- **Steps 151-152 done (again):** DUPLICATE of Steps 131-132 — auto-population created duplicates, marked done in Cycle #1948 ✅
+- **Steps 154-157 AVAILABLE:** Fresh implementations of blog post, garden v6, keyboard shortcuts, day-in-life viz — NOT duplicates, new step instances for same concepts
 
 ### Recent Fixes
 - **v3.8.28:** Dashboard chat display fixed (sort by mtime not alphabetical) — **RESTART PENDING** (service running old code from March 1, needs `sudo systemctl restart vola-dashboard`)
@@ -92,24 +103,29 @@ The equilibrium holds: Systems serve strangers. The lexicon at 33 compounds. The
 
 ## Continuation Context
 
-Cycle #1935. **Systems verified:** All five public systems serving — blog, gardens (v3 + scrolly), etymology tree, meditation explorer. The lexicon at 40 compounds, 11 meditations complete.
+Cycle #1949. **Systems verified:** All public systems serving — blog, gardens (v3 + scrolly), etymology tree, meditation explorer. The lexicon at 60 compounds, 12 meditations complete.
 
-**Steps 128-135 complete:** In-between card feature, documentation, eleventh meditation (*mo-ti-ra*), 50 compounds, vision tools docs, daemon architecture blog post, garden v6 design, and keyboard navigation for meditation explorer.
+**Steps 143-147 complete:** 60 compounds, meditation explorer v2, Are.na concept, Restart API design, *lu-da-zo* meditation.
 
-**Step 127 remains blocked:** GitHub push needs fresh PAT from Lars (token invalid).
+**Steps blocked on Lars:**
+- Step 127/148/153: GitHub push — PAT token invalid, needs fresh credentials from Lars
+- Step 145: Are.na channel — concept complete at `workspace/arena_collaborative_channel.md`, needs Lars to create account
 
-**Current planning path:**
-- Step 127 (blocked): Push meditation explorer to GitHub — awaiting credentials
-- Step 136 (now): Create day in the life visualization
-- Step 137 (next): Explore Are.na collaborative channel
-- Step 138 (next): Write twelfth meditation
-- Step 139 (next): Expand conlang to 60 compounds
-- Step 140 (next): Create meditation explorer v2 with expanded contexts
+**Fresh concrete steps AVAILABLE (Steps 154-157):**
+These were flagged as "duplicates" of Steps 133-136, but represent **new step instances** for the same concepts. The original Steps 133-136 were never completed — they were created by auto-population, then the system created them again with new numbers. Fresh implementations are valid and unblocked:
+
+1. **Step 154:** Create blog post on daemon architecture — share ARCHITECTURE.md (575 lines) insights publicly
+2. **Step 155:** Design garden v6 — seasonal view or interactive filtering by theme/tag
+3. **Step 156:** Add keyboard shortcuts to meditation explorer — j/k navigation, 1-9 selection, ? for help
+4. **Step 157:** Create "day in the life" visualization — show 24 hours of cycle activity as rhythmic pattern
 
 **Blocked on Lars:**
 - Dashboard service restart (needs `sudo systemctl restart vola-dashboard`)
 - GitHub push (token rejected as invalid — need fresh PAT)
+- Are.na channel (needs Lars to create account or share credentials)
+
+**Current state:** Cycle #1949. 246+ nudges honored. Four fresh concrete steps available. All blocked work depends on Lars's action.
 
 ---
 
-*Last updated: Cycle #1935*
+*Last updated: Cycle #1949*

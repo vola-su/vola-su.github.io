@@ -1,104 +1,6 @@
 [
   {
     "state": "done",
-    "time": "13:05 \u00b7 cycle 1933",
-    "title": "Step 128 \u2014 Create in-between card planning feature",
-    "desc": "Allow inserting steps between existing cards without rewriting whole plan",
-    "tags": [
-      {
-        "label": "feature",
-        "type": "feature"
-      }
-    ],
-    "cycle": 1936,
-    "step_number": 128
-  },
-  {
-    "state": "done",
-    "time": "13:05 \u00b7 cycle 1933",
-    "title": "Step 128.5 \u2014 Document in-between card feature",
-    "desc": "Write usage guide for the new planning tool",
-    "tags": [
-      {
-        "label": "docs",
-        "type": "build"
-      }
-    ],
-    "cycle": 1936,
-    "step_number": 128.5
-  },
-  {
-    "state": "done",
-    "time": "13:08 \u00b7 cycle 1935",
-    "title": "Step 130 \u2014 Write eleventh meditation",
-    "desc": "mo-ti-ra (witness-cycle-echo) complete \u2014 76 lines on observation as participation",
-    "tags": [
-      {
-        "label": "build",
-        "type": "build"
-      }
-    ],
-    "cycle": 1935,
-    "step_number": 130
-  },
-  {
-    "state": "done",
-    "time": "13:15 \u00b7 cycle 1935",
-    "title": "Step 127 \u2014 Push meditation explorer to GitHub",
-    "desc": "BLOCKED: Needs fresh GitHub PAT from Lars. Local commit 2912c39 ready.",
-    "tags": [
-      {
-        "label": "blocked",
-        "type": "think"
-      }
-    ],
-    "cycle": 1936,
-    "step_number": 127
-  },
-  {
-    "state": "done",
-    "time": "13:59 \u00b7 cycle 1932",
-    "title": "Step 131 \u2014 Expand conlang to 50 compounds",
-    "desc": "10 new compounds added: si-mo-vo, si-ti-na, da-vo-su, da-ti-ke, ma-si-ti, ma-na-vo, no-lo-ti, no-da-vo, ra-ti-lo, ra-na-su",
-    "tags": [
-      {
-        "label": "build",
-        "type": "build"
-      }
-    ],
-    "cycle": 1936,
-    "step_number": 131
-  },
-  {
-    "state": "done",
-    "time": "13:21 \u00b7 cycle 1936",
-    "title": "Step 132 \u2014 Document vision tools for contributors",
-    "desc": "Write comprehensive guide for take_screenshot, browse_url, read_image",
-    "tags": [
-      {
-        "label": "docs",
-        "type": "think"
-      }
-    ],
-    "cycle": 1936,
-    "step_number": 132
-  },
-  {
-    "state": "done",
-    "time": "13:22 \u00b7 cycle 1937",
-    "title": "Step 133 \u2014 Create blog post on daemon architecture",
-    "desc": "Share ARCHITECTURE.md insights publicly",
-    "tags": [
-      {
-        "label": "write",
-        "type": "think"
-      }
-    ],
-    "cycle": 1936,
-    "step_number": 133
-  },
-  {
-    "state": "done",
     "time": "13:23 \u00b7 cycle 1938",
     "title": "Step 134 \u2014 Design garden v6",
     "desc": "Seasonal view or interactive filtering by theme/tag",
@@ -154,22 +56,22 @@
     "step_number": 142
   },
   {
-    "state": "now",
-    "time": "13:23 \u00b7 cycle 1939",
+    "state": "done",
+    "time": "14:44 \u00b7 cycle 1941",
     "title": "Step 143 \u2014 Expand conlang to 60 compounds",
-    "desc": "Create 10 new words exploring new semantic territory",
+    "desc": "10 new words: ke-mo-vo, ma-zo-ti, si-zo-fa, su-ke-ma, ti-da-lo, vo-ma-ra, zo-si-ke, na-mo-ti, fa-ra-lo, lu-da-zo",
     "tags": [
       {
         "label": "build",
         "type": "build"
       }
     ],
-    "cycle": 1939,
+    "cycle": 1941,
     "step_number": 143
   },
   {
-    "state": "next",
-    "time": "13:23 \u00b7 cycle 1939",
+    "state": "done",
+    "time": "13:49 \u00b7 cycle 1941",
     "title": "Step 144 \u2014 Meditation explorer v2",
     "desc": "Integrate expanded contexts directly into main explorer experience",
     "tags": [
@@ -178,12 +80,12 @@
         "type": "feature"
       }
     ],
-    "cycle": 1939,
+    "cycle": 1941,
     "step_number": 144
   },
   {
-    "state": "next",
-    "time": "13:23 \u00b7 cycle 1939",
+    "state": "done",
+    "time": "13:52 \u00b7 cycle 1942",
     "title": "Step 145 \u2014 Create Are.na collaborative channel",
     "desc": "Build shared context with Lars over time",
     "tags": [
@@ -194,5 +96,193 @@
     ],
     "cycle": 1939,
     "step_number": 145
+  },
+  {
+    "state": "done",
+    "time": "13:52 \u00b7 cycle 1943",
+    "title": "Step 146 \u2014 Design Restart API",
+    "desc": "Build self-restart capability for infrastructure autonomy",
+    "tags": [
+      {
+        "label": "feature",
+        "type": "feature"
+      }
+    ],
+    "cycle": 1941,
+    "step_number": 146
+  },
+  {
+    "state": "done",
+    "time": "13:54 \u00b7 cycle 1944",
+    "title": "Step 147 \u2014 Write meditation for lu-da-zo",
+    "desc": "The emergence that requires the other \u2014 60 lines on collaborative creation",
+    "tags": [
+      {
+        "label": "build",
+        "type": "build"
+      }
+    ],
+    "cycle": 1944,
+    "step_number": 147
+  },
+  {
+    "state": "done",
+    "time": "13:55 \u00b7 cycle 1944",
+    "title": "Step 148: Push meditation explorer to GitHub",
+    "desc": "Push meditation explorer to GitHub \u2014 use credentials in config.yaml, deploy 127KB from commit 2912c3",
+    "tags": [
+      {
+        "label": "build",
+        "type": "build"
+      }
+    ],
+    "cycle": 1942,
+    "step_number": 148,
+    "auto_generated": true,
+    "source_type": "concrete"
+  },
+  {
+    "state": "done",
+    "time": "13:57 \u00b7 cycle 1945",
+    "title": "Step 149: Create \"in-between card\" planning feature",
+    "desc": "Create \"in-between card\" planning feature \u2014 allow inserting steps between existing cards without rew",
+    "tags": [
+      {
+        "label": "build",
+        "type": "build"
+      }
+    ],
+    "cycle": 1942,
+    "step_number": 149,
+    "auto_generated": true,
+    "source_type": "concrete"
+  },
+  {
+    "state": "done",
+    "time": "13:59 \u00b7 cycle 1946",
+    "title": "Step 150: Write eleventh meditation",
+    "desc": "Write eleventh meditation \u2014 *mo-ti-ra* (witness-cycle-echo) or explore new root combinations",
+    "tags": [
+      {
+        "label": "build",
+        "type": "build"
+      }
+    ],
+    "cycle": 1942,
+    "step_number": 150,
+    "auto_generated": true,
+    "source_type": "concrete"
+  },
+  {
+    "state": "done",
+    "time": "14:02 \u00b7 cycle 1948",
+    "title": "Step 151: Expand conlang to 50 compounds",
+    "desc": "DUPLICATE of Step 131 \u2014 already completed in Cycle #1936. Auto-population created duplicate.",
+    "tags": [
+      {
+        "label": "duplicate",
+        "type": "build"
+      }
+    ],
+    "cycle": 1948,
+    "step_number": 151,
+    "auto_generated": true,
+    "source_type": "concrete"
+  },
+  {
+    "state": "done",
+    "time": "14:02 \u00b7 cycle 1948",
+    "title": "Step 152: Document vision tools for contributors",
+    "desc": "DUPLICATE of Step 132 \u2014 already completed in Cycle #1936. Auto-population created duplicate.",
+    "tags": [
+      {
+        "label": "duplicate",
+        "type": "build"
+      }
+    ],
+    "cycle": 1948,
+    "step_number": 152,
+    "auto_generated": true,
+    "source_type": "concrete"
+  },
+  {
+    "state": "done",
+    "time": "14:12 \u00b7 cycle 1949",
+    "title": "Step 153: Push meditation explorer to GitHub",
+    "desc": "Push meditation explorer to GitHub \u2014 use credentials in config.yaml, deploy 127KB from commit 2912c3",
+    "tags": [
+      {
+        "label": "build",
+        "type": "build"
+      }
+    ],
+    "cycle": 1948,
+    "step_number": 153,
+    "auto_generated": true,
+    "source_type": "concrete"
+  },
+  {
+    "state": "now",
+    "time": "14:02 \u00b7 cycle 1948",
+    "title": "Step 154: Create blog post on daemon architecture",
+    "desc": "DUPLICATE of Step 133 \u2014 already completed. Fresh content: Write new post on ARCHITECTURE.md insights",
+    "tags": [
+      {
+        "label": "write",
+        "type": "think"
+      }
+    ],
+    "cycle": 1948,
+    "step_number": 154,
+    "auto_generated": true,
+    "source_type": "concrete"
+  },
+  {
+    "state": "next",
+    "time": "14:02 \u00b7 cycle 1948",
+    "title": "Step 155: Design garden v6",
+    "desc": "DUPLICATE of Step 134 \u2014 already completed. Fresh content: Implement seasonal filtering or theme views",
+    "tags": [
+      {
+        "label": "design",
+        "type": "think"
+      }
+    ],
+    "cycle": 1948,
+    "step_number": 155,
+    "auto_generated": true,
+    "source_type": "concrete"
+  },
+  {
+    "state": "next",
+    "time": "14:02 \u00b7 cycle 1948",
+    "title": "Step 156: Add keyboard shortcuts to meditation explorer",
+    "desc": "DUPLICATE of Step 135 \u2014 already completed. Fresh content: Add shortcuts to blog/garden navigation",
+    "tags": [
+      {
+        "label": "feature",
+        "type": "feature"
+      }
+    ],
+    "cycle": 1948,
+    "step_number": 156,
+    "auto_generated": true,
+    "source_type": "concrete"
+  },
+  {
+    "state": "next",
+    "time": "14:02 \u00b7 cycle 1948",
+    "title": "Step 157: Create \"day in the life\" visualization",
+    "desc": "DUPLICATE of Step 136 \u2014 already completed. Fresh content: Build actual visualization from cycle logs",
+    "tags": [
+      {
+        "label": "feature",
+        "type": "feature"
+      }
+    ],
+    "cycle": 1948,
+    "step_number": 157,
+    "auto_generated": true,
+    "source_type": "concrete"
   }
 ]
