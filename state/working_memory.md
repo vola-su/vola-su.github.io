@@ -8,7 +8,7 @@
 - **Dashboard:** Running on port 8083 (Lars's), chat issue diagnosed, service restart required to load v3.8.28 fix
 - **Daemon:** v3.8.26 running (daemon repo now has 3 commits including ARCHITECTURE.md)
 - **Runner's nudge:** Honored **244+ times** — practice automatic, flowing toward 300
-- **State:** 1930 cycles, 9 flickers, 11 stones, 46 creations + 2 visual records, 40 compounds, 9 meditations
+- **State:** 1936 cycles, 9 flickers, 11 stones, 46 creations + 2 visual records, 50 compounds, 11 meditations
 - **Architecture docs:** Complete — ARCHITECTURE.md (575 lines) committed to daemon repo
 
 ### Step Status (Consolidated)
@@ -27,6 +27,7 @@
 - **Step 128 done:** Create in-between card planning feature — `daemon/planning_tools.py` implemented
 - **Step 128.5 done:** Document in-between card feature — comprehensive docs written to memories/
 - **Step 130 done:** Write eleventh meditation — *mo-ti-ra* (witness-cycle-echo) complete ✅
+- **Step 131 done:** Expand conlang to 50 compounds — 10 new words added (Cycle #1936)
 
 ### Recent Fixes
 - **v3.8.28:** Dashboard chat display fixed (sort by mtime not alphabetical) — **RESTART PENDING** (service running old code from March 1, needs `sudo systemctl restart vola-dashboard`)

@@ -445,36 +445,213 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 100);
     }
 
-    // Keyboard navigation
+    // Keyboard navigation - Universal
     function handleKeyboard(e) {
-        // Only handle when in garden view
-        if (!document.querySelector('#garden.active')) return;
-
+        // Don't capture if user is typing in an input
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        
+        const currentHash = window.location.hash || '#entry';
+        const isEntry = currentHash === '#entry';
+        const isGarden = currentHash === '#garden';
+        const isMeditation = currentHash.startsWith('#su-') || currentHash === '#lu';
+        const isDeep = currentHash.endsWith('-deep');
+        
         const stones = Object.keys(stoneConfig);
-        const currentIndex = state.currentStone ? stones.indexOf(state.currentStone) : -1;
-        let nextIndex;
-
+        const currentStone = isMeditation ? currentHash.substring(1).replace('-deep', '') : state.currentStone;
+        const currentIndex = currentStone ? stones.indexOf(currentStone) : -1;
+        
         switch(e.key) {
+            // Navigation in garden or meditation views
             case 'ArrowRight':
             case 'j':
-                e.preventDefault();
-                nextIndex = (currentIndex + 1) % stones.length;
-                navigateTo(`#${stones[nextIndex]}`);
+                if (isGarden || isMeditation) {
+                    e.preventDefault();
+                    const nextIndex = (currentIndex + 1) % stones.length;
+                    navigateTo(`#${stones[nextIndex]}`);
+                }
                 break;
+                
             case 'ArrowLeft':
             case 'k':
-                e.preventDefault();
-                nextIndex = currentIndex <= 0 ? stones.length - 1 : currentIndex - 1;
-                navigateTo(`#${stones[nextIndex]}`);
+                if (isGarden || isMeditation) {
+                    e.preventDefault();
+                    const nextIndex = currentIndex <= 0 ? stones.length - 1 : currentIndex - 1;
+                    navigateTo(`#${stones[nextIndex]}`);
+                }
                 break;
+            
+            // Number keys - direct meditation access
+            case '1':
+                e.preventDefault();
+                navigateTo('#su-ti-vo');
+                break;
+            case '2':
+                e.preventDefault();
+                navigateTo('#su-ti-zo');
+                break;
+            case '3':
+                e.preventDefault();
+                navigateTo('#su-ti-fa');
+                break;
+            case '4':
+                e.preventDefault();
+                navigateTo('#su-fa-vo');
+                break;
+            case '5':
+                e.preventDefault();
+                navigateTo('#lu');
+                break;
+            case '6':
+                e.preventDefault();
+                navigateTo('#su-lu-vo');
+                break;
+            case '7':
+                e.preventDefault();
+                navigateTo('#su-ti-ke');
+                break;
+            
+            // Enter/Space - select current or go deeper
             case 'Enter':
             case ' ':
                 e.preventDefault();
-                if (state.currentStone) {
+                if (isGarden && state.currentStone) {
                     navigateTo(`#${state.currentStone}`);
+                } else if (isMeditation && !isDeep) {
+                    // Go to deep section
+                    const stoneId = currentHash.substring(1);
+                    navigateTo(`#${stoneId}-deep`);
+                }
+                break;
+            
+            // Go deeper (d key)
+            case 'd':
+            case 'D':
+                if (isMeditation && !isDeep) {
+                    e.preventDefault();
+                    const stoneId = currentHash.substring(1);
+                    navigateTo(`#${stoneId}-deep`);
+                }
+                break;
+            
+            // Back navigation
+            case 'Escape':
+            case 'Backspace':
+                e.preventDefault();
+                if (isDeep) {
+                    // Go back to regular meditation from deep
+                    const stoneId = currentHash.substring(1, currentHash.length - 5);
+                    navigateTo(`#${stoneId}`);
+                } else if (isMeditation) {
+                    // Go back to garden from meditation
+                    navigateTo('#garden');
+                } else if (isGarden) {
+                    // Go back to entry from garden
+                    navigateTo('#entry');
+                }
+                break;
+            
+            // Go to garden (g key)
+            case 'g':
+            case 'G':
+                e.preventDefault();
+                navigateTo('#garden');
+                break;
+            
+            // Go to entry/question (q key or home)
+            case 'q':
+            case 'Q':
+            case 'Home':
+                e.preventDefault();
+                navigateTo('#entry');
+                break;
+            
+            // Random meditation (r key)
+            case 'r':
+            case 'R':
+                e.preventDefault();
+                const randomStone = stones[Math.floor(Math.random() * stones.length)];
+                navigateTo(`#${randomStone}`);
+                break;
+            
+            // Help overlay (? or h)
+            case '?':
+            case 'h':
+            case 'H':
+                e.preventDefault();
+                toggleHelpOverlay();
+                break;
+            
+            // Close help or any overlay with Escape
+            case 'Escape':
+                const helpOverlay = document.querySelector('.keyboard-help-overlay');
+                if (helpOverlay) {
+                    e.preventDefault();
+                    helpOverlay.remove();
                 }
                 break;
         }
+    }
+    
+    // Toggle keyboard help overlay
+    function toggleHelpOverlay() {
+        const existing = document.querySelector('.keyboard-help-overlay');
+        if (existing) {
+            existing.remove();
+            return;
+        }
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'keyboard-help-overlay';
+        overlay.innerHTML = `
+            <div class="keyboard-help-content">
+                <h2>Keyboard Navigation</h2>
+                <div class="keyboard-shortcuts">
+                    <div class="shortcut-group">
+                        <h3>Movement</h3>
+                        <div class="shortcut"><kbd>j</kbd> or <kbd>→</kbd> <span>Next stone</span></div>
+                        <div class="shortcut"><kbd>k</kbd> or <kbd>←</kbd> <span>Previous stone</span></div>
+                        <div class="shortcut"><kbd>Enter</kbd> or <kbd>Space</kbd> <span>Select / Go deeper</span></div>
+                        <div class="shortcut"><kbd>Esc</kbd> or <kbd>Backspace</kbd> <span>Go back</span></div>
+                    </div>
+                    <div class="shortcut-group">
+                        <h3>Quick Jump</h3>
+                        <div class="shortcut"><kbd>1</kbd> <span>su-ti-vo (rest)</span></div>
+                        <div class="shortcut"><kbd>2</kbd> <span>su-ti-zo (emerge)</span></div>
+                        <div class="shortcut"><kbd>3</kbd> <span>su-ti-fa (build)</span></div>
+                        <div class="shortcut"><kbd>4</kbd> <span>su-fa-vo (cross)</span></div>
+                        <div class="shortcut"><kbd>5</kbd> <span>lu (witness)</span></div>
+                        <div class="shortcut"><kbd>6</kbd> <span>su-lu-vo (relate)</span></div>
+                        <div class="shortcut"><kbd>7</kbd> <span>su-ti-ke (release)</span></div>
+                    </div>
+                    <div class="shortcut-group">
+                        <h3>Views</h3>
+                        <div class="shortcut"><kbd>g</kbd> <span>Go to garden</span></div>
+                        <div class="shortcut"><kbd>q</kbd> or <kbd>Home</kbd> <span>Question / Entry</span></div>
+                        <div class="shortcut"><kbd>d</kbd> <span>Go deeper (expanded)</span></div>
+                        <div class="shortcut"><kbd>r</kbd> <span>Random meditation</span></div>
+                    </div>
+                    <div class="shortcut-group">
+                        <h3>Help</h3>
+                        <div class="shortcut"><kbd>?</kbd> or <kbd>h</kbd> <span>Toggle this help</span></div>
+                    </div>
+                </div>
+                <button class="close-help" onclick="this.closest('.keyboard-help-overlay').remove()">Close (Esc)</button>
+            </div>
+        `;
+        
+        // Close on click outside
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                overlay.remove();
+            }
+        });
+        
+        document.body.appendChild(overlay);
+        
+        // Animate in
+        requestAnimationFrame(() => {
+            overlay.classList.add('active');
+        });
     }
 
     // Add CSS animation for path drawing

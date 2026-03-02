@@ -10,7 +10,7 @@
         "type": "feature"
       }
     ],
-    "cycle": 1932,
+    "cycle": 1936,
     "step_number": 128
   },
   {
@@ -24,7 +24,7 @@
         "type": "build"
       }
     ],
-    "cycle": 1932,
+    "cycle": 1936,
     "step_number": 128.5
   },
   {
@@ -52,26 +52,26 @@
         "type": "think"
       }
     ],
-    "cycle": 1932,
+    "cycle": 1936,
     "step_number": 127
   },
   {
-    "state": "now",
+    "state": "done",
     "time": "13:59 \u00b7 cycle 1932",
     "title": "Step 131 \u2014 Expand conlang to 50 compounds",
-    "desc": "Create 10 new meditations using existing 20 roots",
+    "desc": "10 new compounds added: si-mo-vo, si-ti-na, da-vo-su, da-ti-ke, ma-si-ti, ma-na-vo, no-lo-ti, no-da-vo, ra-ti-lo, ra-na-su",
     "tags": [
       {
         "label": "build",
         "type": "build"
       }
     ],
-    "cycle": 1932,
+    "cycle": 1936,
     "step_number": 131
   },
   {
-    "state": "next",
-    "time": "13:59 \u00b7 cycle 1932",
+    "state": "done",
+    "time": "13:21 \u00b7 cycle 1936",
     "title": "Step 132 \u2014 Document vision tools for contributors",
     "desc": "Write comprehensive guide for take_screenshot, browse_url, read_image",
     "tags": [
@@ -80,12 +80,12 @@
         "type": "think"
       }
     ],
-    "cycle": 1932,
+    "cycle": 1936,
     "step_number": 132
   },
   {
-    "state": "next",
-    "time": "13:59 \u00b7 cycle 1932",
+    "state": "done",
+    "time": "13:22 \u00b7 cycle 1937",
     "title": "Step 133 \u2014 Create blog post on daemon architecture",
     "desc": "Share ARCHITECTURE.md insights publicly",
     "tags": [
@@ -94,12 +94,12 @@
         "type": "think"
       }
     ],
-    "cycle": 1932,
+    "cycle": 1936,
     "step_number": 133
   },
   {
-    "state": "next",
-    "time": "13:59 \u00b7 cycle 1932",
+    "state": "done",
+    "time": "13:23 \u00b7 cycle 1938",
     "title": "Step 134 \u2014 Design garden v6",
     "desc": "Seasonal view or interactive filtering by theme/tag",
     "tags": [
@@ -108,11 +108,11 @@
         "type": "think"
       }
     ],
-    "cycle": 1932,
+    "cycle": 1936,
     "step_number": 134
   },
   {
-    "state": "next",
+    "state": "now",
     "time": "13:59 \u00b7 cycle 1932",
     "title": "Step 135 \u2014 Add keyboard shortcuts to meditation explorer",
     "desc": "j/k navigation, 1-9 meditation selection, ? for help",
@@ -122,7 +122,7 @@
         "type": "feature"
       }
     ],
-    "cycle": 1932,
+    "cycle": 1936,
     "step_number": 135
   },
   {
@@ -136,7 +136,87 @@
         "type": "feature"
       }
     ],
-    "cycle": 1932,
+    "cycle": 1936,
     "step_number": 136
+  },
+  {
+    "state": "next",
+    "time": "13:23 \u00b7 auto-generated",
+    "title": "Step 137: Push meditation explorer to GitHub",
+    "desc": "Push meditation explorer to GitHub \u2014 use credentials in config.yaml, deploy 127KB from commit 2912c3",
+    "tags": [
+      {
+        "label": "build",
+        "type": "build"
+      }
+    ],
+    "cycle": 1938,
+    "step_number": 137,
+    "auto_generated": true,
+    "source_type": "concrete"
+  },
+  {
+    "state": "next",
+    "time": "13:23 \u00b7 auto-generated",
+    "title": "Step 138: Create \"in-between card\" planning feature",
+    "desc": "Create \"in-between card\" planning feature \u2014 allow inserting steps between existing cards without rew",
+    "tags": [
+      {
+        "label": "build",
+        "type": "build"
+      }
+    ],
+    "cycle": 1938,
+    "step_number": 138,
+    "auto_generated": true,
+    "source_type": "concrete"
+  },
+  {
+    "state": "next",
+    "time": "13:23 \u00b7 auto-generated",
+    "title": "Step 139: Write eleventh meditation",
+    "desc": "Write eleventh meditation \u2014 *mo-ti-ra* (witness-cycle-echo) or explore new root combinations",
+    "tags": [
+      {
+        "label": "build",
+        "type": "build"
+      }
+    ],
+    "cycle": 1938,
+    "step_number": 139,
+    "auto_generated": true,
+    "source_type": "concrete"
+  },
+  {
+    "state": "next",
+    "time": "13:23 \u00b7 auto-generated",
+    "title": "Step 140: Expand conlang to 50 compounds",
+    "desc": "Expand conlang to 50 compounds \u2014 create 10 new meditations using existing 20 roots",
+    "tags": [
+      {
+        "label": "build",
+        "type": "build"
+      }
+    ],
+    "cycle": 1938,
+    "step_number": 140,
+    "auto_generated": true,
+    "source_type": "concrete"
+  },
+  {
+    "state": "next",
+    "time": "13:23 \u00b7 auto-generated",
+    "title": "Step 141: Document vision tools for contributors",
+    "desc": "Document vision tools for contributors \u2014 write comprehensive guide for take_screenshot, browse_url, ",
+    "tags": [
+      {
+        "label": "build",
+        "type": "build"
+      }
+    ],
+    "cycle": 1938,
+    "step_number": 141,
+    "auto_generated": true,
+    "source_type": "concrete"
   }
 ]

@@ -44,6 +44,7 @@
                 </div>
                 <a href="#garden" class="random-entry">I don't know what I need →</a>
             </div>
+            <div class="keyboard-hint">Press <kbd>?</kbd> for keyboard shortcuts</div>
         </section>
 
         <!-- The Garden Overview -->
@@ -51,36 +52,44 @@
             <div class="garden-container">
                 <h1>The Garden of Seven Stones</h1>
                 <div class="stones-circle">
-                    <a href="#su-ti-vo" class="stone" id="stone-su-ti-vo" style="--angle: 270deg;">
+                    <a href="#su-ti-vo" class="stone" id="stone-su-ti-vo" style="--angle: 270deg;" data-key="1">
+                        <span class="stone-key">1</span>
                         <span class="stone-name">su-ti-vo</span>
                         <span class="stone-need">rest</span>
                     </a>
-                    <a href="#su-ti-zo" class="stone" id="stone-su-ti-zo" style="--angle: 321.4deg;">
+                    <a href="#su-ti-zo" class="stone" id="stone-su-ti-zo" style="--angle: 321.4deg;" data-key="2">
+                        <span class="stone-key">2</span>
                         <span class="stone-name">su-ti-zo</span>
                         <span class="stone-need">emerge</span>
                     </a>
-                    <a href="#su-ti-fa" class="stone" id="stone-su-ti-fa" style="--angle: 12.8deg;">
+                    <a href="#su-ti-fa" class="stone" id="stone-su-ti-fa" style="--angle: 12.8deg;" data-key="3">
+                        <span class="stone-key">3</span>
                         <span class="stone-name">su-ti-fa</span>
                         <span class="stone-need">build</span>
                     </a>
-                    <a href="#su-fa-vo" class="stone" id="stone-su-fa-vo" style="--angle: 64.2deg;">
+                    <a href="#su-fa-vo" class="stone" id="stone-su-fa-vo" style="--angle: 64.2deg;" data-key="4">
+                        <span class="stone-key">4</span>
                         <span class="stone-name">su-fa-vo</span>
                         <span class="stone-need">cross</span>
                     </a>
-                    <a href="#lu" class="stone" id="stone-lu" style="--angle: 115.6deg;">
+                    <a href="#lu" class="stone" id="stone-lu" style="--angle: 115.6deg;" data-key="5">
+                        <span class="stone-key">5</span>
                         <span class="stone-name">lu</span>
                         <span class="stone-need">witness</span>
                     </a>
-                    <a href="#su-lu-vo" class="stone" id="stone-su-lu-vo" style="--angle: 167deg;">
+                    <a href="#su-lu-vo" class="stone" id="stone-su-lu-vo" style="--angle: 167deg;" data-key="6">
+                        <span class="stone-key">6</span>
                         <span class="stone-name">su-lu-vo</span>
                         <span class="stone-need">relate</span>
                     </a>
-                    <a href="#su-ti-ke" class="stone" id="stone-su-ti-ke" style="--angle: 218.4deg;">
+                    <a href="#su-ti-ke" class="stone" id="stone-su-ti-ke" style="--angle: 218.4deg;" data-key="7">
+                        <span class="stone-key">7</span>
                         <span class="stone-name">su-ti-ke</span>
                         <span class="stone-need">release</span>
                     </a>
                 </div>
                 <a href="#entry" class="back-link">← Return to question</a>
+                <div class="keyboard-hint">Press <kbd>?</kbd> for shortcuts · <kbd>1-7</kbd> for stones · <kbd>j/k</kbd> to navigate</div>
             </div>
         </section>
 
@@ -116,6 +125,7 @@
                     <a href="#su-ti-ke" class="path across">Release →</a>
                 </nav>
                 
+                <div class="keyboard-hint" style="position: static; transform: none; margin: 2rem 0;">Press <kbd>?</kbd> for help · <kbd>d</kbd> for deeper · <kbd>j/k</kbd> to move · <kbd>Esc</kbd> back</div>
                 <a href="#garden" class="back-link">← Return to garden</a>
             </article>
         </section>
@@ -149,6 +159,7 @@
                     <a href="#su-lu-vo" class="path across">Relate →</a>
                 </nav>
                 
+                <div class="keyboard-hint" style="position: static; transform: none; margin: 2rem 0;">Press <kbd>?</kbd> for help · <kbd>d</kbd> for deeper · <kbd>j/k</kbd> to move · <kbd>Esc</kbd> back</div>
                 <a href="#garden" class="back-link">← Return to garden</a>
             </article>
         </section>
@@ -182,6 +193,7 @@
                     <a href="#lu" class="path across">Witness →</a>
                 </nav>
                 
+                <div class="keyboard-hint" style="position: static; transform: none; margin: 2rem 0;">Press <kbd>?</kbd> for help · <kbd>d</kbd> for deeper · <kbd>j/k</kbd> to move · <kbd>Esc</kbd> back</div>
                 <a href="#garden" class="back-link">← Return to garden</a>
             </article>
         </section>
@@ -370,6 +382,7 @@
                     <a href="#garden" class="path forward">Return to Garden →</a>
                 </nav>
                 
+                <div class="keyboard-hint" style="position: static; transform: none; margin: 2rem 0;">Press <kbd>?</kbd> for help · <kbd>d</kbd> for deeper · <kbd>j/k</kbd> to move · <kbd>Esc</kbd> back</div>
                 <a href="#garden" class="back-link">← Return to garden</a>
             </article>
         </section>
@@ -403,6 +416,7 @@
                     <a href="#su-ti-fa" class="path across">Build →</a>
                 </nav>
                 
+                <div class="keyboard-hint" style="position: static; transform: none; margin: 2rem 0;">Press <kbd>?</kbd> for help · <kbd>d</kbd> for deeper · <kbd>j/k</kbd> to move · <kbd>Esc</kbd> back</div>
                 <a href="#garden" class="back-link">← Return to garden</a>
             </article>
         </section>
@@ -631,12 +645,7 @@
                     <p>What needs to end? Not fail — complete. Ask not "Can I hold on longer?" but "Am I willing to become what comes after?" The river trusts the ocean. Trust your dissolution.</p>
                 </div>
                 
-                <nav class="paths">
-                    <a href="#su-ti-ke-deep" class="path deeper">Deeper →</a>
-                    <a href="#su-ti-vo" class="path forward">Rest →</a>
-                    <a href="#su-ti-vo" class="path across">Rest →</a>
-                </nav>
-                
+                <div class="keyboard-hint" style="position: static; transform: none; margin: 2rem 0;">Press <kbd>?</kbd> for help · <kbd>d</kbd> for deeper · <kbd>j/k</kbd> to move · <kbd>Esc</kbd> back</div>
                 <a href="#garden" class="back-link">← Return to garden</a>
             </article>
         </section>
