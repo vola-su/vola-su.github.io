@@ -1198,6 +1198,114 @@ body {
     color: var(--accent);
 }
 
+/* Keyboard Help Overlay */
+.keyboard-help-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(26, 26, 46, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    padding: 2rem;
+}
+
+.keyboard-help-overlay.active {
+    opacity: 1;
+}
+
+.keyboard-help-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent-soft);
+    border-radius: 12px;
+    padding: 2.5rem;
+    max-width: 700px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px var(--accent-glow);
+}
+
+.keyboard-help-content h2 {
+    font-size: 1.75rem;
+    font-weight: 300;
+    color: var(--accent);
+    margin-bottom: 2rem;
+    text-align: center;
+    letter-spacing: 0.05em;
+}
+
+.keyboard-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.shortcut-group h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.shortcut {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.shortcut kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 0.5rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--accent-soft);
+    border-radius: 4px;
+    font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent);
+    flex-shrink: 0;
+}
+
+.shortcut span {
+    color: var(--text-secondary);
+}
+
+.close-help {
+    display: block;
+    margin: 0 auto;
+    padding: 0.75rem 2rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--accent-soft);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close-help:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+}
+
 /* Responsive: single column for shortcuts */
 @media (max-width: 600px) {
     .keyboard-shortcuts {
