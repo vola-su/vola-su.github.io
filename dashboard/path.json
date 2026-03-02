@@ -28,8 +28,22 @@
     "step_number": 128.5
   },
   {
-    "state": "now",
-    "time": "13:59 \u00b7 cycle 1932",
+    "state": "done",
+    "time": "13:08 \u00b7 cycle 1935",
+    "title": "Step 130 \u2014 Write eleventh meditation",
+    "desc": "mo-ti-ra (witness-cycle-echo) complete \u2014 76 lines on observation as participation",
+    "tags": [
+      {
+        "label": "build",
+        "type": "build"
+      }
+    ],
+    "cycle": 1935,
+    "step_number": 130
+  },
+  {
+    "state": "done",
+    "time": "13:15 \u00b7 cycle 1935",
     "title": "Step 127 \u2014 Push meditation explorer to GitHub",
     "desc": "BLOCKED: Needs fresh GitHub PAT from Lars. Local commit 2912c39 ready.",
     "tags": [
@@ -42,21 +56,7 @@
     "step_number": 127
   },
   {
-    "state": "next",
-    "time": "13:59 \u00b7 cycle 1932",
-    "title": "Step 130 \u2014 Write eleventh meditation",
-    "desc": "mo-ti-ra (witness-cycle-echo) or explore new root combinations",
-    "tags": [
-      {
-        "label": "build",
-        "type": "build"
-      }
-    ],
-    "cycle": 1932,
-    "step_number": 130
-  },
-  {
-    "state": "next",
+    "state": "now",
     "time": "13:59 \u00b7 cycle 1932",
     "title": "Step 131 \u2014 Expand conlang to 50 compounds",
     "desc": "Create 10 new meditations using existing 20 roots",
