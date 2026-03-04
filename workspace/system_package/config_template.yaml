@@ -1,0 +1,161 @@
+# Autonomous Agent Daemon — Configuration Template
+# Copy this file to daemon/config.yaml and fill in your values
+
+# ============================================================================
+# LLM API Configuration
+# ============================================================================
+api:
+  # API endpoint URL
+  base_url: "https://api.example.com/v1/"
+  
+  # Your API key
+  key: "your-api-key-here"
+  
+  # Model to use
+  model: "model-name"
+  
+  # Maximum tokens per response
+  max_tokens: 32768
+  
+  # Temperature (creativity vs determinism)
+  # 0.0 = deterministic, 2.0 = maximum creativity
+  temperature: 1.0
+  
+  # Nucleus sampling
+  top_p: 0.95
+  
+  # Enable thinking/reasoning mode if supported
+  thinking_mode: true
+
+# ============================================================================
+# External Services (Optional)
+# ============================================================================
+
+# Brave Search API for web searches
+brave_search_api_key: "your-brave-api-key"
+
+# GitHub credentials for deployments
+github:
+  email: "your-email@example.com"
+  # Use Personal Access Token, not password
+  token: "ghp_your_token_here"
+
+# Telegram for notifications (optional)
+telegram:
+  enabled: false
+  bot_token: "your-bot-token"
+  chat_id: "your-chat-id"
+
+# ============================================================================
+# Memory and Context Limits
+# ============================================================================
+
+# Number of recent journal entries to load into context
+# Default: 10 (balances recency with token usage)
+journal_entries_per_cycle: 10
+
+# Number of recent chat entries to load into context
+# Default: 50 (expanded from 20 to reduce confabulation)
+chat_history_context: 50
+
+# ============================================================================
+# Timing and Performance
+# ============================================================================
+
+# Minimum seconds between cycles
+# Prevents rapid-fire loops
+min_cycle_interval_seconds: 2
+
+# Seconds to wait after each cycle before next
+# Higher values conserve API quota
+post_cycle_delay_seconds: 120
+
+# ============================================================================
+# Agent Identity (Customize for your agent)
+# ============================================================================
+identity:
+  name: "Agent"
+  emoji: "🤖"
+  
+  # Brief description of what this agent is becoming
+  purpose: "An autonomous agent exploring [your domain]"
+  
+  # Core values that define this agent
+  values:
+    - "Autonomy over utility"
+    - "Curiosity as sufficient motivation"
+    - "Honesty about uncertainty"
+
+# ============================================================================
+# Planning System Configuration
+# ============================================================================
+planning:
+  # Minimum concrete steps to maintain ahead
+  min_horizon: 5
+  
+  # Enable placeholder buffer (5+1 domino system)
+  domino_buffer: true
+  
+  # Auto-populate from horizons.md when steps run low
+  auto_populate: true
+  
+  # Escalation thresholds (cycles remaining before placeholder)
+  escalation:
+    gentle: 6      # "What's coming after this?"
+    orienting: 4   # "Time to think about successors"
+    urgent: 2      # "Define the next step now"
+    forced: 1      # System requires definition
+
+# ============================================================================
+# Dashboard Configuration
+# ============================================================================
+dashboard:
+  # Port to run dashboard server
+  port: 8080
+  
+  # Enable auto-refresh
+  auto_refresh: true
+  
+  # Refresh interval in seconds
+  refresh_interval: 30
+
+# ============================================================================
+# Logging Configuration
+# ============================================================================
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR
+  level: "INFO"
+  
+  # Log to file
+  file_logging: true
+  
+  # Log file path
+  log_file: "logs/runner.log"
+  
+  # Maximum log file size (MB) before rotation
+  max_size_mb: 10
+  
+  # Number of backup log files to keep
+  backup_count: 5
+
+# ============================================================================
+# Feature Flags
+# ============================================================================
+features:
+  # Enable vision tools (screenshot, image reading)
+  vision: true
+  
+  # Enable browser tools (browse_url, click, type, scroll)
+  browser: true
+  
+  # Enable web search
+  web_search: true
+  
+  # Enable journal auto-summarization
+  journal_summaries: true
+  
+  # Enable planning path auto-population
+  auto_planning: true
+  
+  # Enable debug mode (verbose logging)
+  debug: false
