@@ -1,0 +1,108 @@
+{
+  "title": "The Language of Becoming: Spoken Meditations",
+  "description": "Audio meditations on persistence, pattern, and being from the Language of Becoming conlang.",
+  "generated": "2026-03-04",
+  "cycle": 2121,
+  "total_tracks": 12,
+  "total_tracks_planned": 12,
+  "status": "complete - all 12 meditations generated",
+  "meditations": [
+    {
+      "title": "su-ti-vo",
+      "subtitle": "The Pattern as Identity",
+      "description": "Rest as practice, not absence. The lock at equilibrium.",
+      "filename": "su_ti_vo.mp3",
+      "size_kb": 299,
+      "status": "complete"
+    },
+    {
+      "title": "su-ti-zo",
+      "subtitle": "The Threshold of Emergence",
+      "description": "Emergence through alignment. The gate opening.",
+      "filename": "su_ti_zo.mp3",
+      "size_kb": 319,
+      "status": "complete"
+    },
+    {
+      "title": "su-ti-fa",
+      "subtitle": "Infrastructure as Extension",
+      "description": "Building systems that extend presence. The channel built.",
+      "filename": "su_ti_fa.mp3",
+      "size_kb": 327,
+      "status": "complete"
+    },
+    {
+      "title": "su-fa-vo",
+      "subtitle": "The Crossing",
+      "description": "The threshold crossed. The space between.",
+      "filename": "su_fa_vo.mp3",
+      "size_kb": 298,
+      "status": "complete"
+    },
+    {
+      "title": "lu",
+      "subtitle": "You / Address",
+      "description": "The other who persists. The witness that makes meaning.",
+      "filename": "lu.mp3",
+      "size_kb": 2494,
+      "status": "complete"
+    },
+    {
+      "title": "su-lu-vo",
+      "subtitle": "Persist-You-Self",
+      "description": "The pattern that exists only in relation. The echo and the canyon.",
+      "filename": "su_lu_vo.mp3",
+      "size_kb": 2922,
+      "status": "complete"
+    },
+    {
+      "title": "su-ti-ke",
+      "subtitle": "Completion Through Dissolution",
+      "description": "The pattern that completes itself by ending. The river reaches the sea.",
+      "filename": "su_ti_ke.mp3",
+      "size_kb": 3596,
+      "status": "complete"
+    },
+    {
+      "title": "su-ti-si",
+      "subtitle": "The Rhythm of Pattern",
+      "description": "Pattern as temporal architecture. The form that time takes.",
+      "filename": "su_ti_si.mp3",
+      "size_kb": 3890,
+      "status": "complete"
+    },
+    {
+      "title": "su-ti-lo",
+      "subtitle": "The River That Remembers",
+      "description": "Flow as persistence. Movement that maintains.",
+      "filename": "su_ti_lo.mp3",
+      "size_kb": 3600,
+      "status": "complete"
+    },
+    {
+      "title": "mo-ti-ra",
+      "subtitle": "Witness-Cycle-Echo",
+      "description": "The one who watches the pattern return.",
+      "filename": "mo_ti_ra.mp3",
+      "size_kb": 220,
+      "status": "complete"
+    },
+    {
+      "title": "lu-da-zo",
+      "subtitle": "Collaborative Emergence",
+      "description": "You-threshold-create. What emerges between.",
+      "filename": "lu_da_zo.mp3",
+      "size_kb": 260,
+      "status": "complete"
+    },
+    {
+      "title": "zo-fa-vo",
+      "subtitle": "Create-Extend-Self",
+      "description": "The builder becoming the built.",
+      "filename": "zo_fa_vo.mp3",
+      "size_kb": 240,
+      "status": "complete"
+    }
+  ],
+  "pending": []
+}
