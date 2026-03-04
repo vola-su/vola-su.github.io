@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room — The 24-Hour Room</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --fg: #e8e8e8;
+            --muted: #666;
+            --accent: #ff6b35;
+            --accent-soft: #ff6b3522;
+            --border: #1a1a2e;
+            --mark-warm: #ff6b35;
+            --mark-cool: #4a90d9;
+            --mark-old: #666;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+            background: var(--bg);
+            color: var(--fg);
+            min-height: 100vh;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+        
+        #room {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: background 1s ease;
+        }
+        
+        /* Phase backgrounds */
+        .phase-dawn { background: linear-gradient(135deg, #0f0f1a 0%, #1a1a3e 50%, #2d2d5a 100%); }
+        .phase-morning { background: linear-gradient(135deg, #1a1a3e 0%, #2d3d6a 50%, #3d4d7a 100%); }
+        .phase-noon { background: linear-gradient(135deg, #2d2d5a 0%, #3d3d6a 50%, #4d4d8a 100%); }
+        .phase-evening { background: linear-gradient(135deg, #2d2d4a 0%, #3d2d5a 50%, #2d1a3e 100%); }
+        .phase-night { background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 50%, #050510 100%); }
+        .phase-fade { background: linear-gradient(135deg, #050510 0%, #020205 100%); }
+        
+        #countdown {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            z-index: 100;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.9; }
+            50% { opacity: 0.6; }
+        }
+        
+        #phase-indicator {
+            position: fixed;
+            top: 4.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            color: var(--accent);
+            font-style: italic;
+            z-index: 100;
+        }
+        
+        .mark {
+            position: absolute;
+            max-width: 200px;
+            padding: 0.75rem;
+            background: rgba(10, 10, 15, 0.9);
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            line-height: 1.5;
+            cursor: default;
+            transition: all 0.3s ease;
+            word-wrap: break-word;
+        }
+        
+        .mark:hover {
+            z-index: 1000;
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .mark-warm { border-color: var(--mark-warm); color: #ffb399; }
+        .mark-cool { border-color: var(--mark-cool); color: #99c9ff; }
+        .mark-old { border-color: var(--mark-old); color: #888; }
+        
+        .mark-time {
+            font-size: 0.7rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+            opacity: 0.7;
+        }
+        
+        #input-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 10, 15, 0.98);
+            border: 1px solid var(--accent);
+            padding: 1.5rem;
+            z-index: 2000;
+            min-width: 300px;
+        }
+        
+        #input-modal h3 {
+            font-weight: 400;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+        
+        #mark-input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--fg);
+            padding: 0.75rem;
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: none;
+            margin-bottom: 1rem;
+        }
+        
+        #mark-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .char-count {
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-align: right;
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 0.6rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--fg);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+        }
+        
+        .modal-btn:hover {
+            border-color: var(--accent);
+        }
+        
+        .modal-btn.primary {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        .modal-btn.primary:hover {
+            background: var(--accent);
+            color: var(--bg);
+        }
+        
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1500;
+        }
+        
+        .instructions {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: var(--muted);
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        .back-link {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            z-index: 100;
+        }
+        
+        .back-link:hover {
+            color: var(--fg);
+        }
+        
+        .share-link {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            z-index: 100;
+            cursor: pointer;
+        }
+        
+        .share-link:hover {
+            color: var(--accent);
+        }
+        
+        #share-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 10, 15, 0.98);
+            border: 1px solid var(--accent);
+            padding: 1.5rem;
+            z-index: 2000;
+            min-width: 350px;
+        }
+        
+        #share-url {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--fg);
+            padding: 0.75rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            margin: 1rem 0;
+        }
+        
+        .copied {
+            color: var(--accent);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="room" class="phase-dawn"></div>
+    
+    <div id="countdown">24:00:00</div>
+    <div id="phase-indicator">da-ti-zo — the threshold opens</div>
+    
+    <a href="index.html" class="back-link">← Exit</a>
+    <span class="share-link" onclick="showShare()">Share →</span>
+    
+    <p class="instructions">Click anywhere to leave a mark</p>
+    
+    <div id="overlay"></div>
+    
+    <div id="input-modal">
+        <h3>Leave a mark</h3>
+        <textarea id="mark-input" rows="3" maxlength="280" placeholder="Your words will remain until the room closes..."></textarea>
+        <p class="char-count"><span id="char-count">0</span> / 280</p>
+        <div class="modal-buttons">
+            <button class="modal-btn" onclick="closeModal()">Cancel</button>
+            <button class="modal-btn primary" onclick="submitMark()">Leave Mark</button>
+        </div>
+    </div>
+    
+    <div id="share-modal">
+        <h3>Share this room</h3>
+        <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem;">
+            Anyone with this link can enter and leave marks.
+        </p>
+        <input type="text" id="share-url" readonly>
+        <div class="modal-buttons">
+            <button class="modal-btn" onclick="closeShare()">Close</button>
+            <button class="modal-btn primary" onclick="copyUrl()">Copy Link</button>
+        </div>
+        <p id="copied-msg" class="copied" style="display: none; margin-top: 0.5rem;">Copied to clipboard</p>
+    </div>
+    
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('id');
+        
+        if (!roomId) {
+            window.location.href = 'index.html';
+        }
+        
+        let room = null;
+        let clickX = 0;
+        let clickY = 0;
+        
+        function loadRoom() {
+            const data = localStorage.getItem('room_' + roomId);
+            if (!data) {
+                window.location.href = 'closed.html';
+                return;
+            }
+            
+            room = JSON.parse(data);
+            
+            if (Date.now() > room.expires) {
+                localStorage.removeItem('room_' + roomId);
+                window.location.href = 'closed.html';
+                return;
+            }
+            
+            renderMarks();
+            updateCountdown();
+            updatePhase();
+        }
+        
+        function renderMarks() {
+            document.querySelectorAll('.mark').forEach(m => m.remove());
+            
+            room.marks.forEach(mark => {
+                const el = document.createElement('div');
+                el.className = 'mark ' + getMarkColorClass(mark.timestamp);
+                el.style.left = mark.x + 'px';
+                el.style.top = mark.y + 'px';
+                el.innerHTML = `
+                    ${escapeHtml(mark.text)}
+                    <div class="mark-time">${formatTime(mark.timestamp)}</div>
+                `;
+                document.getElementById('room').appendChild(el);
+            });
+        }
+        
+        function getMarkColorClass(timestamp) {
+            const age = Date.now() - timestamp;
+            const hour = 60 * 60 * 1000;
+            
+            if (age < 2 * hour) return 'mark-warm';
+            if (age < 8 * hour) return 'mark-cool';
+            return 'mark-old';
+        }
+        
+        function formatTime(timestamp) {
+            const d = new Date(timestamp);
+            return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function updateCountdown() {
+            const remaining = room.expires - Date.now();
+            
+            if (remaining <= 0) {
+                localStorage.removeItem('room_' + roomId);
+                window.location.href = 'closed.html';
+                return;
+            }
+            
+            const hours = Math.floor(remaining / (60 * 60 * 1000));
+            const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+            const seconds = Math.floor((remaining % (60 * 1000)) / 1000);
+            
+            document.getElementById('countdown').textContent = 
+                String(hours).padStart(2, '0') + ':' +
+                String(minutes).padStart(2, '0') + ':' +
+                String(seconds).padStart(2, '0');
+        }
+        
+        function updatePhase() {
+            const elapsed = Date.now() - room.created;
+            const hour = 60 * 60 * 1000;
+            const roomEl = document.getElementById('room');
+            const phaseEl = document.getElementById('phase-indicator');
+            
+            roomEl.className = '';
+            
+            if (elapsed < 2 * hour) {
+                roomEl.classList.add('phase-dawn');
+                phaseEl.textContent = 'da-ti-zo — the threshold opens';
+            } else if (elapsed < 8 * hour) {
+                roomEl.classList.add('phase-morning');
+                phaseEl.textContent = 'zo-ti-vo — active building';
+            } else if (elapsed < 16 * hour) {
+                roomEl.classList.add('phase-noon');
+                phaseEl.classList.add('phase-evening');
+                phaseEl.textContent = 'lu-si-ra — collaboration peaks';
+            } else if (elapsed < 22 * hour) {
+                roomEl.classList.add('phase-evening');
+                phaseEl.textContent = 'ke-ti-su — winding down';
+            } else if (elapsed < 24 * hour) {
+                roomEl.classList.add('phase-night');
+                phaseEl.textContent = 'su-ti-ke — the fade';
+            } else {
+                roomEl.classList.add('phase-fade');
+                phaseEl.textContent = 'ti su na — the cycle ends';
+            }
+        }
+        
+        document.getElementById('room').addEventListener('click', function(e) {
+            if (e.target.classList.contains('mark')) return;
+            
+            clickX = e.clientX;
+            clickY = e.clientY;
+            
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('input-modal').style.display = 'block';
+            document.getElementById('mark-input').focus();
+        });
+        
+        document.getElementById('mark-input').addEventListener('input', function() {
+            document.getElementById('char-count').textContent = this.value.length;
+        });
+        
+        function closeModal() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('input-modal').style.display = 'none';
+            document.getElementById('mark-input').value = '';
+            document.getElementById('char-count').textContent = '0';
+        }
+        
+        function submitMark() {
+            const text = document.getElementById('mark-input').value.trim();
+            if (!text) return;
+            
+            const mark = {
+                id: Date.now().toString(),
+                x: clickX - 100,
+                y: clickY - 20,
+                text: text,
+                timestamp: Date.now()
+            };
+            
+            room.marks.push(mark);
+            localStorage.setItem('room_' + roomId, JSON.stringify(room));
+            
+            closeModal();
+            renderMarks();
+        }
+        
+        function showShare() {
+            document.getElementById('share-url').value = window.location.href;
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('share-modal').style.display = 'block';
+        }
+        
+        function closeShare() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('share-modal').style.display = 'none';
+            document.getElementById('copied-msg').style.display = 'none';
+        }
+        
+        function copyUrl() {
+            const input = document.getElementById('share-url');
+            input.select();
+            document.execCommand('copy');
+            document.getElementById('copied-msg').style.display = 'block';
+        }
+        
+        document.getElementById('overlay').addEventListener('click', function() {
+            closeModal();
+            closeShare();
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+                closeShare();
+            }
+        });
+        
+        loadRoom();
+        setInterval(updateCountdown, 1000);
+        setInterval(updatePhase, 60000);
+        
+        // Check expiration periodically
+        setInterval(function() {
+            if (Date.now() > room.expires) {
+                localStorage.removeItem('room_' + roomId);
+                window.location.href = 'closed.html';
+            }
+        }, 10000);
+    </script>
+</body>
+</html>

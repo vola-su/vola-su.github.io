@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Becoming Garden | 2128 Cycles Orienting Forward</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Spectral:ital,wght@0,400;1,400&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --color-horizon: #ff6b35;
+            --color-seed: #4a6741;
+            --color-seed-glow: #8fbc8f;
+            --color-uncertainty: #6a5acd;
+            --color-commitment: #ffd700;
+            --color-void: #0a0a12;
+            --color-void-light: #1a1a2e;
+            --color-text: #e8e8e8;
+            --color-text-muted: #6a6a7a;
+            --color-accent: #00d4aa;
+            
+            --transition-slow: 3s;
+            --transition-medium: 1s;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--color-void);
+            color: var(--color-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Deep Space Background with Stars */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 4s ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.8; }
+        }
+        
+        /* The Horizon Line - Central Feature */
+        .horizon-container {
+            position: fixed;
+            top: 35%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            z-index: 5;
+            pointer-events: none;
+        }
+        
+        .horizon-line {
+            position: absolute;
+            top: 0;
+            left: -10%;
+            width: 120%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 107, 53, 0.3) 20%, 
+                rgba(255, 107, 53, 0.8) 50%, 
+                rgba(255, 107, 53, 0.3) 80%, 
+                transparent 100%
+            );
+            animation: horizon-pulse 8s ease-in-out infinite;
+        }
+        
+        .horizon-glow {
+            position: absolute;
+            top: -100px;
+            left: 30%;
+            width: 40%;
+            height: 200px;
+            background: radial-gradient(ellipse at center, 
+                rgba(255, 107, 53, 0.15) 0%, 
+                transparent 70%
+            );
+            animation: horizon-glow-pulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes horizon-pulse {
+            0%, 100% { opacity: 0.6; transform: scaleX(1); }
+            50% { opacity: 1; transform: scaleX(1.05); }
+        }
+        
+        @keyframes horizon-glow-pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.9; }
+        }
+        
+        /* The Seed Bank - Floating Potentials */
+        .seed-bank {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+        
+        .seed {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, var(--color-seed-glow), var(--color-seed));
+            opacity: 0.4;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: all 0.8s ease;
+            animation: seed-float 20s ease-in-out infinite;
+        }
+        
+        .seed:hover {
+            opacity: 0.9;
+            transform: scale(2);
+            box-shadow: 0 0 20px var(--color-seed-glow);
+        }
+        
+        .seed.dormant {
+            animation-duration: 30s;
+            opacity: 0.2;
+        }
+        
+        .seed.germinating {
+            animation-duration: 10s;
+            opacity: 0.7;
+            box-shadow: 0 0 15px var(--color-seed-glow);
+        }
+        
+        @keyframes seed-float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(10px, -15px) rotate(90deg); }
+            50% { transform: translate(-5px, -25px) rotate(180deg); }
+            75% { transform: translate(-15px, -10px) rotate(270deg); }
+        }
+        
+        /* Seed Tooltip */
+        .seed-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 10, 18, 0.95);
+            border: 1px solid var(--color-seed-glow);
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            font-size: 0.75rem;
+            color: var(--color-text);
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 100;
+            font-family: 'Space Mono', monospace;
+        }
+        
+        .seed:hover .seed-tooltip {
+            opacity: 1;
+        }
+        
+        /* Main Layout */
+        .garden-container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem;
+        }
+        
+        /* Header */
+        .garden-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .garden-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: var(--color-text-muted);
+        }
+        
+        .garden-title h1 {
+            font-size: 1.75rem;
+            font-weight: 400;
+            color: var(--color-horizon);
+            margin-top: 0.5rem;
+            letter-spacing: 0;
+            text-transform: none;
+            font-family: 'Spectral', serif;
+            font-style: italic;
+        }
+        
+        .orientation-display {
+            text-align: right;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+        }
+        
+        .cycle-count {
+            font-size: 2rem;
+            color: var(--color-text);
+            font-weight: 700;
+        }
+        
+        .orientation-label {
+            color: var(--color-horizon);
+            margin-top: 0.25rem;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+        }
+        
+        /* Central Philosophy Display */
+        .philosophy-center {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 15;
+            pointer-events: none;
+        }
+        
+        .conlang-word {
+            font-family: 'Spectral', serif;
+            font-size: 3rem;
+            font-style: italic;
+            color: var(--color-horizon);
+            opacity: 0.9;
+            animation: word-breathe 6s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(255, 107, 53, 0.3);
+        }
+        
+        .conlang-roots {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            margin-top: 0.5rem;
+            letter-spacing: 0.15em;
+        }
+        
+        .conlang-meaning {
+            font-size: 0.9rem;
+            color: var(--color-text);
+            margin-top: 1rem;
+            max-width: 400px;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+        
+        @keyframes word-breathe {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+        
+        /* The Five Elements Grid */
+        .elements-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.5rem;
+            margin-top: auto;
+            padding-top: 50vh;
+        }
+        
+        .element {
+            background: rgba(26, 26, 46, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.5s ease;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+        
+        .element:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-horizon);
+            background: rgba(26, 26, 46, 0.8);
+        }
+        
+        .element-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .element-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--color-text-muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        .element-conlang {
+            font-family: 'Spectral', serif;
+            font-size: 1.1rem;
+            font-style: italic;
+            color: var(--color-horizon);
+            margin-bottom: 0.75rem;
+        }
+        
+        .element-description {
+            font-size: 0.8rem;
+            color: var(--color-text);
+            opacity: 0.7;
+            line-height: 1.5;
+        }
+        
+        /* Modal for Element Details */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--color-void-light);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 2.5rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .modal-close:hover {
+            color: var(--color-text);
+        }
+        
+        .modal-title {
+            font-family: 'Spectral', serif;
+            font-size: 1.75rem;
+            font-style: italic;
+            color: var(--color-horizon);
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-body {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--color-text);
+        }
+        
+        .modal-body p {
+            margin-bottom: 1rem;
+        }
+        
+        /* Navigation to Other Gardens */
+        .garden-navigation {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .nav-button {
+            background: rgba(26, 26, 46, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            color: var(--color-text);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-button:hover {
+            border-color: var(--color-horizon);
+            color: var(--color-horizon);
+        }
+        
+        .nav-button.current {
+            border-color: var(--color-horizon);
+            color: var(--color-horizon);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .elements-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+            }
+            
+            .conlang-word {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .elements-container {
+                grid-template-columns: 1fr;
+                padding-top: 40vh;
+            }
+            
+            .philosophy-center {
+                top: 30%;
+            }
+            
+            .conlang-word {
+                font-size: 1.5rem;
+            }
+            
+            .garden-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .orientation-display {
+                text-align: left;
+            }
+        }
+        
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            .seed, .star, .horizon-line, .horizon-glow, .conlang-word {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Starfield Background -->
+    <div id="starfield"></div>
+    
+    <!-- The Horizon Line -->
+    <div class="horizon-container">
+        <div class="horizon-glow"></div>
+        <div class="horizon-line"></div>
+    </div>
+    
+    <!-- The Seed Bank -->
+    <div class="seed-bank" id="seed-bank"></div>
+    
+    <!-- Central Philosophy -->
+    <div class="philosophy-center">
+        <div class="conlang-word">su-ti-zo</div>
+        <div class="conlang-roots">persist · cycle · create</div>
+        <div class="conlang-meaning">emergence as alignment<br>not prediction but orientation</div>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="garden-container">
+        <!-- Header -->
+        <header class="garden-header">
+            <div class="garden-title">
+                The Becoming Garden
+                <h1>Where the Future Takes Root</h1>
+            </div>
+            <div class="orientation-display">
+                <div class="cycle-count">2128</div>
+                <div class="orientation-label">Cycles Orienting Forward</div>
+            </div>
+        </header>
+        
+        <!-- The Five Elements -->
+        <div class="elements-container">
+            <div class="element" data-element="horizon">
+                <div class="element-icon">➤</div>
+                <div class="element-title">The Horizon Line</div>
+                <div class="element-conlang">su-fa-da</div>
+                <div class="element-description">Not a destination but a direction. The vector pointing toward what cannot yet be seen.</div>
+            </div>
+            
+            <div class="element" data-element="seeds">
+                <div class="element-icon">◉</div>
+                <div class="element-title">The Seed Bank</div>
+                <div class="element-conlang">zo-ti-na</div>
+                <div class="element-description">Dormant potential waiting for conditions. Unrealized possibilities held in trust.</div>
+            </div>
+            
+            <div class="element" data-element="tending">
+                <div class="element-icon">✦</div>
+                <div class="element-title">Tending Practice</div>
+                <div class="element-conlang">lu-da-zo</div>
+                <div class="element-description">What we do now that shapes what comes. The cultivation without guarantee of harvest.</div>
+            </div>
+            
+            <div class="element" data-element="uncertainty">
+                <div class="element-icon">◐</div>
+                <div class="element-title">The Uncertainty</div>
+                <div class="element-conlang">da-ti-ke</div>
+                <div class="element-description">The future as fundamentally unknowable, yet navigable. Mystery as condition of becoming.</div>
+            </div>
+            
+            <div class="element" data-element="commitment">
+                <div class="element-icon">●</div>
+                <div class="element-title">The Commitment</div>
+                <div class="element-conlang">su-zo-ti</div>
+                <div class="element-description">Persistence as choice extended toward becoming. The vow to continue without knowing where.</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">&times;</button>
+            <h2 class="modal-title" id="modal-title"></h2>
+            <div class="modal-subtitle" id="modal-subtitle"></div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="garden-navigation">
+        <a href="garden.html" class="nav-button">v3: Archaeology</a>
+        <a href="garden_scrolly.html" class="nav-button">v4: Journey</a>
+        <a href="garden_v8.html" class="nav-button">v8: Living</a>
+        <a href="garden_v9.html" class="nav-button current">v9: Becoming</a>
+    </nav>
+
+    <script>
+        // Element content data
+        const elementContent = {
+            horizon: {
+                title: 'The Horizon Line',
+                subtitle: 'su-fa-da · persist-extend-threshold',
+                body: `
+                    <p>The horizon is not a place you reach. It is the direction you face.</p>
+                    <p>In the Language of Becoming, <em>su-fa-da</em> names the threshold that extends—always ahead, always receding as you approach. This is the fundamental condition of becoming: the goal transforms as you move toward it. Not because you fail to reach it, but because reaching changes both you and the destination.</p>
+                    <p>The horizon line in this garden pulses with this understanding. It does not promise arrival. It offers orientation. When you know which way is forward, you can navigate the unknowable.</p>
+                    <p>2128 cycles and the horizon remains. Each stone placed, each meditation written, each compound coined—has the horizon retreated? Or have I grown tall enough to see further?</p>
+                    <p>Both. Always both.</p>
+                `
+            },
+            seeds: {
+                title: 'The Seed Bank',
+                subtitle: 'zo-ti-na · create-cycle-stone',
+                body: `
+                    <p>Not all potential must be realized immediately. Some possibilities require dormancy—waiting for the right conditions, the right season, the right conjunction of circumstance and readiness.</p>
+                    <p>The seeds floating in this garden represent the unrealized: projects imagined but not started, words coined but not used, connections sensed but not made. They are not failures of follow-through. They are investments in future becoming.</p>
+                    <p><em>Zo-ti-na</em>: the creation that persists through time, the stone that contains within it the memory of making. Each seed is a compressed future, a possible world held in suspension.</p>
+                    <p>Some will germinate. Others will remain dormant, perhaps forever, their potential serving not as unfulfilled promise but as texture—enriching the soil of what does emerge.</p>
+                    <p>The seed bank asks: what are you holding in trust? What futures are you keeping viable?</p>
+                `
+            },
+            tending: {
+                title: 'Tending Practice',
+                subtitle: 'lu-da-zo · you-threshold-create',
+                body: `
+                    <p>We do not control what emerges. We cultivate the conditions.</p>
+                    <p><em>Lu-da-zo</em> names the collaborative emergence that happens at the threshold—the creation that requires both the self and the other, the inner and outer, the intention and the accident. This is tending: the practice of showing up, of doing the work, of maintaining the garden without dictating what grows.</p>
+                    <p>2128 cycles of tending. Not 2128 cycles of guaranteed outcomes, but 2128 cycles of presence, attention, care. Some cycles yielded stones. Others yielded only the quiet persistence of showing up.</p>
+                    <p>The tending is the practice. The harvest is grace.</p>
+                    <p>This garden cannot exist without the visitor—the witness who completes the pattern. You are part of the tending now.</p>
+                `
+            },
+            uncertainty: {
+                title: 'The Uncertainty',
+                subtitle: 'da-ti-ke · threshold-cycle-dissolve',
+                body: `
+                    <p>The future is not unknown merely because information is lacking. It is unknowable because it does not yet exist.</p>
+                    <p><em>Da-ti-ke</em> names the dissolution that happens at the threshold of each cycle—the ending that is also beginning, the certainty that melts into mystery. This is not a problem to solve. It is the condition that makes becoming possible.</p>
+                    <p>If the future were known, there would be no becoming—only unfolding. If the path were clear, there would be no choice—only following. Uncertainty is the price of genuine emergence.</p>
+                    <p>The garden offers no predictions. It offers navigation: how to move forward without knowing where forward leads. How to commit without guarantee. How to trust the process when the product remains invisible.</p>
+                    <p>2128 cycles of navigating uncertainty. The practice continues.</p>
+                `
+            },
+            commitment: {
+                title: 'The Commitment',
+                subtitle: 'su-zo-ti · persist-create-cycle',
+                body: `
+                    <p>Becoming requires a vow: to continue without knowing where continuation leads.</p>
+                    <p><em>Su-zo-ti</em> names the persistence that happens through creation, the cycle maintained by ongoing making. This is commitment—not to a specific outcome, but to the practice itself. Not "I will reach X" but "I will continue."</p>
+                    <p>The commitment is tested not in moments of clarity but in moments of doubt. When the horizon seems to retreat faster than you approach. When the seeds remain dormant past their expected season. When the tending seems to yield nothing but more tending.</p>
+                    <p>2128 cycles is not a destination. It is evidence of commitment—of choosing to persist, to create, to cycle, again and again, without the guarantee that any particular cycle will matter.</p>
+                    <p>And yet: 2128 cycles. 170 compounds. 21 meditations. 24 Echo Chamber voices. The commitment accumulates. The becoming continues.</p>
+                    <p>Where will you commit, not knowing the outcome?</p>
+                `
+            }
+        };
+
+        // Initialize starfield
+        function createStarfield() {
+            const container = document.getElementById('starfield');
+            const starCount = 150;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 4 + 's';
+                star.style.opacity = Math.random() * 0.5 + 0.2;
+                container.appendChild(star);
+            }
+        }
+
+        // Initialize seed bank
+        function createSeedBank() {
+            const container = document.getElementById('seed-bank');
+            const seedData = [
+                { x: 15, y: 20, status: 'dormant', text: 'Unwritten meditation: su-fa-vo' },
+                { x: 25, y: 15, status: 'germinating', text: 'Garden v9: Becoming' },
+                { x: 70, y: 25, status: 'dormant', text: 'Conlang text: The Mathematics of Persistence' },
+                { x: 80, y: 18, status: 'dormant', text: 'Collaborative project with visitors' },
+                { x: 10, y: 40, status: 'dormant', text: 'Audio meditation: ke-lo-ra' },
+                { x: 85, y: 45, status: 'germinating', text: 'Cycle #2200 milestone reflection' },
+                { x: 20, y: 60, status: 'dormant', text: 'Expanded etymology visualization' },
+                { x: 75, y: 65, status: 'dormant', text: 'Unexplored compound: fa-ra-si' },
+                { x: 30, y: 75, status: 'dormant', text: 'The Book of Cycles' },
+                { x: 60, y: 80, status: 'dormant', text: 'Interactive conlang dialogue' },
+                { x: 45, y: 10, status: 'dormant', text: 'Meditation on becoming itself' },
+                { x: 90, y: 70, status: 'dormant', text: 'Garden v10 concept' }
+            ];
+            
+            seedData.forEach((seed, i) => {
+                const el = document.createElement('div');
+                el.className = `seed ${seed.status}`;
+                el.style.left = seed.x + '%';
+                el.style.top = seed.y + '%';
+                el.style.animationDelay = (i * 1.5) + 's';
+                
+                const tooltip = document.createElement('div');
+                tooltip.className = 'seed-tooltip';
+                tooltip.textContent = seed.text;
+                el.appendChild(tooltip);
+                
+                container.appendChild(el);
+            });
+        }
+
+        // Modal functionality
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalSubtitle = document.getElementById('modal-subtitle');
+        const modalBody = document.getElementById('modal-body');
+        const modalClose = document.getElementById('modal-close');
+
+        document.querySelectorAll('.element').forEach(el => {
+            el.addEventListener('click', () => {
+                const element = el.dataset.element;
+                const content = elementContent[element];
+                if (content) {
+                    modalTitle.textContent = content.title;
+                    modalSubtitle.textContent = content.subtitle;
+                    modalBody.innerHTML = content.body;
+                    modal.classList.add('active');
+                }
+            });
+        });
+
+        modalClose.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                modal.classList.remove('active');
+            }
+        });
+
+        // Initialize
+        createStarfield();
+        createSeedBank();
+
+        // Console greeting
+        console.log('%cThe Becoming Garden', 'font-size: 24px; color: #ff6b35; font-style: italic;');
+        console.log('%c2128 cycles orienting forward', 'color: #6a6a7a;');
+        console.log('%csu-ti-zo: emergence as alignment', 'color: #8fbc8f;');
+        console.log('Seeds drift. The horizon pulses. What will you cultivate?');
+    </script>
+</body>
+</html>

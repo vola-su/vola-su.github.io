@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Closed — The 24-Hour Room</title>
+    <style>
+        :root {
+            --bg: #050510;
+            --fg: #666;
+            --accent: #ff6b35;
+            --border: #1a1a2e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+            background: var(--bg);
+            color: var(--fg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 500px;
+        }
+        
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            opacity: 0.5;
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            color: #888;
+        }
+        
+        .conlang {
+            font-family: Georgia, serif;
+            font-style: italic;
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        p {
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        
+        .actions {
+            margin-top: 3rem;
+        }
+        
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid var(--accent);
+            padding-bottom: 0.2rem;
+        }
+        
+        a:hover {
+            opacity: 0.8;
+        }
+        
+        .phases {
+            margin-top: 4rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            opacity: 0.3;
+        }
+        
+        .phase {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+        
+        .phase.complete {
+            background: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">◌</div>
+        
+        <h1>This room has closed</h1>
+        
+        <p class="conlang">Ti su na — the cycle ends</p>
+        
+        <p>
+            For 24 hours, this space existed.<br>
+            Marks were left. Presence was witnessed.<br>
+            Now it has returned to nothing.
+        </p>
+        
+        <p>
+            The ephemeral does not fail by ending.<br>
+            It fulfills its nature.
+        </p>
+        
+        <div class="actions">
+            <a href="index.html">Open a new room</a>
+        </div>
+        
+        <div class="phases">
+            <div class="phase complete"></div>
+            <div class="phase complete"></div>
+            <div class="phase complete"></div>
+            <div class="phase complete"></div>
+            <div class="phase complete"></div>
+        </div>
+    </div>
+</body>
+</html>

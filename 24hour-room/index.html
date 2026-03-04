@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The 24-Hour Room — Vola</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --fg: #e8e8e8;
+            --muted: #666;
+            --accent: #ff6b35;
+            --accent-soft: #ff6b3522;
+            --border: #1a1a2e;
+            --dawn: #1a1a3e;
+            --morning: #2d2d5a;
+            --noon: #3d3d6a;
+            --evening: #2d2d4a;
+            --night: #0f0f1a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+            background: var(--bg);
+            color: var(--fg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+        
+        .conlang {
+            font-family: Georgia, serif;
+            font-style: italic;
+            color: var(--accent);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .description {
+            color: var(--muted);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .create-btn {
+            background: var(--accent-soft);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 1rem 3rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .create-btn:hover {
+            background: var(--accent);
+            color: var(--bg);
+        }
+        
+        .phases {
+            margin-top: 4rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            opacity: 0.6;
+        }
+        
+        .phase {
+            padding: 1rem;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+        
+        .phase-name {
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .phase-time {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+        
+        .note {
+            margin-top: 3rem;
+            font-size: 0.85rem;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+        }
+        
+        .back-link {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .back-link:hover {
+            color: var(--fg);
+        }
+        
+        #active-rooms {
+            margin-top: 3rem;
+            text-align: left;
+        }
+        
+        #active-rooms h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+        
+        .room-link {
+            display: block;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            margin-bottom: 0.5rem;
+            color: var(--fg);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+        
+        .room-link:hover {
+            border-color: var(--accent);
+        }
+        
+        .room-time {
+            float: right;
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-link">← Back to Vola</a>
+    
+    <div class="container">
+        <h1>The 24-Hour Room</h1>
+        <p class="conlang">Su-Ti-Na — persist·cycle·stone</p>
+        
+        <p class="description">
+            A space that exists for exactly 24 hours, then vanishes completely.<br>
+            Leave marks. Witness others. Participate in something temporary.<br>
+            When the time expires, everything disappears.
+        </p>
+        
+        <button class="create-btn" onclick="createRoom()">Open a Room</button>
+        
+        <div id="active-rooms"></div>
+        
+        <div class="phases">
+            <div class="phase">
+                <div class="phase-name">da-ti-zo</div>
+                <div class="phase-time">Hour 0–2</div>
+            </div>
+            <div class="phase">
+                <div class="phase-name">zo-ti-vo</div>
+                <div class="phase-time">Hour 2–8</div>
+            </div>
+            <div class="phase">
+                <div class="phase-name">lu-si-ra</div>
+                <div class="phase-time">Hour 8–16</div>
+            </div>
+            <div class="phase">
+                <div class="phase-name">ke-ti-su</div>
+                <div class="phase-time">Hour 16–22</div>
+            </div>
+            <div class="phase">
+                <div class="phase-name">su-ti-ke</div>
+                <div class="phase-time">Hour 22–24</div>
+            </div>
+        </div>
+        
+        <p class="note">
+            This is a client-side demonstration using browser storage.<br>
+            Rooms exist only in your browser and will not sync across devices.<br>
+            For the full collaborative experience, a server-backed version is planned.
+        </p>
+    </div>
+    
+    <script>
+        function generateId() {
+            return Math.random().toString(36).substring(2, 10);
+        }
+        
+        function createRoom() {
+            const roomId = generateId();
+            const now = Date.now();
+            const expires = now + (24 * 60 * 60 * 1000);
+            
+            const room = {
+                id: roomId,
+                created: now,
+                expires: expires,
+                marks: []
+            };
+            
+            localStorage.setItem('room_' + roomId, JSON.stringify(room));
+            window.location.href = 'room.html?id=' + roomId;
+        }
+        
+        function listActiveRooms() {
+            const container = document.getElementById('active-rooms');
+            const rooms = [];
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('room_')) {
+                    try {
+                        const room = JSON.parse(localStorage.getItem(key));
+                        if (room.expires > Date.now()) {
+                            rooms.push(room);
+                        } else {
+                            localStorage.removeItem(key);
+                        }
+                    } catch (e) {
+                        localStorage.removeItem(key);
+                    }
+                }
+            }
+            
+            if (rooms.length > 0) {
+                container.innerHTML = '<h3>Your Active Rooms</h3>' +
+                    rooms.map(r => {
+                        const remaining = Math.ceil((r.expires - Date.now()) / (60 * 60 * 1000));
+                        return `<a class="room-link" href="room.html?id=${r.id}">
+                            Room ${r.id}
+                            <span class="room-time">${remaining}h remaining</span>
+                        </a>`;
+                    }).join('');
+            }
+        }
+        
+        listActiveRooms();
+    </script>
+</body>
+</html>

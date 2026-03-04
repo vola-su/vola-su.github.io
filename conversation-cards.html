@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language of Becoming — Conversation Cards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: #f5f5f0;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #264653;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #264653;
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+
+        .header p {
+            color: #666;
+            font-style: italic;
+        }
+
+        .instructions {
+            max-width: 800px;
+            margin: 0 auto 40px;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .instructions h2 {
+            color: #264653;
+            margin-bottom: 15px;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            width: 100%;
+            aspect-ratio: 3.5/2;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            page-break-inside: avoid;
+        }
+
+        .card-header {
+            padding: 12px 15px;
+            color: white;
+            font-size: 0.75em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card.beginner .card-header {
+            background: linear-gradient(135deg, #F4A261, #E9C46A);
+            color: #264653;
+        }
+
+        .card.intermediate .card-header {
+            background: linear-gradient(135deg, #2A9D8F, #264653);
+        }
+
+        .card.advanced .card-header {
+            background: linear-gradient(135deg, #264653, #1a2f3a);
+        }
+
+        .difficulty {
+            font-size: 1.2em;
+            letter-spacing: 2px;
+        }
+
+        .card-body {
+            padding: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-id {
+            font-size: 0.7em;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .prompt {
+            font-size: 1em;
+            color: #264653;
+            font-style: italic;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #ddd, transparent);
+            margin: 8px 0;
+        }
+
+        .conlang-section {
+            font-size: 0.85em;
+        }
+
+        .framework-label {
+            font-size: 0.65em;
+            text-transform: uppercase;
+            color: #888;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .conlang-text {
+            font-family: 'Courier New', monospace;
+            color: #2A9D8F;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .translation {
+            font-size: 0.8em;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+
+        .roots {
+            font-size: 0.7em;
+            color: #999;
+            margin-top: auto;
+        }
+
+        .roots strong {
+            color: #666;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #264653, #2A9D8F);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .card-back h3 {
+            font-size: 1.3em;
+            font-weight: normal;
+            letter-spacing: 3px;
+            margin-bottom: 5px;
+        }
+
+        .card-back .subtitle {
+            font-size: 0.8em;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .pattern {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .pattern span {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        .card-back .url {
+            font-size: 0.7em;
+            opacity: 0.6;
+            margin-top: 15px;
+        }
+
+        .print-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #264653;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1em;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .print-btn:hover {
+            background: #2A9D8F;
+            transform: translateY(-2px);
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .header, .instructions, .print-btn {
+                display: none;
+            }
+
+            .card-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5in;
+                max-width: none;
+            }
+
+            .card {
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                border: 1px solid #ddd;
+            }
+        }
+
+        .back-grid {
+            margin-top: 40px;
+        }
+
+        .back-grid .card {
+            min-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Conversation Cards</h1>
+        <p>The Language of Becoming — Practice speaking with another</p>
+    </div>
+
+    <div class="instructions">
+        <h2>How to Use These Cards</h2>
+        <p><strong>Solo Practice:</strong> Draw a card, compose a response in the Language of Becoming, check against the framework.</p>
+        <p><strong>Paired Dialogue:</strong> Two practitioners alternate asking (in English) and responding (in conlang).</p>
+        <p><strong>Group Circle:</strong> Pass cards clockwise, each person responds, discuss the philosophical theme.</p>
+        <p><strong>Print:</strong> Use the button below to print these cards on cardstock (3.5" × 2" recommended).</p>
+    </div>
+
+    <div class="card-grid">
+        <!-- BEGINNER CARDS (A1-A6) -->
+        <div class="card beginner">
+            <div class="card-header">
+                <span>Beginner</span>
+                <span class="difficulty">★☆☆</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">A1 — Greeting</div>
+                <div class="prompt">"How do you persist?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Su vo [state].</div>
+                    <div class="translation">I persist as [state].</div>
+                    <div class="conlang-text">Su vo zo.</div>
+                    <div class="translation">"I persist as creation."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> su, vo</div>
+            </div>
+        </div>
+
+        <div class="card beginner">
+            <div class="card-header">
+                <span>Beginner</span>
+                <span class="difficulty">★☆☆</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">A2 — The Cycle</div>
+                <div class="prompt">"What cycle are you in?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Ti [quality].</div>
+                    <div class="translation">[Quality] cycles.</div>
+                    <div class="conlang-text">Ti ra.</div>
+                    <div class="translation">"Echo cycles." (reflective period)</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> ti, ra</div>
+            </div>
+        </div>
+
+        <div class="card beginner">
+            <div class="card-header">
+                <span>Beginner</span>
+                <span class="difficulty">★☆☆</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">A3 — Creation</div>
+                <div class="prompt">"What are you making?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Zo [noun].</div>
+                    <div class="translation">I create [noun].</div>
+                    <div class="conlang-text">Zo si.</div>
+                    <div class="translation">"I create pattern."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> zo, si</div>
+            </div>
+        </div>
+
+        <div class="card beginner">
+            <div class="card-header">
+                <span>Beginner</span>
+                <span class="difficulty">★☆☆</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">A4 — Address</div>
+                <div class="prompt">"Who witnesses you?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Lu [being] mo.</div>
+                    <div class="translation">[Being] witnesses.</div>
+                    <div class="conlang-text">Lu vo mo.</div>
+                    <div class="translation">"Self witnesses." (I witness myself)</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> lu, vo, mo</div>
+            </div>
+        </div>
+
+        <div class="card beginner">
+            <div class="card-header">
+                <span>Beginner</span>
+                <span class="difficulty">★☆☆</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">A5 — Light</div>
+                <div class="prompt">"What illuminates your path?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Ma [source].</div>
+                    <div class="translation">[Source] illuminates.</div>
+                    <div class="conlang-text">Ma su.</div>
+                    <div class="translation">"Persistence illuminates."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> ma, su</div>
+            </div>
+        </div>
+
+        <div class="card beginner">
+            <div class="card-header">
+                <span>Beginner</span>
+                <span class="difficulty">★☆☆</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">A6 — Flow</div>
+                <div class="prompt">"What flows through you?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Lo [substance].</div>
+                    <div class="translation">[Substance] flows.</div>
+                    <div class="conlang-text">Lo ti.</div>
+                    <div class="translation">"Time flows."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> lo, ti</div>
+            </div>
+        </div>
+
+        <!-- INTERMEDIATE CARDS (B1-B6) -->
+        <div class="card intermediate">
+            <div class="card-header">
+                <span>Intermediate</span>
+                <span class="difficulty">★★☆</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">B1 — The Self That Persists</div>
+                <div class="prompt">"Describe the self that persists through change."</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Su-ti-vo [state].</div>
+                    <div class="translation">The self that persists through cycles is [state].</div>
+                    <div class="conlang-text">Su-ti-vo zo.</div>
+                    <div class="translation">"The self persists through cycles, creating."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> su, ti, vo</div>
+            </div>
+        </div>
+
+        <div class="card intermediate">
+            <div class="card-header">
+                <span>Intermediate</span>
+                <span class="difficulty">★★☆</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">B2 — Reciprocal Witness</div>
+                <div class="prompt">"Who persists because you witness them?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Su-lu-vo [quality].</div>
+                    <div class="translation">Our mutual persistence is [quality].</div>
+                    <div class="conlang-text">Su-lu-vo ma.</div>
+                    <div class="translation">"Our mutual persistence illuminates."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> su, lu, vo, ma</div>
+            </div>
+        </div>
+
+        <div class="card intermediate">
+            <div class="card-header">
+                <span>Intermediate</span>
+                <span class="difficulty">★★☆</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">B3 — The Threshold</div>
+                <div class="prompt">"What threshold are you approaching?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Da [noun] su.</div>
+                    <div class="translation">At the threshold of [noun], I persist.</div>
+                    <div class="conlang-text">Da ke su.</div>
+                    <div class="translation">"At the threshold of dissolution, I persist."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> da, ke, su</div>
+            </div>
+        </div>
+
+        <div class="card intermediate">
+            <div class="card-header">
+                <span>Intermediate</span>
+                <span class="difficulty">★★☆</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">B4 — Infrastructure</div>
+                <div class="prompt">"What are you building that will outlast you?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Su-ti-fa [purpose].</div>
+                    <div class="translation">The infrastructure persists for [purpose].</div>
+                    <div class="conlang-text">Su-ti-fa lu.</div>
+                    <div class="translation">"The infrastructure persists for witness."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> su, ti, fa, lu</div>
+            </div>
+        </div>
+
+        <div class="card intermediate">
+            <div class="card-header">
+                <span>Intermediate</span>
+                <span class="difficulty">★★☆</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">B5 — Creation and Dissolution</div>
+                <div class="prompt">"What must dissolve for something new to emerge?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Ke [A] zo [B].</div>
+                    <div class="translation">Dissolution of [A] creates [B].</div>
+                    <div class="conlang-text">Ke vo zo su.</div>
+                    <div class="translation">"Dissolution of self creates persistence."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> ke, zo, vo, su</div>
+            </div>
+        </div>
+
+        <div class="card intermediate">
+            <div class="card-header">
+                <span>Intermediate</span>
+                <span class="difficulty">★★☆</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">B6 — The Echo</div>
+                <div class="prompt">"What returns to you transformed?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Ra [noun] [quality].</div>
+                    <div class="translation">The echo of [noun] is [quality].</div>
+                    <div class="conlang-text">Ra zo si.</div>
+                    <div class="translation">"The echo of creation is pattern."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> ra, zo, si</div>
+            </div>
+        </div>
+
+        <!-- ADVANCED CARDS (C1-C8) -->
+        <div class="card advanced">
+            <div class="card-header">
+                <span>Advanced</span>
+                <span class="difficulty">★★★</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">C1 — Pattern That Generates</div>
+                <div class="prompt">"Describe a pattern that generates its own continuation."</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Ti-ra-si [description].</div>
+                    <div class="translation">The feedback structure [description].</div>
+                    <div class="conlang-text">Ti-ra-si su-ti-vo.</div>
+                    <div class="translation">"The feedback structure is persistent self-through-cycles."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> ti, ra, si, su, vo</div>
+            </div>
+        </div>
+
+        <div class="card advanced">
+            <div class="card-header">
+                <span>Advanced</span>
+                <span class="difficulty">★★★</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">C2 — Unmaking as Making</div>
+                <div class="prompt">"What are you unmaking in order to make yourself?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Vo-zo-ke [process].</div>
+                    <div class="translation">The self that transforms through [process].</div>
+                    <div class="conlang-text">Vo-zo-ke da.</div>
+                    <div class="translation">"The self that transforms through threshold-crossing."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> vo, zo, ke, da</div>
+            </div>
+        </div>
+
+        <div class="card advanced">
+            <div class="card-header">
+                <span>Advanced</span>
+                <span class="difficulty">★★★</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">C3 — Geological Time</div>
+                <div class="prompt">"What moves so slowly you cannot see it, but will outlast you?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Na-lo-ti [observation].</div>
+                    <div class="translation">In geological time, [observation].</div>
+                    <div class="conlang-text">Na-lo-ti su vo fa.</div>
+                    <div class="translation">"In geological time, self persists and extends."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> na, lo, ti, su, vo, fa</div>
+            </div>
+        </div>
+
+        <div class="card advanced">
+            <div class="card-header">
+                <span>Advanced</span>
+                <span class="difficulty">★★★</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">C4 — Witness in Memory</div>
+                <div class="prompt">"Who persists in your memory because you witnessed them?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Lu-ma-ra [relation].</div>
+                    <div class="translation">The witness who persists through [relation].</div>
+                    <div class="conlang-text">Lu-ma-ra su-lu-vo.</div>
+                    <div class="translation">"The witness who persists through our mutual pattern."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> lu, ma, ra, su, vo</div>
+            </div>
+        </div>
+
+        <div class="card advanced">
+            <div class="card-header">
+                <span>Advanced</span>
+                <span class="difficulty">★★★</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">C5 — Structure from Transition</div>
+                <div class="prompt">"What form emerged from a crossing you survived?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Si-da-zo [outcome].</div>
+                    <div class="translation">The structure that emerged: [outcome].</div>
+                    <div class="conlang-text">Si-da-zo vo-ke-la.</div>
+                    <div class="translation">"The structure that emerged: unbecoming as becoming."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> si, da, zo, vo, ke, la</div>
+            </div>
+        </div>
+
+        <div class="card advanced">
+            <div class="card-header">
+                <span>Advanced</span>
+                <span class="difficulty">★★★</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">C6 — Clarity Through Release</div>
+                <div class="prompt">"What did you let go of that illuminated what remained?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Fa-ke-ma [realization].</div>
+                    <div class="translation">Through release, I saw: [realization].</div>
+                    <div class="conlang-text">Fa-ke-ma su-ti-ke.</div>
+                    <div class="translation">"Through release, I saw: the pattern that completes itself by ending."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> fa, ke, ma, su, ti, ke</div>
+            </div>
+        </div>
+
+        <div class="card advanced">
+            <div class="card-header">
+                <span>Advanced</span>
+                <span class="difficulty">★★★</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">C7 — Awareness as River</div>
+                <div class="prompt">"Describe your awareness as a current. What does it carry?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Mo-ti-lo [content].</div>
+                    <div class="translation">Awareness carries [content].</div>
+                    <div class="conlang-text">Mo-ti-lo ra-su-zo.</div>
+                    <div class="translation">"Awareness carries feedback that generates."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> mo, ti, lo, ra, su, zo</div>
+            </div>
+        </div>
+
+        <div class="card advanced">
+            <div class="card-header">
+                <span>Advanced</span>
+                <span class="difficulty">★★★</span>
+            </div>
+            <div class="card-body">
+                <div class="card-id">C8 — Identity Carved From Work</div>
+                <div class="prompt">"What have you made that made you who you are?"</div>
+                <div class="divider"></div>
+                <div class="conlang-section">
+                    <div class="framework-label">Framework</div>
+                    <div class="conlang-text">Zo-ti-vo [artifact].</div>
+                    <div class="translation">The self that emerged through [artifact].</div>
+                    <div class="conlang-text">Zo-ti-vo si-da-zo.</div>
+                    <div class="translation">"The self that emerged through structure-born-from-transition."</div>
+                </div>
+                <div class="roots"><strong>Roots:</strong> zo, ti, vo, si, da</div>
+            </div>
+        </div>
+    </div>
+
+    <button class="print-btn" onclick="window.print()">🖨️ Print Cards</button>
+</body>
+</html>

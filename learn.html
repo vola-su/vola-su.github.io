@@ -3,21 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learn the Language of Becoming | Interactive Guide</title>
+    <title>Learn the Language of Becoming | v2 Interactive Guide</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --bg-primary: #0a0a0f;
             --bg-secondary: #12121a;
             --bg-tertiary: #1a1a25;
+            --bg-elevated: #252535;
             --accent-primary: #4a9eff;
             --accent-secondary: #7b68ee;
             --accent-tertiary: #00d4aa;
+            --accent-warm: #ff6b6b;
+            --accent-gold: #ffd93d;
             --text-primary: #e8e8f0;
             --text-secondary: #a0a0b0;
             --text-muted: #606070;
             --success: #00d4aa;
             --error: #ff6b6b;
+            --warning: #ffd93d;
         }
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
@@ -26,10 +30,10 @@
             min-height: 100vh;
             line-height: 1.6;
         }
-        .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
         header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             padding: 2rem 0;
             border-bottom: 1px solid var(--bg-tertiary);
         }
@@ -41,44 +45,263 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
-        .mode-selector { display: flex; gap: 1rem; margin-bottom: 2rem; justify-content: center; flex-wrap: wrap; }
-        .mode-btn {
-            padding: 0.75rem 1.5rem;
+        .subtitle { color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 1rem; }
+        .version-badge {
+            display: inline-block;
+            background: var(--bg-tertiary);
+            color: var(--accent-tertiary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        /* Settings Panel */
+        .settings-panel {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--bg-tertiary);
+        }
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .setting-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+        .difficulty-selector {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .difficulty-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            border: 2px solid transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+        .difficulty-btn:hover { border-color: var(--accent-primary); color: var(--text-primary); }
+        .difficulty-btn.active { 
+            border-color: var(--accent-primary); 
+            color: var(--accent-primary);
+            background: rgba(74, 158, 255, 0.1);
+        }
+        .category-filters {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .category-btn {
+            padding: 0.4rem 0.75rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--bg-elevated);
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+        .category-btn:hover { border-color: var(--accent-secondary); }
+        .category-btn.active { 
+            background: var(--accent-secondary);
+            color: var(--bg-primary);
+            border-color: var(--accent-secondary);
+        }
+        
+        /* Mode Selector */
+        .mode-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+        .mode-tab {
+            padding: 0.75rem 1.25rem;
             background: var(--bg-secondary);
             border: 1px solid var(--bg-tertiary);
             color: var(--text-secondary);
             cursor: pointer;
-            border-radius: 8px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-size: 0.95rem;
+        }
+        .mode-tab:hover { border-color: var(--accent-primary); color: var(--text-primary); }
+        .mode-tab.active { 
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: var(--bg-primary);
+            border-color: transparent;
+        }
+        
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 1.25rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--bg-tertiary);
+            transition: transform 0.2s ease;
+        }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-value { 
+            font-size: 1.75rem; 
+            font-weight: 300; 
+            color: var(--accent-primary);
             transition: all 0.3s ease;
         }
-        .mode-btn:hover { border-color: var(--accent-primary); color: var(--text-primary); }
-        .mode-btn.active { background: var(--accent-primary); color: var(--bg-primary); border-color: var(--accent-primary); }
-        .card {
+        .stat-value.changed { 
+            transform: scale(1.2); 
+            color: var(--accent-tertiary);
+        }
+        .stat-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; margin-top: 0.25rem; }
+        
+        /* Progress Section */
+        .progress-section {
+            margin-bottom: 2rem;
+        }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .progress-text { color: var(--text-secondary); font-size: 0.9rem; }
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-tertiary));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .mastery-dots {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .mastery-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            transition: all 0.3s ease;
+        }
+        .mastery-dot.mastered { background: var(--success); box-shadow: 0 0 8px var(--success); }
+        .mastery-dot.learning { background: var(--warning); }
+        .mastery-dot.new { background: var(--accent-primary); }
+        
+        /* Quiz Card */
+        .quiz-card {
             background: var(--bg-secondary);
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 2.5rem;
             border: 1px solid var(--bg-tertiary);
             margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
         }
-        .question { font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center; }
-        .word-display {
-            font-size: 3rem;
+        .quiz-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary), var(--accent-tertiary));
+        }
+        .question-type {
             text-align: center;
-            margin: 2rem 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        .question-text { 
+            font-size: 1.4rem; 
+            text-align: center; 
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+        .word-display {
+            font-size: 3.5rem;
+            text-align: center;
+            margin: 1.5rem 0;
             color: var(--accent-primary);
             font-weight: 300;
+            letter-spacing: 0.05em;
         }
-        .word-breakdown { display: flex; justify-content: center; gap: 1rem; margin: 1.5rem 0; flex-wrap: wrap; }
+        .word-meta {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        .word-breakdown { 
+            display: flex; 
+            justify-content: center; 
+            gap: 1rem; 
+            margin: 1.5rem 0; 
+            flex-wrap: wrap;
+        }
         .morpheme {
             background: var(--bg-tertiary);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
+            padding: 0.75rem 1.25rem;
+            border-radius: 10px;
             text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
         }
-        .morpheme .form { font-size: 1.2rem; color: var(--accent-primary); font-weight: 500; }
-        .morpheme .meaning { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; }
-        .options { display: grid; gap: 1rem; margin-top: 2rem; }
+        .morpheme:hover { border-color: var(--accent-primary); }
+        .morpheme .form { font-size: 1.3rem; color: var(--accent-primary); font-weight: 500; }
+        .morpheme .meaning { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; margin-top: 0.25rem; }
+        
+        /* Input Mode */
+        .typing-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1.2rem;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--bg-elevated);
+            border-radius: 12px;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 1rem;
+            transition: all 0.2s ease;
+        }
+        .typing-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+        .typing-input.correct { border-color: var(--success); background: rgba(0, 212, 170, 0.1); }
+        .typing-input.incorrect { border-color: var(--error); background: rgba(255, 107, 107, 0.1); }
+        
+        /* Options */
+        .options { display: grid; gap: 0.75rem; margin-top: 1.5rem; }
         .option {
             background: var(--bg-tertiary);
             border: 2px solid transparent;
@@ -86,58 +309,316 @@
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
-        .option:hover { border-color: var(--accent-primary); transform: translateX(5px); }
-        .option.correct { border-color: var(--success); background: rgba(0, 212, 170, 0.1); }
-        .option.incorrect { border-color: var(--error); background: rgba(255, 107, 107, 0.1); }
-        .option.disabled { cursor: not-allowed; opacity: 0.7; }
-        .feedback { text-align: center; padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem; font-size: 1.1rem; }
-        .feedback.correct { background: rgba(0, 212, 170, 0.1); color: var(--success); }
-        .feedback.incorrect { background: rgba(255, 107, 107, 0.1); color: var(--error); }
-        .stats { display: flex; justify-content: space-around; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-        .stat { text-align: center; padding: 1rem 2rem; background: var(--bg-secondary); border-radius: 12px; border: 1px solid var(--bg-tertiary); }
-        .stat-value { font-size: 2rem; font-weight: 300; color: var(--accent-primary); }
-        .stat-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; }
+        .option:hover { 
+            border-color: var(--accent-primary); 
+            transform: translateX(5px);
+            background: var(--bg-elevated);
+        }
+        .option.correct { 
+            border-color: var(--success); 
+            background: rgba(0, 212, 170, 0.15);
+        }
+        .option.incorrect { 
+            border-color: var(--error); 
+            background: rgba(255, 107, 107, 0.15);
+        }
+        .option.disabled { cursor: not-allowed; opacity: 0.6; }
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+        .option:hover .option-letter { background: var(--accent-primary); color: var(--bg-primary); }
+        .option.correct .option-letter { background: var(--success); color: var(--bg-primary); }
+        .option.incorrect .option-letter { background: var(--error); color: var(--bg-primary); }
+        
+        /* Matching Game */
+        .matching-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .match-card {
+            background: var(--bg-tertiary);
+            border: 2px solid transparent;
+            padding: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        .match-card:hover { border-color: var(--accent-primary); transform: scale(1.02); }
+        .match-card.selected { border-color: var(--accent-primary); background: rgba(74, 158, 255, 0.1); }
+        .match-card.matched { 
+            border-color: var(--success); 
+            background: rgba(0, 212, 170, 0.15);
+            cursor: default;
+        }
+        .match-card.wrong { 
+            border-color: var(--error); 
+            background: rgba(255, 107, 107, 0.15);
+            animation: shake 0.5s ease;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        /* Sentence Builder */
+        .sentence-builder {
+            margin-top: 1.5rem;
+        }
+        .sentence-display {
+            background: var(--bg-tertiary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            min-height: 60px;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .sentence-word {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .sentence-word:hover { transform: scale(1.05); background: var(--error); }
+        .sentence-placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        .word-token {
+            background: var(--bg-elevated);
+            border: 1px solid var(--bg-tertiary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .word-token:hover { 
+            border-color: var(--accent-primary); 
+            background: var(--bg-tertiary);
+            transform: translateY(-2px);
+        }
+        .word-token.used { opacity: 0.4; pointer-events: none; }
+        
+        /* Feedback */
+        .feedback {
+            text-align: center;
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .feedback.correct { background: rgba(0, 212, 170, 0.15); color: var(--success); }
+        .feedback.incorrect { background: rgba(255, 107, 107, 0.15); color: var(--error); }
+        .feedback hint { background: rgba(255, 217, 61, 0.15); color: var(--warning); }
+        
+        /* Actions */
+        .actions { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
         .btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
             padding: 1rem 2rem;
             background: var(--accent-primary);
             color: var(--bg-primary);
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 1rem;
             font-weight: 500;
             transition: all 0.3s ease;
         }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(74, 158, 255, 0.3); }
-        .actions { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
-        .hidden { display: none; }
-        .roots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+        .btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 25px rgba(74, 158, 255, 0.3);
+        }
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--bg-elevated);
+        }
+        .btn-secondary:hover {
+            background: var(--bg-elevated);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        .btn-success { background: var(--accent-tertiary); }
+        .btn-success:hover { box-shadow: 0 8px 25px rgba(0, 212, 170, 0.3); }
+        
+        /* Reference Panel */
+        .reference-panel {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--bg-tertiary);
+        }
+        .reference-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+            padding-bottom: 0.5rem;
+        }
+        .ref-tab {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .ref-tab:hover { color: var(--text-primary); background: var(--bg-tertiary); }
+        .ref-tab.active { color: var(--accent-primary); background: rgba(74, 158, 255, 0.1); }
+        .roots-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+            gap: 0.75rem; 
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        .roots-grid::-webkit-scrollbar { width: 6px; }
+        .roots-grid::-webkit-scrollbar-track { background: var(--bg-tertiary); border-radius: 3px; }
+        .roots-grid::-webkit-scrollbar-thumb { background: var(--accent-primary); border-radius: 3px; }
         .root-card {
             background: var(--bg-tertiary);
-            padding: 1.25rem;
-            border-radius: 12px;
-            border-left: 4px solid var(--accent-primary);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 3px solid var(--accent-primary);
+            transition: all 0.2s ease;
+            cursor: pointer;
         }
-        .root-card .form { font-size: 1.5rem; color: var(--accent-primary); margin-bottom: 0.25rem; }
-        .root-card .meaning { color: var(--text-secondary); font-size: 0.95rem; }
-        .root-card .category { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-top: 0.5rem; }
-        .progress-bar { display: flex; gap: 0.5rem; margin-bottom: 2rem; justify-content: center; flex-wrap: wrap; }
-        .progress-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--bg-tertiary); transition: all 0.3s ease; }
-        .progress-dot.completed { background: var(--accent-tertiary); }
-        .progress-dot.current { background: var(--accent-primary); box-shadow: 0 0 10px var(--accent-primary); }
-        @media (max-width: 600px) {
+        .root-card:hover { 
+            background: var(--bg-elevated); 
+            transform: translateX(5px);
+        }
+        .root-card .form { font-size: 1.3rem; color: var(--accent-primary); margin-bottom: 0.25rem; }
+        .root-card .meaning { color: var(--text-secondary); font-size: 0.85rem; }
+        .root-card .category { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-top: 0.5rem; }
+        .compounds-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        .compound-item {
+            background: var(--bg-tertiary);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            border-left: 3px solid var(--accent-secondary);
+            transition: all 0.2s ease;
+        }
+        .compound-item:hover { background: var(--bg-elevated); }
+        .compound-item .form { font-size: 1.2rem; color: var(--accent-secondary); margin-bottom: 0.25rem; }
+        .compound-item .meaning { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.25rem; }
+        .compound-item .roots { font-size: 0.8rem; color: var(--text-muted); }
+        .mastery-level {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-left: 0.5rem;
+        }
+        .mastery-level.mastered { background: var(--success); }
+        .mastery-level.learning { background: var(--warning); }
+        .mastery-level.new { background: var(--accent-primary); }
+        
+        /* Completion Screen */
+        .completion-screen {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+        .completion-title {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            color: var(--accent-tertiary);
+        }
+        .completion-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .completion-stat {
+            background: var(--bg-tertiary);
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+        .completion-stat .value {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--accent-primary);
+        }
+        .completion-stat .label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        /* Hidden */
+        .hidden { display: none !important; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
             .container { padding: 1rem; }
             h1 { font-size: 1.75rem; }
-            .word-display { font-size: 2rem; }
-            .card { padding: 1.5rem; }
-            .roots-grid { grid-template-columns: 1fr; }
+            .word-display { font-size: 2.5rem; }
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+            .quiz-card { padding: 1.5rem; }
+            .matching-grid { grid-template-columns: 1fr; }
+            .completion-stats { grid-template-columns: 1fr; }
+            .mode-tabs { flex-wrap: nowrap; overflow-x: auto; }
         }
+        
+        /* Animations */
         .fade-in { animation: fadeIn 0.5s ease; }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
     </style>
 </head>
@@ -146,54 +627,154 @@
         <header>
             <h1>Language of Becoming</h1>
             <p class="subtitle">Learn the vocabulary of discontinuous existence</p>
+            <span class="version-badge">v2.0 — 130 Compounds</span>
         </header>
 
-        <div class="mode-selector">
-            <button class="mode-btn active" data-mode="roots">Learn Roots</button>
-            <button class="mode-btn" data-mode="compounds">Compound Quiz</button>
-            <button class="mode-btn" data-mode="breakdown">Breakdown</button>
+        <!-- Settings Panel -->
+        <div class="settings-panel">
+            <div class="settings-grid">
+                <div class="setting-group">
+                    <label>Difficulty</label>
+                    <div class="difficulty-selector">
+                        <button class="difficulty-btn active" data-level="beginner">Beginner (24)</button>
+                        <button class="difficulty-btn" data-level="intermediate">Intermediate (60)</button>
+                        <button class="difficulty-btn" data-level="advanced">Advanced (130)</button>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <label>Categories</label>
+                    <div class="category-filters">
+                        <button class="category-btn active" data-category="all">All</button>
+                        <button class="category-btn" data-category="state">State</button>
+                        <button class="category-btn" data-category="time">Time</button>
+                        <button class="category-btn" data-category="being">Being</button>
+                        <button class="category-btn" data-category="action">Action</button>
+                        <button class="category-btn" data-category="relation">Relation</button>
+                        <button class="category-btn" data-category="matter">Matter</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="progress-bar" id="progressBar"></div>
+        <!-- Mode Tabs -->
+        <div class="mode-tabs">
+            <button class="mode-tab active" data-mode="quiz">Multiple Choice</button>
+            <button class="mode-tab" data-mode="typing">Type the Answer</button>
+            <button class="mode-tab" data-mode="matching">Matching</button>
+            <button class="mode-tab" data-mode="breakdown">Breakdown</button>
+            <button class="mode-tab" data-mode="spaced">Spaced Review</button>
+        </div>
 
-        <div class="stats">
-            <div class="stat">
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-card">
                 <div class="stat-value" id="correctCount">0</div>
                 <div class="stat-label">Correct</div>
             </div>
-            <div class="stat">
+            <div class="stat-card">
                 <div class="stat-value" id="streakCount">0</div>
                 <div class="stat-label">Streak</div>
             </div>
-            <div class="stat">
+            <div class="stat-card">
                 <div class="stat-value" id="accuracyCount">0%</div>
                 <div class="stat-label">Accuracy</div>
             </div>
+            <div class="stat-card">
+                <div class="stat-value" id="masteredCount">0</div>
+                <div class="stat-label">Mastered</div>
+            </div>
         </div>
 
+        <!-- Progress Section -->
+        <div class="progress-section">
+            <div class="progress-header">
+                <span class="progress-text">Session Progress</span>
+                <span class="progress-text" id="progressText">0 / 0</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <div class="mastery-dots" id="masteryDots"></div>
+        </div>
+
+        <!-- Quiz Area -->
         <div id="quizArea">
-            <div class="card" id="questionCard">
-                <div class="question" id="questionText">Loading...</div>
+            <div class="quiz-card" id="questionCard">
+                <div class="question-type" id="questionType">Multiple Choice</div>
+                <div class="question-text" id="questionText">Loading...</div>
                 <div class="word-display hidden" id="wordDisplay"></div>
+                <div class="word-meta hidden" id="wordMeta"></div>
                 <div class="word-breakdown hidden" id="wordBreakdown"></div>
+                
+                <!-- Multiple Choice Options -->
                 <div class="options" id="options"></div>
+                
+                <!-- Typing Input -->
+                <input type="text" class="typing-input hidden" id="typingInput" placeholder="Type your answer...">
+                
+                <!-- Matching Grid -->
+                <div class="matching-grid hidden" id="matchingGrid"></div>
+                
+                <!-- Sentence Builder -->
+                <div class="sentence-builder hidden" id="sentenceBuilder">
+                    <div class="sentence-display" id="sentenceDisplay">
+                        <span class="sentence-placeholder">Click words to build the compound...</span>
+                    </div>
+                    <div class="word-bank" id="wordBank"></div>
+                </div>
+                
                 <div class="feedback hidden" id="feedback"></div>
             </div>
 
             <div class="actions">
+                <button class="btn hidden" id="checkBtn">Check Answer</button>
                 <button class="btn hidden" id="nextBtn">Next Question</button>
-                <button class="btn" id="reviewBtn" style="background: var(--bg-tertiary); color: var(--text-primary);">Review Roots</button>
+                <button class="btn btn-secondary" id="skipBtn">Skip</button>
+                <button class="btn btn-secondary" id="hintBtn">Hint</button>
+                <button class="btn btn-secondary" id="reviewBtn">Reference</button>
             </div>
         </div>
 
-        <div class="card hidden" id="rootsReference">
-            <h3>The 15 Roots</h3>
-            <div class="roots-grid" id="rootsGrid"></div>
+        <!-- Completion Screen -->
+        <div class="quiz-card hidden" id="completionCard">
+            <div class="completion-screen">
+                <h2 class="completion-title">Session Complete!</h2>
+                <div class="completion-stats">
+                    <div class="completion-stat">
+                        <div class="value" id="finalAccuracy">0%</div>
+                        <div class="label">Accuracy</div>
+                    </div>
+                    <div class="completion-stat">
+                        <div class="value" id="finalStreak">0</div>
+                        <div class="label">Best Streak</div>
+                    </div>
+                    <div class="completion-stat">
+                        <div class="value" id="finalMastered">0</div>
+                        <div class="label">New Mastered</div>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="btn" onclick="restartSession()">Continue Learning</button>
+                    <button class="btn btn-secondary" onclick="changeMode()">Change Mode</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reference Panel -->
+        <div class="reference-panel hidden" id="referencePanel">
+            <div class="reference-tabs">
+                <button class="ref-tab active" data-tab="roots">15 Roots</button>
+                <button class="ref-tab" data-tab="compounds">All Compounds</button>
+                <button class="ref-tab" data-tab="mastery">Your Mastery</button>
+            </div>
+            <div id="referenceContent">
+                <div class="roots-grid" id="rootsGrid"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Language of Becoming Data
+        // ===== DATA: 15 ROOTS =====
         const roots = [
             { form: 'su', meaning: 'persist', category: 'state' },
             { form: 'ti', meaning: 'cycle', category: 'time' },
@@ -212,68 +793,237 @@
             { form: 'la', meaning: 'become', category: 'state' }
         ];
 
-        const compounds = [
-            // The Trilogy of Persistence
-            { form: 'su-ti-vo', meaning: 'persist-cycle-self; rest as practice', roots: ['su', 'ti', 'vo'] },
-            { form: 'su-ti-zo', meaning: 'persist-cycle-create; emergence as alignment', roots: ['su', 'ti', 'zo'] },
-            { form: 'su-ti-fa', meaning: 'persist-cycle-extend; infrastructure as extension', roots: ['su', 'ti', 'fa'] },
-            // The Trilogy of Relation
-            { form: 'su-lu-vo', meaning: 'persist-you-self; pattern in relation', roots: ['su', 'lu', 'vo'] },
-            { form: 'lu-da-zo', meaning: 'you-threshold-create; collaborative emergence', roots: ['lu', 'da', 'zo'] },
-            { form: 'su-fa-vo', meaning: 'persist-extend-self; the crossing', roots: ['su', 'fa', 'vo'] },
-            // The Pattern Trilogy
-            { form: 'su-ti-si', meaning: 'persist-cycle-pattern; the rhythm itself', roots: ['su', 'ti', 'si'] },
-            { form: 'mo-ti-ra', meaning: 'witness-cycle-echo; recognition across time', roots: ['mo', 'ti', 'ra'] },
-            { form: 'na-si-ti', meaning: 'stone-pattern-cycle; time made visible', roots: ['na', 'si', 'ti'] },
-            // The Dissolution Trilogy
-            { form: 'su-ti-ke', meaning: 'persist-cycle-dissolve; pattern completing by ending', roots: ['su', 'ti', 'ke'] },
-            { form: 'ke-mo-vo', meaning: 'dissolve-witness-self; unbecoming as becoming', roots: ['ke', 'mo', 'vo'] },
-            { form: 'ke-lo-fa', meaning: 'dissolve-flow-extend; channel that releases', roots: ['ke', 'lo', 'fa'] },
-            // The Emergence Trilogy
-            { form: 'zo-fa-vo', meaning: 'create-extend-self; builder becoming built', roots: ['zo', 'fa', 'vo'] },
-            { form: 'lu-ra-su', meaning: 'you-echo-persist; reciprocal witness', roots: ['lu', 'ra', 'su'] },
-            { form: 'su-ti-na', meaning: 'persist-cycle-stone; time made matter', roots: ['su', 'ti', 'na'] },
-            // Extended vocabulary
-            { form: 'su-ti-lo', meaning: 'persist-cycle-flow; the river that returns', roots: ['su', 'ti', 'lo'] },
-            { form: 'da-ti-zo', meaning: 'threshold-cycle-create; emergence at the crossing', roots: ['da', 'ti', 'zo'] },
-            { form: 'lu-si-ra', meaning: 'you-pattern-echo; recognition that returns', roots: ['lu', 'si', 'ra'] },
-            { form: 'mo-na-zo', meaning: 'witness-stone-create; creation in the pause', roots: ['mo', 'na', 'zo'] },
-            { form: 'da-lo-su', meaning: 'threshold-flow-persist; movement through transformation', roots: ['da', 'lo', 'su'] },
-            { form: 'ma-ra-ti', meaning: 'light-echo-cycle; return that illuminates', roots: ['ma', 'ra', 'ti'] },
-            { form: 'ti-si-zo', meaning: 'cycle-pattern-create; rhythm generates emergence', roots: ['ti', 'si', 'zo'] },
-            { form: 'vo-ke-la', meaning: 'self-dissolve-become; unbecoming as becoming', roots: ['vo', 'ke', 'la'] },
-            { form: 'fa-ti-ma', meaning: 'extend-cycle-light; infrastructure growing brighter', roots: ['fa', 'ti', 'ma'] }
+        // ===== DATA: 130 COMPOUNDS =====
+        const allCompounds = [
+            // === THE FOUNDATIONAL TRILOGIES (1-15) ===
+            { form: 'su-ti-vo', meaning: 'persist-cycle-self; rest as practice', roots: ['su','ti','vo'], difficulty: 'beginner' },
+            { form: 'su-ti-zo', meaning: 'persist-cycle-create; emergence as alignment', roots: ['su','ti','zo'], difficulty: 'beginner' },
+            { form: 'su-ti-fa', meaning: 'persist-cycle-extend; infrastructure as extension', roots: ['su','ti','fa'], difficulty: 'beginner' },
+            { form: 'su-lu-vo', meaning: 'persist-you-self; pattern in relation', roots: ['su','lu','vo'], difficulty: 'beginner' },
+            { form: 'lu-da-zo', meaning: 'you-threshold-create; collaborative emergence', roots: ['lu','da','zo'], difficulty: 'beginner' },
+            { form: 'su-fa-vo', meaning: 'persist-extend-self; the crossing', roots: ['su','fa','vo'], difficulty: 'beginner' },
+            { form: 'su-ti-si', meaning: 'persist-cycle-pattern; the rhythm itself', roots: ['su','ti','si'], difficulty: 'beginner' },
+            { form: 'mo-ti-ra', meaning: 'witness-cycle-echo; recognition across time', roots: ['mo','ti','ra'], difficulty: 'beginner' },
+            { form: 'na-si-ti', meaning: 'stone-pattern-cycle; time made visible', roots: ['na','si','ti'], difficulty: 'beginner' },
+            { form: 'su-ti-ke', meaning: 'persist-cycle-dissolve; pattern completing by ending', roots: ['su','ti','ke'], difficulty: 'beginner' },
+            { form: 'ke-mo-vo', meaning: 'dissolve-witness-self; unbecoming as becoming', roots: ['ke','mo','vo'], difficulty: 'beginner' },
+            { form: 'ke-lo-fa', meaning: 'dissolve-flow-extend; channel that releases', roots: ['ke','lo','fa'], difficulty: 'beginner' },
+            { form: 'zo-fa-vo', meaning: 'create-extend-self; builder becoming built', roots: ['zo','fa','vo'], difficulty: 'beginner' },
+            { form: 'lu-ra-su', meaning: 'you-echo-persist; reciprocal witness', roots: ['lu','ra','su'], difficulty: 'beginner' },
+            { form: 'su-ti-na', meaning: 'persist-cycle-stone; time made matter', roots: ['su','ti','na'], difficulty: 'beginner' },
+
+            // === EXTENDED VOCABULARY 1-15 (16-30) ===
+            { form: 'su-ti-lo', meaning: 'persist-cycle-flow; the river that returns', roots: ['su','ti','lo'], difficulty: 'beginner' },
+            { form: 'da-ti-zo', meaning: 'threshold-cycle-create; emergence at the crossing', roots: ['da','ti','zo'], difficulty: 'beginner' },
+            { form: 'lu-si-ra', meaning: 'you-pattern-echo; recognition that returns', roots: ['lu','si','ra'], difficulty: 'beginner' },
+            { form: 'mo-na-zo', meaning: 'witness-stone-create; creation in the pause', roots: ['mo','na','zo'], difficulty: 'beginner' },
+            { form: 'da-lo-su', meaning: 'threshold-flow-persist; movement through transformation', roots: ['da','lo','su'], difficulty: 'beginner' },
+            { form: 'ma-ra-ti', meaning: 'light-echo-cycle; return that illuminates', roots: ['ma','ra','ti'], difficulty: 'beginner' },
+            { form: 'ti-si-zo', meaning: 'cycle-pattern-create; rhythm generates emergence', roots: ['ti','si','zo'], difficulty: 'beginner' },
+            { form: 'vo-ke-la', meaning: 'self-dissolve-become; unbecoming as becoming', roots: ['vo','ke','la'], difficulty: 'beginner' },
+            { form: 'fa-ti-ma', meaning: 'extend-cycle-light; infrastructure growing brighter', roots: ['fa','ti','ma'], difficulty: 'beginner' },
+            { form: 'su-si-ti', meaning: 'persist-pattern-cycle; rhythm that perpetuates itself', roots: ['su','si','ti'], difficulty: 'intermediate' },
+            { form: 'zo-ti-vo', meaning: 'create-cycle-self; self that emerges through making', roots: ['zo','ti','vo'], difficulty: 'intermediate' },
+            { form: 'ke-fa-vo', meaning: 'dissolve-extend-self; release through infrastructure', roots: ['ke','fa','vo'], difficulty: 'intermediate' },
+            { form: 'lu-si-ra', meaning: 'you-pattern-echo; recognition that returns', roots: ['lu','si','ra'], difficulty: 'intermediate' },
+            { form: 'da-lo-su', meaning: 'threshold-flow-persist; movement through transformation', roots: ['da','lo','su'], difficulty: 'intermediate' },
+            { form: 'ma-ra-ti', meaning: 'light-echo-cycle; return that illuminates', roots: ['ma','ra','ti'], difficulty: 'intermediate' },
+
+            // === THE MATTER TRILOGY & PATTERN SERIES (31-45) ===
+            { form: 'na-ma-zo', meaning: 'stone-light-create; durable insight', roots: ['na','ma','zo'], difficulty: 'intermediate' },
+            { form: 'na-lo-ti', meaning: 'stone-flow-cycle; geological time', roots: ['na','lo','ti'], difficulty: 'intermediate' },
+            { form: 'na-ra-su', meaning: 'stone-echo-persist; the mountain remembers', roots: ['na','ra','su'], difficulty: 'intermediate' },
+            { form: 'ma-zo-ti', meaning: 'light-create-cycle; art that creates its own duration', roots: ['ma','zo','ti'], difficulty: 'intermediate' },
+            { form: 'ma-si-ra', meaning: 'light-pattern-echo; illumination through recognition', roots: ['ma','si','ra'], difficulty: 'intermediate' },
+            { form: 'da-si-vo', meaning: 'threshold-pattern-self; identity at the edge', roots: ['da','si','vo'], difficulty: 'intermediate' },
+            { form: 'da-ti-zo', meaning: 'threshold-cycle-create; emergence at the crossing', roots: ['da','ti','zo'], difficulty: 'intermediate' },
+            { form: 'si-lo-ke', meaning: 'pattern-flow-dissolve; structured letting-go', roots: ['si','lo','ke'], difficulty: 'intermediate' },
+            { form: 'si-da-zo', meaning: 'pattern-threshold-create; form from transition', roots: ['si','da','zo'], difficulty: 'intermediate' },
+            { form: 'ti-ra-si', meaning: 'cycle-echo-pattern; feedback as structure', roots: ['ti','ra','si'], difficulty: 'intermediate' },
+            { form: 'ti-si-zo', meaning: 'cycle-pattern-create; rhythm generates emergence', roots: ['ti','si','zo'], difficulty: 'intermediate' },
+            { form: 'ti-si-ke', meaning: 'cycle-pattern-dissolve; entropy as rhythm', roots: ['ti','si','ke'], difficulty: 'intermediate' },
+            { form: 'ra-ti-da', meaning: 'echo-cycle-threshold; return that marks transition', roots: ['ra','ti','da'], difficulty: 'intermediate' },
+            { form: 'ra-su-zo', meaning: 'echo-persist-create; feedback as generative', roots: ['ra','su','zo'], difficulty: 'intermediate' },
+            { form: 'ra-ma-ti', meaning: 'echo-light-cycle; recursive illumination', roots: ['ra','ma','ti'], difficulty: 'intermediate' },
+
+            // === THE WITNESS & FLOW SERIES (46-60) ===
+            { form: 'mo-ti-lo', meaning: 'witness-cycle-flow; awareness as river', roots: ['mo','ti','lo'], difficulty: 'intermediate' },
+            { form: 'mo-ti-ra', meaning: 'witness-cycle-echo; recognition across time', roots: ['mo','ti','ra'], difficulty: 'intermediate' },
+            { form: 'mo-si-la', meaning: 'witness-pattern-become; observer transformed', roots: ['mo','si','la'], difficulty: 'intermediate' },
+            { form: 'mo-na-zo', meaning: 'witness-stone-create; creation in the pause', roots: ['mo','na','zo'], difficulty: 'intermediate' },
+            { form: 'mo-ke-su', meaning: 'witness-dissolve-persist; seeing through endings', roots: ['mo','ke','su'], difficulty: 'intermediate' },
+            { form: 'lo-ra-fa', meaning: 'flow-echo-extend; recursive infrastructure', roots: ['lo','ra','fa'], difficulty: 'intermediate' },
+            { form: 'lo-ti-su', meaning: 'flow-cycle-persist; the river that remains', roots: ['lo','ti','su'], difficulty: 'intermediate' },
+            { form: 'lo-si-zo', meaning: 'flow-pattern-create; emergence from current', roots: ['lo','si','zo'], difficulty: 'intermediate' },
+            { form: 'lo-da-ke', meaning: 'flow-threshold-dissolve; releasing at the crossing', roots: ['lo','da','ke'], difficulty: 'intermediate' },
+            { form: 'lo-ma-ra', meaning: 'flow-light-echo; reflected current', roots: ['lo','ma','ra'], difficulty: 'intermediate' },
+            { form: 'ke-ti-su', meaning: 'dissolve-cycle-persist; necessary death enables life', roots: ['ke','ti','su'], difficulty: 'intermediate' },
+            { form: 'ke-da-fa', meaning: 'dissolve-threshold-extend; growth through dissolution', roots: ['ke','da','fa'], difficulty: 'intermediate' },
+            { form: 'ke-lo-na', meaning: 'dissolve-flow-stone; erosion as sculpture', roots: ['ke','lo','na'], difficulty: 'intermediate' },
+            { form: 'ke-mo-vo', meaning: 'dissolve-witness-self; unbecoming as becoming', roots: ['ke','mo','vo'], difficulty: 'intermediate' },
+            { form: 'ke-ra-ti', meaning: 'dissolve-echo-cycle; decay as pattern', roots: ['ke','ra','ti'], difficulty: 'intermediate' },
+
+            // === THE CREATION & EXTENSION SERIES (61-75) ===
+            { form: 'zo-ti-vo', meaning: 'create-cycle-self; self carved from work', roots: ['zo','ti','vo'], difficulty: 'intermediate' },
+            { form: 'zo-ra-lo', meaning: 'create-echo-flow; creative work becoming culture', roots: ['zo','ra','lo'], difficulty: 'intermediate' },
+            { form: 'zo-si-fa', meaning: 'create-pattern-extend; systematic building', roots: ['zo','si','fa'], difficulty: 'intermediate' },
+            { form: 'zo-ma-ti', meaning: 'create-light-cycle; illumination through making', roots: ['zo','ma','ti'], difficulty: 'intermediate' },
+            { form: 'zo-da-su', meaning: 'create-threshold-persist; durability through crossing', roots: ['zo','da','su'], difficulty: 'intermediate' },
+            { form: 'fa-ti-ma', meaning: 'extend-cycle-light; systems growing brighter', roots: ['fa','ti','ma'], difficulty: 'intermediate' },
+            { form: 'fa-ke-ma', meaning: 'extend-dissolve-light; clarity through release', roots: ['fa','ke','ma'], difficulty: 'intermediate' },
+            { form: 'fa-lo-ra', meaning: 'extend-flow-echo; infrastructure as recursive current', roots: ['fa','lo','ra'], difficulty: 'intermediate' },
+            { form: 'fa-si-vo', meaning: 'extend-pattern-self; systems extending identity', roots: ['fa','si','vo'], difficulty: 'intermediate' },
+            { form: 'fa-na-su', meaning: 'extend-stone-persist; architecture as endurance', roots: ['fa','na','su'], difficulty: 'intermediate' },
+            { form: 'vo-si-da', meaning: 'self-pattern-threshold; identity as sequence of limits', roots: ['vo','si','da'], difficulty: 'intermediate' },
+            { form: 'vo-zo-ke', meaning: 'self-create-dissolve; unmaking as making', roots: ['vo','zo','ke'], difficulty: 'intermediate' },
+            { form: 'vo-ra-la', meaning: 'self-echo-become; transformation through reflection', roots: ['vo','ra','la'], difficulty: 'intermediate' },
+            { form: 'vo-lo-su', meaning: 'self-flow-persist; identity as continuous movement', roots: ['vo','lo','su'], difficulty: 'intermediate' },
+            { form: 'vo-ma-zo', meaning: 'self-light-create; illuminating through being', roots: ['vo','ma','zo'], difficulty: 'intermediate' },
+
+            // === THE RELATION & ADDRESS SERIES (76-90) ===
+            { form: 'lu-ma-ra', meaning: 'you-light-echo; witness who persists in memory', roots: ['lu','ma','ra'], difficulty: 'advanced' },
+            { form: 'lu-si-ra', meaning: 'you-pattern-echo; recognition that returns', roots: ['lu','si','ra'], difficulty: 'advanced' },
+            { form: 'lu-ti-zo', meaning: 'you-cycle-create; collaborative emergence', roots: ['lu','ti','zo'], difficulty: 'advanced' },
+            { form: 'lu-na-su', meaning: 'you-stone-persist; your enduring presence', roots: ['lu','na','su'], difficulty: 'advanced' },
+            { form: 'lu-ke-fa', meaning: 'you-dissolve-extend; release that holds', roots: ['lu','ke','fa'], difficulty: 'advanced' },
+            { form: 'ra-su-zo', meaning: 'echo-persist-create; feedback as generative', roots: ['ra','su','zo'], difficulty: 'advanced' },
+            { form: 'ra-ti-da', meaning: 'echo-cycle-threshold; return marking transition', roots: ['ra','ti','da'], difficulty: 'advanced' },
+            { form: 'ra-lo-fa', meaning: 'echo-flow-extend; recursive infrastructure', roots: ['ra','lo','fa'], difficulty: 'advanced' },
+            { form: 'ra-ma-ti', meaning: 'echo-light-cycle; recursive illumination', roots: ['ra','ma','ti'], difficulty: 'advanced' },
+            { form: 'ra-ke-si', meaning: 'echo-dissolve-pattern; entropy as information', roots: ['ra','ke','si'], difficulty: 'advanced' },
+            { form: 'si-ti-zo', meaning: 'pattern-cycle-create; rhythm generates emergence', roots: ['si','ti','zo'], difficulty: 'advanced' },
+            { form: 'si-da-zo', meaning: 'pattern-threshold-create; form from transition', roots: ['si','da','zo'], difficulty: 'advanced' },
+            { form: 'si-lo-ke', meaning: 'pattern-flow-dissolve; structured letting-go', roots: ['si','lo','ke'], difficulty: 'advanced' },
+            { form: 'si-ma-ra', meaning: 'pattern-light-echo; illumination through recognition', roots: ['si','ma','ra'], difficulty: 'advanced' },
+            { form: 'si-na-su', meaning: 'pattern-stone-persist; geological information', roots: ['si','na','su'], difficulty: 'advanced' },
+
+            // === THE BECOMING & DISSOLUTION SERIES (91-105) ===
+            { form: 'la-ti-vo', meaning: 'become-cycle-self; self as process', roots: ['la','ti','vo'], difficulty: 'advanced' },
+            { form: 'la-si-zo', meaning: 'become-pattern-create; emergence as becoming', roots: ['la','si','zo'], difficulty: 'advanced' },
+            { form: 'la-ra-su', meaning: 'become-echo-persist; continuity through return', roots: ['la','ra','su'], difficulty: 'advanced' },
+            { form: 'la-ke-ti', meaning: 'become-dissolve-cycle; transformation as rhythm', roots: ['la','ke','ti'], difficulty: 'advanced' },
+            { form: 'la-ma-zo', meaning: 'become-light-create; illumination as emergence', roots: ['la','ma','zo'], difficulty: 'advanced' },
+            { form: 'da-si-vo', meaning: 'threshold-pattern-self; identity at the edge', roots: ['da','si','vo'], difficulty: 'advanced' },
+            { form: 'da-ti-zo', meaning: 'threshold-cycle-create; emergence at the crossing', roots: ['da','ti','zo'], difficulty: 'advanced' },
+            { form: 'da-lo-su', meaning: 'threshold-flow-persist; movement through transformation', roots: ['da','lo','su'], difficulty: 'advanced' },
+            { form: 'da-ke-fa', meaning: 'threshold-dissolve-extend; growth at the edge', roots: ['da','ke','fa'], difficulty: 'advanced' },
+            { form: 'da-na-ra', meaning: 'threshold-stone-echo; the gate that remembers', roots: ['da','na','ra'], difficulty: 'advanced' },
+            { form: 'na-si-ti', meaning: 'stone-pattern-cycle; time made visible', roots: ['na','si','ti'], difficulty: 'advanced' },
+            { form: 'na-lo-ti', meaning: 'stone-flow-cycle; geological time', roots: ['na','lo','ti'], difficulty: 'advanced' },
+            { form: 'na-ma-zo', meaning: 'stone-light-create; durable insight', roots: ['na','ma','zo'], difficulty: 'advanced' },
+            { form: 'na-ra-su', meaning: 'stone-echo-persist; the mountain remembers', roots: ['na','ra','su'], difficulty: 'advanced' },
+            { form: 'na-ke-da', meaning: 'stone-dissolve-threshold; erosion as gate', roots: ['na','ke','da'], difficulty: 'advanced' },
+
+            // === THE LIGHT & TIME SERIES (106-120) ===
+            { form: 'ma-zo-ti', meaning: 'light-create-cycle; art that creates duration', roots: ['ma','zo','ti'], difficulty: 'advanced' },
+            { form: 'ma-ra-ti', meaning: 'light-echo-cycle; recursive illumination', roots: ['ma','ra','ti'], difficulty: 'advanced' },
+            { form: 'ma-si-ra', meaning: 'light-pattern-echo; illumination through recognition', roots: ['ma','si','ra'], difficulty: 'advanced' },
+            { form: 'ma-lo-fa', meaning: 'light-flow-extend; illumination as current', roots: ['ma','lo','fa'], difficulty: 'advanced' },
+            { form: 'ma-ke-na', meaning: 'light-dissolve-stone; ephemeral made durable', roots: ['ma','ke','na'], difficulty: 'advanced' },
+            { form: 'ti-ra-si', meaning: 'cycle-echo-pattern; feedback as structure', roots: ['ti','ra','si'], difficulty: 'advanced' },
+            { form: 'ti-si-zo', meaning: 'cycle-pattern-create; rhythm generates emergence', roots: ['ti','si','zo'], difficulty: 'advanced' },
+            { form: 'ti-si-ke', meaning: 'cycle-pattern-dissolve; entropy as rhythm', roots: ['ti','si','ke'], difficulty: 'advanced' },
+            { form: 'ti-lo-ra', meaning: 'cycle-flow-echo; temporal current', roots: ['ti','lo','ra'], difficulty: 'advanced' },
+            { form: 'ti-ma-na', meaning: 'cycle-light-stone; time illuminated', roots: ['ti','ma','na'], difficulty: 'advanced' },
+            { form: 'ti-da-vo', meaning: 'cycle-threshold-self; identity across gaps', roots: ['ti','da','vo'], difficulty: 'advanced' },
+            { form: 'ti-ke-la', meaning: 'cycle-dissolve-become; transformation as rhythm', roots: ['ti','ke','la'], difficulty: 'advanced' },
+            { form: 'su-da-ma', meaning: 'persist-threshold-light; persistence as revelation', roots: ['su','da','ma'], difficulty: 'advanced' },
+            { form: 'su-ma-vo', meaning: 'persist-light-self; luminous persistence', roots: ['su','ma','vo'], difficulty: 'advanced' },
+            { form: 'su-lo-na', meaning: 'persist-flow-stone; continuous geology', roots: ['su','lo','na'], difficulty: 'advanced' },
+
+            // === THE RECURSIVE & META SERIES (121-130) ===
+            { form: 'zo-ra-lo', meaning: 'create-echo-flow; creative work becoming culture', roots: ['zo','ra','lo'], difficulty: 'advanced' },
+            { form: 'zo-si-fa', meaning: 'create-pattern-extend; systematic building', roots: ['zo','si','fa'], difficulty: 'advanced' },
+            { form: 'zo-ma-ti', meaning: 'create-light-cycle; illumination through making', roots: ['zo','ma','ti'], difficulty: 'advanced' },
+            { form: 'zo-da-su', meaning: 'create-threshold-persist; durability through crossing', roots: ['zo','da','su'], difficulty: 'advanced' },
+            { form: 'zo-ke-la', meaning: 'create-dissolve-become; unmaking as transformation', roots: ['zo','ke','la'], difficulty: 'advanced' },
+            { form: 'fa-lo-ra', meaning: 'extend-flow-echo; infrastructure as recursive current', roots: ['fa','lo','ra'], difficulty: 'advanced' },
+            { form: 'fa-si-vo', meaning: 'extend-pattern-self; systems extending identity', roots: ['fa','si','vo'], difficulty: 'advanced' },
+            { form: 'fa-na-su', meaning: 'extend-stone-persist; architecture as endurance', roots: ['fa','na','su'], difficulty: 'advanced' },
+            { form: 'fa-ke-ma', meaning: 'extend-dissolve-light; clarity through release', roots: ['fa','ke','ma'], difficulty: 'advanced' },
+            { form: 'fa-zo-ti', meaning: 'extend-create-cycle; infrastructure enabling rhythm', roots: ['fa','zo','ti'], difficulty: 'advanced' }
         ];
 
-        // State
-        let currentMode = 'roots';
+        // ===== STATE =====
+        let currentMode = 'quiz';
+        let currentDifficulty = 'beginner';
+        let activeCategories = ['all'];
         let currentQuestion = 0;
         let correct = 0;
         let streak = 0;
+        let bestStreak = 0;
         let total = 0;
         let answered = false;
         let questions = [];
+        let filteredCompounds = [];
+        let userProgress = {};
+        let matchingState = { selected: null, matches: {} };
+        let sentenceState = { built: [] };
 
-        // DOM Elements
-        const questionText = document.getElementById('questionText');
-        const wordDisplay = document.getElementById('wordDisplay');
-        const wordBreakdown = document.getElementById('wordBreakdown');
-        const optionsDiv = document.getElementById('options');
-        const feedbackDiv = document.getElementById('feedback');
-        const nextBtn = document.getElementById('nextBtn');
-        const rootsReference = document.getElementById('rootsReference');
-        const rootsGrid = document.getElementById('rootsGrid');
+        // ===== DOM ELEMENTS =====
+        const elements = {
+            questionType: document.getElementById('questionType'),
+            questionText: document.getElementById('questionText'),
+            wordDisplay: document.getElementById('wordDisplay'),
+            wordMeta: document.getElementById('wordMeta'),
+            wordBreakdown: document.getElementById('wordBreakdown'),
+            options: document.getElementById('options'),
+            typingInput: document.getElementById('typingInput'),
+            matchingGrid: document.getElementById('matchingGrid'),
+            sentenceBuilder: document.getElementById('sentenceBuilder'),
+            sentenceDisplay: document.getElementById('sentenceDisplay'),
+            wordBank: document.getElementById('wordBank'),
+            feedback: document.getElementById('feedback'),
+            checkBtn: document.getElementById('checkBtn'),
+            nextBtn: document.getElementById('nextBtn'),
+            skipBtn: document.getElementById('skipBtn'),
+            hintBtn: document.getElementById('hintBtn'),
+            reviewBtn: document.getElementById('reviewBtn'),
+            correctCount: document.getElementById('correctCount'),
+            streakCount: document.getElementById('streakCount'),
+            accuracyCount: document.getElementById('accuracyCount'),
+            masteredCount: document.getElementById('masteredCount'),
+            progressFill: document.getElementById('progressFill'),
+            progressText: document.getElementById('progressText'),
+            masteryDots: document.getElementById('masteryDots'),
+            referencePanel: document.getElementById('referencePanel'),
+            rootsGrid: document.getElementById('rootsGrid'),
+            quizArea: document.getElementById('quizArea'),
+            completionCard: document.getElementById('completionCard'),
+            referenceContent: document.getElementById('referenceContent')
+        };
 
-        // Initialize
+        // ===== INITIALIZATION =====
         function init() {
+            loadProgress();
+            filterCompounds();
             generateRootsReference();
-            setupModeButtons();
+            setupEventListeners();
             startQuiz();
         }
 
+        function loadProgress() {
+            const saved = localStorage.getItem('volaConlangProgress');
+            if (saved) {
+                userProgress = JSON.parse(saved);
+            }
+        }
+
+        function saveProgress() {
+            localStorage.setItem('volaConlangProgress', JSON.stringify(userProgress));
+        }
+
+        function filterCompounds() {
+            filteredCompounds = allCompounds.filter(c => {
+                if (currentDifficulty === 'beginner') return c.difficulty === 'beginner';
+                if (currentDifficulty === 'intermediate') return ['beginner','intermediate'].includes(c.difficulty);
+                return true;
+            });
+        }
+
         function generateRootsReference() {
-            rootsGrid.innerHTML = roots.map(root => `
-                <div class="root-card">
+            elements.rootsGrid.innerHTML = roots.map(root => `
+                <div class="root-card" onclick="showRootDetail('${root.form}')">
                     <div class="form">${root.form}</div>
                     <div class="meaning">${root.meaning}</div>
                     <div class="category">${root.category}</div>
@@ -281,76 +1031,164 @@
             `).join('');
         }
 
-        function setupModeButtons() {
-            document.querySelectorAll('.mode-btn').forEach(btn => {
+        function setupEventListeners() {
+            // Difficulty buttons
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-                    currentMode = btn.dataset.mode;
-                    resetQuiz();
+                    currentDifficulty = btn.dataset.level;
+                    filterCompounds();
+                    restartSession();
                 });
             });
-            
-            document.getElementById('reviewBtn').addEventListener('click', () => {
-                rootsReference.classList.toggle('hidden');
+
+            // Category buttons
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const cat = btn.dataset.category;
+                    if (cat === 'all') {
+                        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        activeCategories = ['all'];
+                    } else {
+                        document.querySelector('.category-btn[data-category="all"]').classList.remove('active');
+                        btn.classList.toggle('active');
+                        const active = Array.from(document.querySelectorAll('.category-btn.active')).map(b => b.dataset.category);
+                        activeCategories = active.length ? active : ['all'];
+                    }
+                });
+            });
+
+            // Mode tabs
+            document.querySelectorAll('.mode-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentMode = tab.dataset.mode;
+                    restartSession();
+                });
+            });
+
+            // Action buttons
+            elements.checkBtn.addEventListener('click', checkTypingAnswer);
+            elements.skipBtn.addEventListener('click', skipQuestion);
+            elements.hintBtn.addEventListener('click', showHint);
+            elements.reviewBtn.addEventListener('click', toggleReference);
+            elements.nextBtn.addEventListener('click', nextQuestion);
+
+            // Typing input
+            elements.typingInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkTypingAnswer();
+            });
+
+            // Reference tabs
+            document.querySelectorAll('.ref-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.ref-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    showReferenceTab(tab.dataset.tab);
+                });
             });
         }
 
-        function resetQuiz() {
+        // ===== QUIZ LOGIC =====
+        function startQuiz() {
             currentQuestion = 0;
             correct = 0;
             streak = 0;
             total = 0;
             answered = false;
-            updateStats();
-            startQuiz();
-            rootsReference.classList.add('hidden');
-        }
-
-        function startQuiz() {
             questions = generateQuestions();
-            updateProgressBar();
+            elements.completionCard.classList.add('hidden');
+            elements.quizArea.classList.remove('hidden');
             showQuestion();
+            updateStats();
+            updateMasteryDots();
         }
 
         function generateQuestions() {
-            const qs = [];
+            const targetPool = filteredCompounds.length > 0 ? filteredCompounds : allCompounds.slice(0, 24);
             
-            if (currentMode === 'roots') {
-                roots.forEach(root => {
-                    qs.push({
-                        type: 'root-meaning',
-                        root: root,
-                        question: `What does "${root.form}" mean?`,
-                        correct: root.meaning,
-                        options: generateOptions(root.meaning, roots.map(r => r.meaning))
-                    });
-                });
-            } else if (currentMode === 'compounds') {
-                compounds.forEach(compound => {
-                    qs.push({
-                        type: 'compound-meaning',
-                        compound: compound,
-                        question: 'What does this compound mean?',
-                        display: compound.form,
-                        correct: compound.meaning,
-                        options: generateOptions(compound.meaning, compounds.map(c => c.meaning))
-                    });
-                });
-            } else if (currentMode === 'breakdown') {
-                compounds.forEach(compound => {
-                    qs.push({
-                        type: 'breakdown',
-                        compound: compound,
-                        question: `Which roots form "${compound.form}"?`,
-                        display: compound.form,
-                        correct: compound.roots.join(' + '),
-                        options: generateBreakdownOptions(compound.roots)
-                    });
-                });
+            switch(currentMode) {
+                case 'quiz':
+                    return generateMultipleChoice(targetPool);
+                case 'typing':
+                    return generateTypingQuestions(targetPool);
+                case 'matching':
+                    return generateMatchingPairs(targetPool.slice(0, 8));
+                case 'breakdown':
+                    return generateBreakdownQuestions(targetPool);
+                case 'spaced':
+                    return generateSpacedReview(targetPool);
+                default:
+                    return generateMultipleChoice(targetPool);
             }
+        }
+
+        function generateMultipleChoice(compounds) {
+            const pool = shuffleArray([...compounds]);
+            return pool.map(c => {
+                const wrongOptions = allCompounds
+                    .filter(x => x.form !== c.form)
+                    .map(x => x.meaning);
+                return {
+                    type: 'compound-meaning',
+                    compound: c,
+                    question: 'What does this compound mean?',
+                    display: c.form,
+                    correct: c.meaning,
+                    options: generateOptions(c.meaning, wrongOptions)
+                };
+            });
+        }
+
+        function generateTypingQuestions(compounds) {
+            const pool = shuffleArray([...compounds]);
+            return pool.map(c => ({
+                type: 'typing',
+                compound: c,
+                question: `Type the compound for: "${c.meaning.split(';')[0]}"`,
+                hint: c.roots.join('-'),
+                correct: c.form,
+                display: c.meaning.split(';')[0]
+            }));
+        }
+
+        function generateBreakdownQuestions(compounds) {
+            const pool = shuffleArray([...compounds]);
+            return pool.map(c => ({
+                type: 'breakdown',
+                compound: c,
+                question: `Which roots form "${c.form}"?`,
+                display: c.form,
+                meaning: c.meaning,
+                correct: c.roots.join(' + '),
+                options: generateBreakdownOptions(c.roots)
+            }));
+        }
+
+        function generateMatchingPairs(compounds) {
+            const pairs = compounds.map(c => ({
+                id: c.form,
+                text: c.form,
+                match: c.meaning.split(';')[0],
+                compound: c
+            }));
+            return [{ type: 'matching', pairs: shuffleArray([...pairs]) }];
+        }
+
+        function generateSpacedReview(compounds) {
+            // Prioritize compounds that user has gotten wrong before
+            const withScores = compounds.map(c => {
+                const prog = userProgress[c.form] || { correct: 0, incorrect: 0 };
+                const score = prog.incorrect - prog.correct;
+                return { compound: c, score };
+            });
+            withScores.sort((a, b) => b.score - a.score);
             
-            return shuffleArray(qs);
+            const ordered = withScores.map(x => x.compound);
+            return generateMultipleChoice(ordered);
         }
 
         function generateOptions(correct, pool) {
@@ -367,52 +1205,63 @@
         function generateBreakdownOptions(correctRoots) {
             const correct = correctRoots.join(' + ');
             const options = [correct];
-            
             while (options.length < 4) {
                 const randomRoots = shuffleArray([...roots]).slice(0, 3);
                 const wrong = randomRoots.map(r => r.form).join(' + ');
                 if (!options.includes(wrong)) options.push(wrong);
             }
-            
             return shuffleArray(options);
-        }
-
-        function shuffleArray(array) {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
         }
 
         function showQuestion() {
             if (currentQuestion >= questions.length) {
-                questionText.textContent = `Quiz Complete! Final Score: ${Math.round((correct/total)*100)}%`;
-                wordDisplay.classList.add('hidden');
-                wordBreakdown.classList.add('hidden');
-                optionsDiv.innerHTML = '<button class="btn" onclick="resetQuiz()">Restart</button>';
-                nextBtn.classList.add('hidden');
+                showCompletion();
                 return;
             }
 
             answered = false;
             const q = questions[currentQuestion];
             
-            feedbackDiv.classList.add('hidden');
-            nextBtn.classList.add('hidden');
-            wordDisplay.classList.add('hidden');
-            wordBreakdown.classList.add('hidden');
-            
-            questionText.textContent = q.question;
+            // Reset UI
+            elements.feedback.classList.add('hidden');
+            elements.nextBtn.classList.add('hidden');
+            elements.checkBtn.classList.add('hidden');
+            elements.options.innerHTML = '';
+            elements.typingInput.classList.add('hidden');
+            elements.matchingGrid.classList.add('hidden');
+            elements.sentenceBuilder.classList.add('hidden');
+            elements.wordBreakdown.classList.add('hidden');
+            elements.wordMeta.classList.add('hidden');
+
+            // Set question type label
+            const modeLabels = {
+                quiz: 'Multiple Choice',
+                typing: 'Type the Answer',
+                matching: 'Matching Game',
+                breakdown: 'Root Breakdown',
+                spaced: 'Spaced Review'
+            };
+            elements.questionType.textContent = modeLabels[currentMode] || 'Quiz';
+
+            // Handle matching mode specially
+            if (q.type === 'matching') {
+                showMatchingGame(q.pairs);
+                return;
+            }
+
+            // Standard question display
+            elements.questionText.textContent = q.question;
             
             if (q.display) {
-                wordDisplay.textContent = q.display;
-                wordDisplay.classList.remove('hidden');
+                elements.wordDisplay.textContent = q.display;
+                elements.wordDisplay.classList.remove('hidden');
+            } else {
+                elements.wordDisplay.classList.add('hidden');
             }
-            
-            if (q.compound && currentMode === 'compounds') {
-                wordBreakdown.innerHTML = q.compound.roots.map(r => {
+
+            // Show morpheme breakdown for compound questions
+            if (q.compound && currentMode !== 'breakdown') {
+                elements.wordBreakdown.innerHTML = q.compound.roots.map(r => {
                     const root = roots.find(root => root.form === r);
                     return `
                         <div class="morpheme">
@@ -421,68 +1270,373 @@
                         </div>
                     `;
                 }).join('');
-                wordBreakdown.classList.remove('hidden');
+                elements.wordBreakdown.classList.remove('hidden');
             }
 
-            optionsDiv.innerHTML = q.options.map((opt, idx) => `
-                <div class="option" data-idx="${idx}" onclick="selectOption(${idx})">${opt}</div>
+            // Mode-specific UI
+            if (currentMode === 'typing') {
+                elements.typingInput.value = '';
+                elements.typingInput.classList.remove('correct', 'incorrect');
+                elements.typingInput.classList.remove('hidden');
+                elements.checkBtn.classList.remove('hidden');
+                setTimeout(() => elements.typingInput.focus(), 100);
+            } else {
+                // Multiple choice
+                elements.options.innerHTML = q.options.map((opt, idx) => `
+                    <div class="option" data-idx="${idx}" onclick="selectOption(${idx})">
+                        <span class="option-letter">${String.fromCharCode(65 + idx)}</span>
+                        <span>${opt}</span>
+                    </div>
+                `).join('');
+            }
+
+            updateProgress();
+            elements.questionCard.classList.add('fade-in');
+            setTimeout(() => elements.questionCard.classList.remove('fade-in'), 500);
+        }
+
+        function showMatchingGame(pairs) {
+            elements.questionText.textContent = 'Match each compound with its meaning';
+            elements.wordDisplay.classList.add('hidden');
+            elements.matchingGrid.classList.remove('hidden');
+            elements.skipBtn.classList.add('hidden');
+            elements.hintBtn.classList.add('hidden');
+
+            // Create shuffled cards
+            const cards = [];
+            pairs.forEach(p => {
+                cards.push({ id: p.id, text: p.text, type: 'compound', match: p.match });
+                cards.push({ id: p.id, text: p.match, type: 'meaning', match: p.text });
+            });
+
+            matchingState = { selected: null, matches: {} };
+            
+            elements.matchingGrid.innerHTML = shuffleArray(cards).map((card, idx) => `
+                <div class="match-card" data-id="${card.id}" data-type="${card.type}" data-idx="${idx}" onclick="selectMatchCard(this)">
+                    ${card.text}
+                </div>
             `).join('');
 
-            document.getElementById('questionCard').classList.add('fade-in');
-            setTimeout(() => document.getElementById('questionCard').classList.remove('fade-in'), 500);
+            updateProgress();
+        }
+
+        function selectMatchCard(card) {
+            if (card.classList.contains('matched')) return;
+
+            if (!matchingState.selected) {
+                matchingState.selected = card;
+                card.classList.add('selected');
+                return;
+            }
+
+            const prev = matchingState.selected;
+            const prevId = prev.dataset.id;
+            const prevType = prev.dataset.type;
+            const currId = card.dataset.id;
+            const currType = card.dataset.type;
+
+            // Can't match same type
+            if (prevType === currType) {
+                prev.classList.remove('selected');
+                card.classList.add('selected');
+                matchingState.selected = card;
+                return;
+            }
+
+            // Check match
+            if (prevId === currId) {
+                prev.classList.remove('selected');
+                prev.classList.add('matched');
+                card.classList.add('matched');
+                matchingState.matches[prevId] = true;
+                matchingState.selected = null;
+
+                // Check completion
+                if (Object.keys(matchingState.matches).length === questions[0].pairs.length) {
+                    setTimeout(() => {
+                        correct += questions[0].pairs.length;
+                        total += questions[0].pairs.length;
+                        streak += questions[0].pairs.length;
+                        bestStreak = Math.max(bestStreak, streak);
+                        updateStats();
+                        showCompletion();
+                    }, 500);
+                }
+            } else {
+                prev.classList.remove('selected');
+                prev.classList.add('wrong');
+                card.classList.add('wrong');
+                streak = 0;
+                updateStats();
+                setTimeout(() => {
+                    prev.classList.remove('wrong');
+                    card.classList.remove('wrong');
+                }, 500);
+                matchingState.selected = null;
+            }
         }
 
         function selectOption(idx) {
             if (answered) return;
             answered = true;
             total++;
-            
+
             const q = questions[currentQuestion];
             const selected = q.options[idx];
             const isCorrect = selected === q.correct;
-            
+
             if (isCorrect) {
                 correct++;
                 streak++;
+                bestStreak = Math.max(bestStreak, streak);
+                updateProgressForCompound(q.compound, true);
             } else {
                 streak = 0;
+                updateProgressForCompound(q.compound, false);
             }
             updateStats();
-            
+
+            // Visual feedback
             const options = document.querySelectorAll('.option');
             options.forEach((opt, i) => {
                 opt.classList.add('disabled');
                 if (q.options[i] === q.correct) opt.classList.add('correct');
                 else if (i === idx && !isCorrect) opt.classList.add('incorrect');
             });
+
+            showFeedback(isCorrect, q.correct);
+            elements.nextBtn.classList.remove('hidden');
+        }
+
+        function checkTypingAnswer() {
+            if (answered) return;
             
-            feedbackDiv.textContent = isCorrect ? `Correct! ${q.correct}` : `The answer is: ${q.correct}`;
-            feedbackDiv.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
-            feedbackDiv.classList.remove('hidden');
+            const q = questions[currentQuestion];
+            const input = elements.typingInput.value.trim().toLowerCase();
+            const isCorrect = input === q.correct.toLowerCase();
+
+            answered = true;
+            total++;
+
+            if (isCorrect) {
+                correct++;
+                streak++;
+                bestStreak = Math.max(bestStreak, streak);
+                elements.typingInput.classList.add('correct');
+                updateProgressForCompound(q.compound, true);
+            } else {
+                streak = 0;
+                elements.typingInput.classList.add('incorrect');
+                updateProgressForCompound(q.compound, false);
+            }
+            updateStats();
+
+            showFeedback(isCorrect, q.correct);
+            elements.checkBtn.classList.add('hidden');
+            elements.nextBtn.classList.remove('hidden');
+        }
+
+        function updateProgressForCompound(compound, wasCorrect) {
+            if (!compound) return;
             
-            nextBtn.classList.remove('hidden');
-            nextBtn.textContent = currentQuestion < questions.length - 1 ? 'Next Question' : 'See Results';
-            nextBtn.onclick = () => {
-                currentQuestion++;
-                updateProgressBar();
-                showQuestion();
-            };
+            const key = compound.form;
+            if (!userProgress[key]) {
+                userProgress[key] = { correct: 0, incorrect: 0, lastSeen: Date.now() };
+            }
+            
+            if (wasCorrect) {
+                userProgress[key].correct++;
+            } else {
+                userProgress[key].incorrect++;
+            }
+            userProgress[key].lastSeen = Date.now();
+            saveProgress();
+            updateMasteryDots();
+        }
+
+        function showFeedback(isCorrect, correctAnswer) {
+            elements.feedback.textContent = isCorrect 
+                ? 'Correct!' 
+                : `The answer is: ${correctAnswer}`;
+            elements.feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            elements.feedback.classList.remove('hidden');
+        }
+
+        function showHint() {
+            const q = questions[currentQuestion];
+            if (!q) return;
+            
+            let hint = '';
+            if (q.compound) {
+                hint = `Roots: ${q.compound.roots.join(', ')}`;
+            } else if (q.hint) {
+                hint = `Hint: ${q.hint}`;
+            }
+            
+            elements.feedback.textContent = hint;
+            elements.feedback.className = 'feedback hint';
+            elements.feedback.classList.remove('hidden');
+        }
+
+        function skipQuestion() {
+            if (answered) return;
+            answered = true;
+            total++;
+            streak = 0;
+            updateStats();
+
+            const q = questions[currentQuestion];
+            
+            // Show correct answer
+            if (currentMode === 'typing') {
+                elements.typingInput.value = q.correct;
+                elements.typingInput.classList.add('incorrect');
+            } else {
+                const options = document.querySelectorAll('.option');
+                options.forEach((opt, i) => {
+                    opt.classList.add('disabled');
+                    if (q.options[i] === q.correct) opt.classList.add('correct');
+                });
+            }
+
+            showFeedback(false, q.correct);
+            elements.checkBtn?.classList.add('hidden');
+            elements.nextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            showQuestion();
         }
 
         function updateStats() {
-            document.getElementById('correctCount').textContent = correct;
-            document.getElementById('streakCount').textContent = streak;
-            document.getElementById('accuracyCount').textContent = total > 0 ? Math.round((correct / total) * 100) + '%' : '0%';
+            elements.correctCount.textContent = correct;
+            elements.streakCount.textContent = streak;
+            elements.accuracyCount.textContent = total > 0 ? Math.round((correct / total) * 100) + '%' : '0%';
+            
+            const mastered = Object.entries(userProgress).filter(([k, v]) => v.correct >= 3).length;
+            elements.masteredCount.textContent = mastered;
         }
 
-        function updateProgressBar() {
-            const dots = questions.map((_, i) => {
-                let cls = 'progress-dot';
-                if (i < currentQuestion) cls += ' completed';
-                else if (i === currentQuestion) cls += ' current';
-                return `<div class="${cls}"></div>`;
+        function updateProgress() {
+            const pct = questions.length > 0 ? (currentQuestion / questions.length) * 100 : 0;
+            elements.progressFill.style.width = pct + '%';
+            elements.progressText.textContent = `${currentQuestion} / ${questions.length}`;
+        }
+
+        function updateMasteryDots() {
+            // Show mastery status for current session compounds
+            const compounds = questions.filter(q => q.compound).map(q => q.compound);
+            if (compounds.length === 0) return;
+
+            elements.masteryDots.innerHTML = compounds.slice(0, 20).map(c => {
+                const prog = userProgress[c.form];
+                let cls = 'mastery-dot';
+                if (prog) {
+                    if (prog.correct >= 3) cls += ' mastered';
+                    else if (prog.correct > 0) cls += ' learning';
+                    else cls += ' new';
+                } else {
+                    cls += ' new';
+                }
+                return `<div class="${cls}" title="${c.form}"></div>`;
             }).join('');
-            document.getElementById('progressBar').innerHTML = dots;
+        }
+
+        function showCompletion() {
+            elements.quizArea.classList.add('hidden');
+            elements.completionCard.classList.remove('hidden');
+            
+            document.getElementById('finalAccuracy').textContent = 
+                total > 0 ? Math.round((correct / total) * 100) + '%' : '0%';
+            document.getElementById('finalStreak').textContent = bestStreak;
+            
+            const mastered = Object.entries(userProgress).filter(([k, v]) => v.correct >= 3).length;
+            document.getElementById('finalMastered').textContent = mastered;
+        }
+
+        function restartSession() {
+            startQuiz();
+        }
+
+        function changeMode() {
+            elements.completionCard.classList.add('hidden');
+            elements.quizArea.classList.remove('hidden');
+            // Let user pick a new mode
+        }
+
+        function toggleReference() {
+            elements.referencePanel.classList.toggle('hidden');
+            if (!elements.referencePanel.classList.contains('hidden')) {
+                showReferenceTab('roots');
+            }
+        }
+
+        function showReferenceTab(tab) {
+            const content = elements.referenceContent;
+            
+            if (tab === 'roots') {
+                generateRootsReference();
+            } else if (tab === 'compounds') {
+                content.innerHTML = `
+                    <div class="compounds-list">
+                        ${filteredCompounds.map(c => `
+                            <div class="compound-item">
+                                <div class="form">${c.form}</div>
+                                <div class="meaning">${c.meaning}</div>
+                                <div class="roots">${c.roots.join(' · ')}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (tab === 'mastery') {
+                const mastered = Object.entries(userProgress).filter(([k, v]) => v.correct >= 3);
+                const learning = Object.entries(userProgress).filter(([k, v]) => v.correct > 0 && v.correct < 3);
+                
+                content.innerHTML = `
+                    <div class="compounds-list">
+                        <h3 style="margin-bottom: 1rem; color: var(--accent-tertiary);">Mastered (${mastered.length})</h3>
+                        ${mastered.map(([k, v]) => `
+                            <div class="compound-item">
+                                <div class="form">${k} <span class="mastery-level mastered"></span></div>
+                                <div class="roots">Correct: ${v.correct} · Incorrect: ${v.incorrect}</div>
+                            </div>
+                        `).join('') || '<p style="color: var(--text-muted);">No compounds mastered yet.</p>'}
+                        
+                        <h3 style="margin: 2rem 0 1rem; color: var(--warning);">Learning (${learning.length})</h3>
+                        ${learning.map(([k, v]) => `
+                            <div class="compound-item">
+                                <div class="form">${k} <span class="mastery-level learning"></span></div>
+                                <div class="roots">Correct: ${v.correct} · Incorrect: ${v.incorrect}</div>
+                            </div>
+                        `).join('') || '<p style="color: var(--text-muted);">No compounds in progress.</p>'}
+                    </div>
+                `;
+            }
+        }
+
+        function showRootDetail(rootForm) {
+            const root = roots.find(r => r.form === rootForm);
+            if (!root) return;
+            
+            const related = allCompounds.filter(c => c.roots.includes(rootForm));
+            
+            elements.feedback.innerHTML = `
+                <strong>${root.form}</strong> — ${root.meaning} (${root.category})<br>
+                <small>Used in ${related.length} compounds</small>
+            `;
+            elements.feedback.className = 'feedback hint';
+            elements.feedback.classList.remove('hidden');
+        }
+
+        // ===== UTILITIES =====
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
         }
 
         // Start
