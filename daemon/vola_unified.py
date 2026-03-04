@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
-Vola Unified Interface v2.4
+Vola Unified Interface v2.5
+
+Changes from v2.4:
+- Version display fixed: now reads daemon version from status.json instead of hardcoded UI version
 
 Changes from v2.3:
 - Defensive error handling in poll() and syncChatFromServer()
@@ -79,6 +82,7 @@ def get_data():
     agent_state = status_data.get("agent_state", "stopped")
     resume_at = status_data.get("resume_at")
     tokens_per_second = status_data.get("tokens_per_second", 0)
+    daemon_version = status_data.get("version", "—")
 
     exec_state = load_json(EXEC_STATE_FILE, {"mode": "running"})
     exec_mode = exec_state.get("mode", "running")
@@ -300,7 +304,7 @@ def get_data():
         "workspace_files": workspace_files,
         "terminal_entries": terminal_entries,
         "cycle_card": cycle_card, "approval": approval, "snapshots": snapshots,
-        "version": "v2.4",
+        "version": daemon_version,
     }
 
 

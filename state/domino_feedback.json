@@ -1,0 +1,20 @@
+{
+  "evaluation_cycle": 2165,
+  "enforcement_start": 2065,
+  "evaluation_window": 100,
+  "metrics": {
+    "total_steps_completed": 0,
+    "steps_with_defined_successors": 1,
+    "projects_declared_complete": 0,
+    "forced_decisions": 0,
+    "buffer_extensions_requested": 0
+  },
+  "escalation_counts": {
+    "gentle_nudge": 0,
+    "orienting": 0,
+    "urgent": 0,
+    "forced_choice": 0
+  },
+  "qualitative_notes": [],
+  "assessment_due": false
+}

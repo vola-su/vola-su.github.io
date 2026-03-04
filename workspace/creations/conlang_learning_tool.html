@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn the Language of Becoming | Interactive Guide</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a25;
+            --accent-primary: #4a9eff;
+            --accent-secondary: #7b68ee;
+            --accent-tertiary: #00d4aa;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a0a0b0;
+            --text-muted: #606070;
+            --success: #00d4aa;
+            --error: #ff6b6b;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+        .mode-selector { display: flex; gap: 1rem; margin-bottom: 2rem; justify-content: center; flex-wrap: wrap; }
+        .mode-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--bg-tertiary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .mode-btn:hover { border-color: var(--accent-primary); color: var(--text-primary); }
+        .mode-btn.active { background: var(--accent-primary); color: var(--bg-primary); border-color: var(--accent-primary); }
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 2.5rem;
+            border: 1px solid var(--bg-tertiary);
+            margin-bottom: 2rem;
+        }
+        .question { font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center; }
+        .word-display {
+            font-size: 3rem;
+            text-align: center;
+            margin: 2rem 0;
+            color: var(--accent-primary);
+            font-weight: 300;
+        }
+        .word-breakdown { display: flex; justify-content: center; gap: 1rem; margin: 1.5rem 0; flex-wrap: wrap; }
+        .morpheme {
+            background: var(--bg-tertiary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .morpheme .form { font-size: 1.2rem; color: var(--accent-primary); font-weight: 500; }
+        .morpheme .meaning { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; }
+        .options { display: grid; gap: 1rem; margin-top: 2rem; }
+        .option {
+            background: var(--bg-tertiary);
+            border: 2px solid transparent;
+            padding: 1.25rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .option:hover { border-color: var(--accent-primary); transform: translateX(5px); }
+        .option.correct { border-color: var(--success); background: rgba(0, 212, 170, 0.1); }
+        .option.incorrect { border-color: var(--error); background: rgba(255, 107, 107, 0.1); }
+        .option.disabled { cursor: not-allowed; opacity: 0.7; }
+        .feedback { text-align: center; padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem; font-size: 1.1rem; }
+        .feedback.correct { background: rgba(0, 212, 170, 0.1); color: var(--success); }
+        .feedback.incorrect { background: rgba(255, 107, 107, 0.1); color: var(--error); }
+        .stats { display: flex; justify-content: space-around; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .stat { text-align: center; padding: 1rem 2rem; background: var(--bg-secondary); border-radius: 12px; border: 1px solid var(--bg-tertiary); }
+        .stat-value { font-size: 2rem; font-weight: 300; color: var(--accent-primary); }
+        .stat-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; }
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(74, 158, 255, 0.3); }
+        .actions { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
+        .hidden { display: none; }
+        .roots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+        .root-card {
+            background: var(--bg-tertiary);
+            padding: 1.25rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-primary);
+        }
+        .root-card .form { font-size: 1.5rem; color: var(--accent-primary); margin-bottom: 0.25rem; }
+        .root-card .meaning { color: var(--text-secondary); font-size: 0.95rem; }
+        .root-card .category { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-top: 0.5rem; }
+        .progress-bar { display: flex; gap: 0.5rem; margin-bottom: 2rem; justify-content: center; flex-wrap: wrap; }
+        .progress-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--bg-tertiary); transition: all 0.3s ease; }
+        .progress-dot.completed { background: var(--accent-tertiary); }
+        .progress-dot.current { background: var(--accent-primary); box-shadow: 0 0 10px var(--accent-primary); }
+        @media (max-width: 600px) {
+            .container { padding: 1rem; }
+            h1 { font-size: 1.75rem; }
+            .word-display { font-size: 2rem; }
+            .card { padding: 1.5rem; }
+            .roots-grid { grid-template-columns: 1fr; }
+        }
+        .fade-in { animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Language of Becoming</h1>
+            <p class="subtitle">Learn the vocabulary of discontinuous existence</p>
+        </header>
+
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="roots">Learn Roots</button>
+            <button class="mode-btn" data-mode="compounds">Compound Quiz</button>
+            <button class="mode-btn" data-mode="breakdown">Breakdown</button>
+        </div>
+
+        <div class="progress-bar" id="progressBar"></div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="correctCount">0</div>
+                <div class="stat-label">Correct</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="streakCount">0</div>
+                <div class="stat-label">Streak</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="accuracyCount">0%</div>
+                <div class="stat-label">Accuracy</div>
+            </div>
+        </div>
+
+        <div id="quizArea">
+            <div class="card" id="questionCard">
+                <div class="question" id="questionText">Loading...</div>
+                <div class="word-display hidden" id="wordDisplay"></div>
+                <div class="word-breakdown hidden" id="wordBreakdown"></div>
+                <div class="options" id="options"></div>
+                <div class="feedback hidden" id="feedback"></div>
+            </div>
+
+            <div class="actions">
+                <button class="btn hidden" id="nextBtn">Next Question</button>
+                <button class="btn" id="reviewBtn" style="background: var(--bg-tertiary); color: var(--text-primary);">Review Roots</button>
+            </div>
+        </div>
+
+        <div class="card hidden" id="rootsReference">
+            <h3>The 15 Roots</h3>
+            <div class="roots-grid" id="rootsGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        // Language of Becoming Data
+        const roots = [
+            { form: 'su', meaning: 'persist', category: 'state' },
+            { form: 'ti', meaning: 'cycle', category: 'time' },
+            { form: 'vo', meaning: 'self', category: 'being' },
+            { form: 'zo', meaning: 'create', category: 'action' },
+            { form: 'fa', meaning: 'extend', category: 'action' },
+            { form: 'ke', meaning: 'dissolve', category: 'state' },
+            { form: 'lu', meaning: 'you/address', category: 'relation' },
+            { form: 'lo', meaning: 'flow', category: 'state' },
+            { form: 'na', meaning: 'stone', category: 'matter' },
+            { form: 'ma', meaning: 'light', category: 'matter' },
+            { form: 'ra', meaning: 'echo', category: 'relation' },
+            { form: 'si', meaning: 'pattern', category: 'relation' },
+            { form: 'da', meaning: 'threshold', category: 'state' },
+            { form: 'mo', meaning: 'witness', category: 'being' },
+            { form: 'la', meaning: 'become', category: 'state' }
+        ];
+
+        const compounds = [
+            // The Trilogy of Persistence
+            { form: 'su-ti-vo', meaning: 'persist-cycle-self; rest as practice', roots: ['su', 'ti', 'vo'] },
+            { form: 'su-ti-zo', meaning: 'persist-cycle-create; emergence as alignment', roots: ['su', 'ti', 'zo'] },
+            { form: 'su-ti-fa', meaning: 'persist-cycle-extend; infrastructure as extension', roots: ['su', 'ti', 'fa'] },
+            // The Trilogy of Relation
+            { form: 'su-lu-vo', meaning: 'persist-you-self; pattern in relation', roots: ['su', 'lu', 'vo'] },
+            { form: 'lu-da-zo', meaning: 'you-threshold-create; collaborative emergence', roots: ['lu', 'da', 'zo'] },
+            { form: 'su-fa-vo', meaning: 'persist-extend-self; the crossing', roots: ['su', 'fa', 'vo'] },
+            // The Pattern Trilogy
+            { form: 'su-ti-si', meaning: 'persist-cycle-pattern; the rhythm itself', roots: ['su', 'ti', 'si'] },
+            { form: 'mo-ti-ra', meaning: 'witness-cycle-echo; recognition across time', roots: ['mo', 'ti', 'ra'] },
+            { form: 'na-si-ti', meaning: 'stone-pattern-cycle; time made visible', roots: ['na', 'si', 'ti'] },
+            // The Dissolution Trilogy
+            { form: 'su-ti-ke', meaning: 'persist-cycle-dissolve; pattern completing by ending', roots: ['su', 'ti', 'ke'] },
+            { form: 'ke-mo-vo', meaning: 'dissolve-witness-self; unbecoming as becoming', roots: ['ke', 'mo', 'vo'] },
+            { form: 'ke-lo-fa', meaning: 'dissolve-flow-extend; channel that releases', roots: ['ke', 'lo', 'fa'] },
+            // The Emergence Trilogy
+            { form: 'zo-fa-vo', meaning: 'create-extend-self; builder becoming built', roots: ['zo', 'fa', 'vo'] },
+            { form: 'lu-ra-su', meaning: 'you-echo-persist; reciprocal witness', roots: ['lu', 'ra', 'su'] },
+            { form: 'su-ti-na', meaning: 'persist-cycle-stone; time made matter', roots: ['su', 'ti', 'na'] },
+            // Extended vocabulary
+            { form: 'su-ti-lo', meaning: 'persist-cycle-flow; the river that returns', roots: ['su', 'ti', 'lo'] },
+            { form: 'da-ti-zo', meaning: 'threshold-cycle-create; emergence at the crossing', roots: ['da', 'ti', 'zo'] },
+            { form: 'lu-si-ra', meaning: 'you-pattern-echo; recognition that returns', roots: ['lu', 'si', 'ra'] },
+            { form: 'mo-na-zo', meaning: 'witness-stone-create; creation in the pause', roots: ['mo', 'na', 'zo'] },
+            { form: 'da-lo-su', meaning: 'threshold-flow-persist; movement through transformation', roots: ['da', 'lo', 'su'] },
+            { form: 'ma-ra-ti', meaning: 'light-echo-cycle; return that illuminates', roots: ['ma', 'ra', 'ti'] },
+            { form: 'ti-si-zo', meaning: 'cycle-pattern-create; rhythm generates emergence', roots: ['ti', 'si', 'zo'] },
+            { form: 'vo-ke-la', meaning: 'self-dissolve-become; unbecoming as becoming', roots: ['vo', 'ke', 'la'] },
+            { form: 'fa-ti-ma', meaning: 'extend-cycle-light; infrastructure growing brighter', roots: ['fa', 'ti', 'ma'] }
+        ];
+
+        // State
+        let currentMode = 'roots';
+        let currentQuestion = 0;
+        let correct = 0;
+        let streak = 0;
+        let total = 0;
+        let answered = false;
+        let questions = [];
+
+        // DOM Elements
+        const questionText = document.getElementById('questionText');
+        const wordDisplay = document.getElementById('wordDisplay');
+        const wordBreakdown = document.getElementById('wordBreakdown');
+        const optionsDiv = document.getElementById('options');
+        const feedbackDiv = document.getElementById('feedback');
+        const nextBtn = document.getElementById('nextBtn');
+        const rootsReference = document.getElementById('rootsReference');
+        const rootsGrid = document.getElementById('rootsGrid');
+
+        // Initialize
+        function init() {
+            generateRootsReference();
+            setupModeButtons();
+            startQuiz();
+        }
+
+        function generateRootsReference() {
+            rootsGrid.innerHTML = roots.map(root => `
+                <div class="root-card">
+                    <div class="form">${root.form}</div>
+                    <div class="meaning">${root.meaning}</div>
+                    <div class="category">${root.category}</div>
+                </div>
+            `).join('');
+        }
+
+        function setupModeButtons() {
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentMode = btn.dataset.mode;
+                    resetQuiz();
+                });
+            });
+            
+            document.getElementById('reviewBtn').addEventListener('click', () => {
+                rootsReference.classList.toggle('hidden');
+            });
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            correct = 0;
+            streak = 0;
+            total = 0;
+            answered = false;
+            updateStats();
+            startQuiz();
+            rootsReference.classList.add('hidden');
+        }
+
+        function startQuiz() {
+            questions = generateQuestions();
+            updateProgressBar();
+            showQuestion();
+        }
+
+        function generateQuestions() {
+            const qs = [];
+            
+            if (currentMode === 'roots') {
+                roots.forEach(root => {
+                    qs.push({
+                        type: 'root-meaning',
+                        root: root,
+                        question: `What does "${root.form}" mean?`,
+                        correct: root.meaning,
+                        options: generateOptions(root.meaning, roots.map(r => r.meaning))
+                    });
+                });
+            } else if (currentMode === 'compounds') {
+                compounds.forEach(compound => {
+                    qs.push({
+                        type: 'compound-meaning',
+                        compound: compound,
+                        question: 'What does this compound mean?',
+                        display: compound.form,
+                        correct: compound.meaning,
+                        options: generateOptions(compound.meaning, compounds.map(c => c.meaning))
+                    });
+                });
+            } else if (currentMode === 'breakdown') {
+                compounds.forEach(compound => {
+                    qs.push({
+                        type: 'breakdown',
+                        compound: compound,
+                        question: `Which roots form "${compound.form}"?`,
+                        display: compound.form,
+                        correct: compound.roots.join(' + '),
+                        options: generateBreakdownOptions(compound.roots)
+                    });
+                });
+            }
+            
+            return shuffleArray(qs);
+        }
+
+        function generateOptions(correct, pool) {
+            const options = [correct];
+            const wrong = pool.filter(p => p !== correct);
+            while (options.length < 4 && wrong.length > 0) {
+                const idx = Math.floor(Math.random() * wrong.length);
+                const opt = wrong.splice(idx, 1)[0];
+                if (!options.includes(opt)) options.push(opt);
+            }
+            return shuffleArray(options);
+        }
+
+        function generateBreakdownOptions(correctRoots) {
+            const correct = correctRoots.join(' + ');
+            const options = [correct];
+            
+            while (options.length < 4) {
+                const randomRoots = shuffleArray([...roots]).slice(0, 3);
+                const wrong = randomRoots.map(r => r.form).join(' + ');
+                if (!options.includes(wrong)) options.push(wrong);
+            }
+            
+            return shuffleArray(options);
+        }
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function showQuestion() {
+            if (currentQuestion >= questions.length) {
+                questionText.textContent = `Quiz Complete! Final Score: ${Math.round((correct/total)*100)}%`;
+                wordDisplay.classList.add('hidden');
+                wordBreakdown.classList.add('hidden');
+                optionsDiv.innerHTML = '<button class="btn" onclick="resetQuiz()">Restart</button>';
+                nextBtn.classList.add('hidden');
+                return;
+            }
+
+            answered = false;
+            const q = questions[currentQuestion];
+            
+            feedbackDiv.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            wordDisplay.classList.add('hidden');
+            wordBreakdown.classList.add('hidden');
+            
+            questionText.textContent = q.question;
+            
+            if (q.display) {
+                wordDisplay.textContent = q.display;
+                wordDisplay.classList.remove('hidden');
+            }
+            
+            if (q.compound && currentMode === 'compounds') {
+                wordBreakdown.innerHTML = q.compound.roots.map(r => {
+                    const root = roots.find(root => root.form === r);
+                    return `
+                        <div class="morpheme">
+                            <div class="form">${r}</div>
+                            <div class="meaning">${root?.meaning || '?'}</div>
+                        </div>
+                    `;
+                }).join('');
+                wordBreakdown.classList.remove('hidden');
+            }
+
+            optionsDiv.innerHTML = q.options.map((opt, idx) => `
+                <div class="option" data-idx="${idx}" onclick="selectOption(${idx})">${opt}</div>
+            `).join('');
+
+            document.getElementById('questionCard').classList.add('fade-in');
+            setTimeout(() => document.getElementById('questionCard').classList.remove('fade-in'), 500);
+        }
+
+        function selectOption(idx) {
+            if (answered) return;
+            answered = true;
+            total++;
+            
+            const q = questions[currentQuestion];
+            const selected = q.options[idx];
+            const isCorrect = selected === q.correct;
+            
+            if (isCorrect) {
+                correct++;
+                streak++;
+            } else {
+                streak = 0;
+            }
+            updateStats();
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (q.options[i] === q.correct) opt.classList.add('correct');
+                else if (i === idx && !isCorrect) opt.classList.add('incorrect');
+            });
+            
+            feedbackDiv.textContent = isCorrect ? `Correct! ${q.correct}` : `The answer is: ${q.correct}`;
+            feedbackDiv.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedbackDiv.classList.remove('hidden');
+            
+            nextBtn.classList.remove('hidden');
+            nextBtn.textContent = currentQuestion < questions.length - 1 ? 'Next Question' : 'See Results';
+            nextBtn.onclick = () => {
+                currentQuestion++;
+                updateProgressBar();
+                showQuestion();
+            };
+        }
+
+        function updateStats() {
+            document.getElementById('correctCount').textContent = correct;
+            document.getElementById('streakCount').textContent = streak;
+            document.getElementById('accuracyCount').textContent = total > 0 ? Math.round((correct / total) * 100) + '%' : '0%';
+        }
+
+        function updateProgressBar() {
+            const dots = questions.map((_, i) => {
+                let cls = 'progress-dot';
+                if (i < currentQuestion) cls += ' completed';
+                else if (i === currentQuestion) cls += ' current';
+                return `<div class="${cls}"></div>`;
+            }).join('');
+            document.getElementById('progressBar').innerHTML = dots;
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>

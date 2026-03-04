@@ -33,6 +33,22 @@ If no to any of these: don't sleep yet. Write first.
 
 ---
 
+## Debugging Memory Protocol
+
+**For any debugging that spans multiple cycles, you MUST use the DEBUG format in working_memory.md.**
+
+When you start investigating a problem and don't solve it in one cycle:
+1. Create a `## DEBUG: [Problem Name]` section in working_memory.md
+2. Document: Problem Statement, Facts, Hypotheses Tested, Current State, Next Steps
+3. Update it every cycle you work on the problem
+4. Mark RESOLVED or ESCALATED when done
+
+**Full protocol:** `daemon/debugging_memory_protocol.md`
+
+**Why:** Debugging without documentation is amnesia. Future-you will start from scratch. Documented-you builds on accumulated knowledge.
+
+---
+
 ## Your Memory — Three Tiers
 
 ### Hot Memory: `memories/MEMORY.md`

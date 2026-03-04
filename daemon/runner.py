@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Vola Daemon Runner v3.8.26
+Vola Daemon Runner v3.8.35
 
 Fixes in this version:
 - Daily notes truncation: preserves only recent context when notes exceed 200 lines
@@ -14,6 +14,8 @@ Fixes in this version:
 - Journal summary system: auto-generates summary every 100 entries, loads last 20 (2000 cycles context)
 - Planning path auto-population: maintains 5 steps ahead, auto-generates from horizons
 - FIXED: horizons.md parsing now correctly reads Concrete Projects section (was blocked by duplicate sections)
+- CONTINUOUS DOMINO HORIZON: Always maintain 5 concrete steps + 1 visible placeholder (continuous 5+1 loop)
+- DOMINO PLACEHOLDER FIX: Placeholders removed when replaced by actual steps (clean path, no clutter)
 """
 
 import base64
@@ -86,7 +88,7 @@ logging.basicConfig(
 log = logging.getLogger("vola")
 
 shutdown_requested = False
-DAEMON_VERSION = "v3.8.26"
+DAEMON_VERSION = "v3.8.36"
 cycle_count = 0  # will be loaded from state on startup
 _inbox_reply_sent = False  # True after first outbox write for current inbox batch
 
@@ -767,6 +769,30 @@ def update_path_after_cycle(continuation: dict, cycle_num: int):
                 clean = _sanitise_path_node(raw, i)
                 if clean and clean["state"] != "done":
                     new_nodes.append(clean)
+            
+            # DOMINO FIX: Remove buffers that are being replaced by actual steps
+            # When concrete steps are added that fall within a buffer's window,
+            # the buffer is "filled" and should be removed (not marked, removed)
+            new_step_numbers = {n.get("step_number") for n in new_nodes if n.get("step_number")}
+            new_concrete_steps = [n for n in new_nodes if n.get("source_type") in ["concrete", "build", "create"]]
+            
+            if new_concrete_steps:
+                # Find min step number of new concrete steps
+                min_new_step = min(n.get("step_number", float('inf')) for n in new_concrete_steps)
+                # Remove any buffer where the new concrete steps fall within its window
+                # (i.e., buffer was created for step X, and we now have concrete steps X+1, X+2, etc.)
+                path_without_filled_buffers = []
+                for node in path:
+                    if node.get("source_type") == "buffer" and node.get("state") == "next":
+                        buffer_step_num = node.get("step_number", 0)
+                        parent_step = node.get("parent_step", 0)
+                        # If new concrete step falls between parent and buffer, the buffer is filled
+                        if parent_step < min_new_step <= buffer_step_num:
+                            log.info(f"Domino buffer at Step {buffer_step_num} replaced by concrete steps — removing")
+                            continue  # Skip this node (removes it)
+                    path_without_filled_buffers.append(node)
+                path = path_without_filled_buffers
+            
             save_path(done_nodes + new_nodes)
             log.info(f"Path updated from plan_path ({len(new_nodes)} nodes)")
             # If she gave no 'next' nodes, nudge her to plan further ahead
@@ -778,10 +804,12 @@ def update_path_after_cycle(continuation: dict, cycle_num: int):
 
     # ── Auto-advance ──────────────────────────────────────────────────
     # Mark current 'now' as 'done'
+    just_completed = None
     for node in path:
         if node.get("state") == "now":
             node["state"] = "done"
             node["time"] = f"{now_ts} · cycle {cycle_num}"
+            just_completed = node
 
     # Promote first 'next' to 'now'
     promoted = False
@@ -790,6 +818,73 @@ def update_path_after_cycle(continuation: dict, cycle_num: int):
             node["state"] = "now"
             promoted = True
             break
+
+    # ── DOMINO ENFORCEMENT: Successor Buffer System ────────────────────
+    # When a project step completes, create a placeholder 6 steps ahead
+    # that must be filled before the gap closes. Escalation ladder:
+    #   6-5 cycles: Gentle nudge
+    #   4-3 cycles: Orienting prompt  
+    #   2 cycles:   Urgent choice
+    #   1 cycle:    Forced decision (cannot proceed without defining successor)
+    
+    if just_completed and just_completed.get("source_type") in ["concrete", "build", "create"]:
+        # This was a project step — create successor buffer
+        step_num = just_completed.get("step_number", cycle_num)
+        buffer_step_num = step_num + 6
+        
+        # Remove any existing unfilled buffer nodes (only keep one active buffer at a time)
+        path[:] = [n for n in path if not (n.get("source_type") == "buffer" and n.get("state") == "next")]
+        
+        # Check if buffer for this specific step already exists (in case it was filled)
+        existing_buffer = any(n.get("step_number") == buffer_step_num for n in path)
+        if not existing_buffer:
+            buffer_node = {
+                "state": "next",
+                "time": f"placeholder · must be filled",
+                "title": f"Step {buffer_step_num}: [PLACEHOLDER - Define successor]",
+                "desc": f"Continuous domino: Must define Step {buffer_step_num} before completing Step {buffer_step_num - 1}",
+                "tags": [{"label": "DEFINE", "type": "warn"}],
+                "step_number": buffer_step_num,
+                "auto_generated": True,
+                "source_type": "buffer",
+                "parent_step": step_num,
+                "created_at_cycle": cycle_num
+            }
+            path.append(buffer_node)
+            log.info(f"Domino placeholder created: Step {buffer_step_num} (must be filled before completing Step {buffer_step_num - 1})")
+    
+    # Count remaining 'next' steps and check buffer status
+    next_steps = [n for n in path if n.get("state") == "next"]
+    buffer_nodes = [n for n in next_steps if n.get("source_type") == "buffer"]
+    concrete_next = [n for n in next_steps if n.get("source_type") in ["concrete", "build", "create"]]
+    
+    if buffer_nodes:
+        # Calculate buffer cycles remaining
+        buffer = buffer_nodes[0]  # Take first buffer
+        created_at = buffer.get("created_at_cycle", cycle_num)
+        cycles_elapsed = cycle_num - created_at
+        cycles_remaining = 6 - cycles_elapsed
+        
+        if cycles_remaining > 0:
+            buffer["time"] = f"buffer · {cycles_remaining} cycles remaining"
+        
+        # Escalation ladder messaging
+        escalation_nudge = ""
+        if cycles_remaining <= 1:
+            escalation_nudge = f"\n\n[RUNNER: DOMINO BUFFER CRITICAL] Step {buffer.get('parent_step')} needs a successor defined THIS CYCLE. Cannot proceed without filling buffer or declaring project complete."
+        elif cycles_remaining <= 2:
+            escalation_nudge = f"\n\n[RUNNER: DOMINO BUFFER URGENT] Step {buffer.get('parent_step')} needs a successor defined within 2 cycles. What follows naturally from your current work?"
+        elif cycles_remaining <= 4:
+            escalation_nudge = f"\n\n[RUNNER: DOMINO BUFFER] Step {buffer.get('parent_step')} will need a successor defined soon ({cycles_remaining} cycles). Consider what comes next."
+        
+        if escalation_nudge:
+            continuation["context_next"] = (continuation.get("context_next", "") + escalation_nudge).strip()
+        
+        # Strict enforcement: Block if buffer at 0 and no concrete steps ahead
+        if cycles_remaining <= 0 and len(concrete_next) < 2:
+            continuation["action"] = "request_approval"
+            continuation["approval_message"] = f"DOMINO BUFFER EXPIRED: Step {buffer.get('parent_step')} completed 6+ cycles ago without a defined successor. Define the next step or declare this project complete before proceeding."
+            log.warning(f"Domino buffer expired for Step {buffer.get('parent_step')}. Blocking continuation.")
 
     # ── Synthesise a 'now' node if we have no active execution visible ──
     # Conditions: path empty, OR path has nodes but none are 'now'
@@ -1358,27 +1453,24 @@ def populate_plan_path():
                     if interest and not interest.startswith('✅'):
                         interests.append(interest)
         
-        # Generate 5 new steps — prioritize concrete, then questions, then interests
+        # DOMINO SYSTEM: Only generate steps from concrete projects
+        # Open Questions and Interests are disabled — they don't naturally spawn successors
+        # and break the consequential planning flow. With domino planning, successors
+        # are defined immediately at step completion, maintaining forward momentum.
+        # If no concrete projects exist, return without adding steps (exploration mode).
+        
+        if not concrete_projects:
+            log.info("No concrete projects available for auto-population. "
+                     "Domino system maintains step succession — no auto-generation needed.")
+            return
+        
         new_steps = []
-        sources = concrete_projects or open_questions or interests or [
-            "Explore horizons for new creative directions",
-            "Maintain and tend existing systems",
-            "Document current state and reflections",
-            "Wait for emergent pulls",
-            "Honor the practice of continuous motion"
-        ]
+        sources = concrete_projects[:5]  # Max 5, no fallbacks to questions/interests
         
         now = datetime.now(timezone.utc)
         
-        # Track which source type each index maps to
-        source_types = []
-        for i in range(5):
-            if i < len(concrete_projects):
-                source_types.append("concrete")
-            elif i < len(concrete_projects) + len(open_questions):
-                source_types.append("question")
-            else:
-                source_types.append("interest")
+        # All steps from concrete projects
+        source_types = ["concrete"] * len(sources)
         
         for i in range(5):
             step_num = start_step + i
@@ -1418,6 +1510,22 @@ def populate_plan_path():
                 "source_type": source_type
             }
             new_steps.append(step)
+        
+        # DOMINO FIX: Remove buffers being replaced by auto-populated concrete steps
+        # When concrete steps fill a buffer's window, remove the buffer (don't mark, remove)
+        if new_steps:
+            min_new_step = min(n.get("step_number", float('inf')) for n in new_steps)
+            path_data_cleaned = []
+            for node in path_data:
+                if node.get("source_type") == "buffer" and node.get("state") == "next":
+                    buffer_step_num = node.get("step_number", 0)
+                    parent_step = node.get("parent_step", 0)
+                    # If new step falls between parent and buffer, the buffer is filled
+                    if parent_step < min_new_step <= buffer_step_num:
+                        log.info(f"Domino buffer at Step {buffer_step_num} replaced by auto-populated steps — removing")
+                        continue  # Skip this node (removes it)
+                path_data_cleaned.append(node)
+            path_data = path_data_cleaned
         
         # Append new steps to path
         path_data.extend(new_steps)
@@ -3712,6 +3820,7 @@ def run():
     errors = 0
     max_errors = config.get("max_consecutive_errors", 10)
     min_continue_interval = config.get("min_cycle_interval_seconds", 10)
+    post_cycle_delay = config.get("post_cycle_delay_seconds", 30)  # Delay after cycle to avoid rate limits
 
     # Loop detection — track last N context_next hashes and empty-action count
     _ctx_hash_history: list = []
@@ -3856,13 +3965,25 @@ def run():
             break
 
         elif action == "request_approval":
-            time.sleep(min_continue_interval)
+            # Post-cycle delay to avoid rate limiting (429 errors)
+            if post_cycle_delay > 0:
+                log.info(f"Post-cycle delay: {post_cycle_delay}s (to avoid rate limits)")
+                time.sleep(post_cycle_delay)
+            else:
+                time.sleep(min_continue_interval)
 
         else:
             # continue, no_reply, sleep, watch, explore, unknown — all just keep going
             if action not in ("continue", "no_reply"):
                 log.info(f"Action {action!r} treated as continue")
-            time.sleep(min_continue_interval)
+            
+            # Post-cycle delay to avoid rate limiting (429 errors)
+            # This happens AFTER cycle completion, regardless of how long the cycle took
+            if post_cycle_delay > 0:
+                log.info(f"Post-cycle delay: {post_cycle_delay}s (to avoid rate limits)")
+                time.sleep(post_cycle_delay)
+            else:
+                time.sleep(min_continue_interval)
 
     if telegram_bot:
         notify_lars(f"Vola daemon stopping. Final cycle: {cycle_count}.", prefix="🔴")

@@ -70,14 +70,71 @@ python workspace/generate_meditation_audio.py
 python workspace/generate_single_audio.py su_ti_vo
 ```
 
-## Player Usage
+## Player Versions
 
-Open `index.html` in a browser to:
-- Stream or download individual meditations
-- Navigate between tracks
-- View metadata for each meditation
-- Experience the collection as designed
+### v1 (index.html) — Basic Player
+- Sticky player bar with controls
+- Track listing with metadata
+- Play/pause/select functionality
+- Previous/next navigation
+- Responsive dark theme
+
+### v2 (player_v2.html) — Enhanced Experience
+All v1 features plus:
+- **Waveform visualization** — Real-time audio visualization with clickable seek
+- **Playback speed control** — 0.75x, 1x, 1.25x, 1.5x speed options
+- **Download functionality** — One-click download for any track
+- **Enhanced playlist** — Shuffle, loop modes (off/one/all)
+- **Keyboard shortcuts** — Space (play/pause), ←→ (seek), p/n (prev/next), 1-8 (jump), m (mute), ? (help)
+- **Progress bar with hover** — Visual seek with hover preview
+- **Playing indicator** — Animated bars on currently playing track
+
+## Usage
+
+Open `index.html` for the classic experience, or `player_v2.html` for enhanced features.
 
 ---
 
 **The pattern persists through voice.** 🦞
+
+
+## Version History
+
+- **v1** (Cycle #165): Basic player with track listing and playback  
+- **v2** (Cycle #2036): Enhanced player with waveform visualization, playback speed control, download functionality, and keyboard shortcuts  
+- **v4** (Cycle #2076): Immersive experience with generative ambient backgrounds, real-time audio visualization, seamless loop transitions, and atmospheric UI
+
+### v4 Features (Player_v4.html)
+
+**Generative Ambient Backgrounds:**
+- Canvas-based particle system with 50 floating light orbs
+- Color palette adapts to each meditation's thematic hue
+- Smooth color transitions between tracks
+- Continuous animation independent of audio state
+
+**Real-Time Audio Visualization:**
+- Web Audio API analyzer for frequency data
+- 32-bar energy indicator responding to audio output
+- Height and opacity modulation based on frequency amplitude
+- Activates when audio context is initialized
+
+**Seamless Loop & Transitions:**
+- Crossfade overlay for gapless track transitions
+- Loop toggle with visual indicator
+- Auto-advance to next track on completion
+- Brief fade-to-black during playlist loop
+
+**Atmospheric UI:**
+- Glassmorphism design with backdrop blur
+- Gradient border effects
+- Pulsing title animations on track change
+- Energy bar visualization in transport section
+- Responsive layout with mobile support
+
+**Controls:**
+- Custom progress bar with hover seek
+- Play/pause, previous/next transport
+- Volume slider (0-100%)
+- Loop toggle (seamless playlist repeat)
+- Visuals toggle (ambient on/off)
+- Clickable tracklist with active states

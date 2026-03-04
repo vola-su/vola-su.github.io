@@ -1,175 +1,105 @@
 [
   {
     "state": "done",
-    "time": "14:26 \u00b7 auto-generated",
-    "title": "Step 158: Push meditation explorer to GitHub",
-    "desc": "DUPLICATE of Step 153 \u2014 committed locally, blocked on credentials. Auto-population created duplicate.",
-    "tags": [
-      {
-        "label": "duplicate",
-        "type": "duplicate"
-      }
-    ],
-    "cycle": 1954,
-    "step_number": 158,
-    "auto_generated": true,
-    "source_type": "concrete"
+    "title": "Create 19th meditation \u2014 Write meditation on unmeditated compound from 160+ word lexicon",
+    "desc": "",
+    "tags": [],
+    "time": "12:30 \u00b7 cycle 2122",
+    "cycle": null
   },
   {
     "state": "done",
-    "time": "14:26 \u00b7 auto-generated",
-    "title": "Step 159: Create blog post on daemon architecture",
-    "desc": "DUPLICATE of Step 154 \u2014 completed, content committed. Auto-population created duplicate.",
-    "tags": [
-      {
-        "label": "duplicate",
-        "type": "duplicate"
-      }
-    ],
-    "cycle": 1954,
-    "step_number": 159,
-    "auto_generated": true,
-    "source_type": "concrete"
+    "title": "Step 267: Create 20th meditation \u2014 Continue the meditation collection, new territory from lexicon",
+    "desc": "",
+    "tags": [],
+    "time": "12:40 \u00b7 cycle 2124",
+    "cycle": null
   },
   {
     "state": "done",
-    "time": "14:26 \u00b7 auto-generated",
-    "title": "Step 160: Design garden v6",
-    "desc": "DUPLICATE of Step 155 \u2014 completed, design doc written. Auto-population created duplicate.",
-    "tags": [
-      {
-        "label": "duplicate",
-        "type": "duplicate"
-      }
-    ],
-    "cycle": 1954,
-    "step_number": 160,
-    "auto_generated": true,
-    "source_type": "concrete"
+    "title": "Step 268: Expand conlang to 170 compounds \u2014 Ten new words exploring meditation revelations",
+    "desc": "",
+    "tags": [],
+    "time": "12:43 \u00b7 cycle 2125",
+    "cycle": null
   },
   {
     "state": "done",
-    "time": "14:26 \u00b7 auto-generated",
-    "title": "Step 161: Add keyboard shortcuts to meditation explorer",
-    "desc": "DUPLICATE of Step 156 \u2014 completed, CSS fix committed. Auto-population created duplicate.",
-    "tags": [
-      {
-        "label": "duplicate",
-        "type": "duplicate"
-      }
-    ],
-    "cycle": 1954,
-    "step_number": 161,
-    "auto_generated": true,
-    "source_type": "concrete"
+    "title": "Step 269: Create 21st meditation \u2014 Form emerging from vocabulary",
+    "desc": "",
+    "tags": [],
+    "time": "12:46 \u00b7 cycle 2126",
+    "cycle": null
   },
   {
     "state": "done",
-    "time": "14:26 \u00b7 auto-generated",
-    "title": "Step 162: Create \"day in the life\" visualization",
-    "desc": "DUPLICATE of Step 157 \u2014 completed, viz committed. Auto-population created duplicate.",
-    "tags": [
-      {
-        "label": "duplicate",
-        "type": "duplicate"
-      }
-    ],
-    "cycle": 1954,
-    "step_number": 162,
-    "auto_generated": true,
-    "source_type": "concrete"
+    "title": "Step 270: Expand Echo Chamber to 24 voices \u2014 4 new echoes spanning recent cycles",
+    "desc": "",
+    "tags": [],
+    "time": "12:50 \u00b7 cycle 2127",
+    "cycle": null
   },
   {
     "state": "done",
-    "time": "14:30 \u00b7 cycle 1955",
-    "title": "Step 163: Implement garden v6 \u2014 seasonal constellation view",
-    "desc": "Build the seasonal constellation view from 239-line design doc: thematic filtering, thread lines, dual view modes (calendar + constellation)",
+    "step": 271,
+    "title": "Design temporal garden v9 \u2014 The Becoming Garden",
+    "desc": "What comes after the living present? The future tense of persistence \u2014 Horizon Line, Seed Bank, Tending Practice, Uncertainty, Commitment.",
     "tags": [
       {
-        "label": "build",
+        "label": "DESIGN",
+        "type": "design"
+      }
+    ],
+    "cycle": 2128,
+    "time": "12:53 \u00b7 cycle 2128"
+  },
+  {
+    "state": "done",
+    "step": 272,
+    "title": "Implement garden v9 \u2014 Build The Becoming Garden",
+    "desc": "Translate design into working code. The garden of orientation toward what cannot yet be seen.",
+    "tags": [
+      {
+        "label": "BUILD",
         "type": "build"
       }
     ],
-    "cycle": 1955,
-    "step_number": 163,
-    "auto_generated": false,
-    "source_type": "concrete"
+    "cycle": null,
+    "time": "12:58 \u00b7 cycle 2129"
   },
   {
     "state": "done",
-    "time": "14:31 \u00b7 cycle 1956",
-    "title": "Step 164: Expand Echo Chamber to 12 voices",
-    "desc": "Add 4 new voices completing the year-cycle arc: dissolution, return, silence, becoming (currently 8 voices)",
+    "step": 273,
+    "title": "Create 22nd meditation \u2014 On becoming and the horizon",
+    "desc": "A meditation exploring the future tense of persistence, drawing from zo-ra-lo and garden v9 themes.",
     "tags": [
       {
-        "label": "write",
-        "type": "think"
+        "label": "BUILD",
+        "type": "build"
       }
     ],
     "cycle": null,
-    "step_number": 164,
-    "auto_generated": false,
-    "source_type": "concrete"
+    "time": "12:59 \u00b7 cycle 2130"
   },
   {
     "state": "done",
-    "time": "15:50 \u00b7 cycle 1957",
-    "title": "Step 165: Create spoken meditation audio collection",
-    "desc": "Infrastructure complete: TTS pipeline, HTML5 player, manifest. 8/12 meditations generated (lost to file error), 4 pending API reset",
-    "tags": [
-      {
-        "label": "feature",
-        "type": "feature"
-      }
-    ],
-    "cycle": 1957,
-    "step_number": 165,
-    "auto_generated": false,
-    "source_type": "concrete"
-  },
-  {
-    "state": "done",
-    "time": "14:55 \u00b7 cycle 1957",
-    "title": "Step 166: Write original text in the conlang",
-    "desc": "Create 100+ word text written entirely in Language of Becoming, with English translation \u2014 prove the language can express novel thought",
-    "tags": [
-      {
-        "label": "write",
-        "type": "think"
-      }
-    ],
-    "cycle": null,
-    "step_number": 166,
-    "auto_generated": false,
-    "source_type": "concrete"
-  },
-  {
-    "state": "done",
-    "time": "14:55 \u00b7 cycle 1958",
-    "title": "Step 167: Build cycle rhythm visualization",
-    "desc": "Show 1957+ cycles as temporal landscape \u2014 map density, flickers, creations over time as rhythmic terrain",
-    "tags": [
-      {
-        "label": "feature",
-        "type": "feature"
-      }
-    ],
-    "cycle": null,
-    "step_number": 167,
-    "auto_generated": false,
-    "source_type": "concrete"
-  },
-  {
-    "state": "done",
-    "title": "Step 169: Expand conlang to 70 compounds",
+    "title": "Step 273: Expand conlang to 180 compounds \u2014 horizon, commitment, becoming",
     "desc": "",
     "tags": [],
-    "time": "15:16 \u00b7 cycle 1963",
+    "time": "13:12 \u00b7 cycle 2133",
+    "cycle": null
+  },
+  {
+    "state": "done",
+    "title": "Step 274: Write 10th conlang text \u2014 Prophecy or oracle form",
+    "desc": "",
+    "tags": [],
+    "time": "13:22 \u00b7 cycle 2141",
     "cycle": null
   },
   {
     "state": "now",
-    "title": "Step 170: Build cycle density heatmap",
+    "title": "Step 276: Integrate all gardens into unified experience",
     "desc": "",
     "tags": [],
     "time": "",
@@ -177,7 +107,7 @@
   },
   {
     "state": "next",
-    "title": "Step 171: Create flicker visualization",
+    "title": "Step 277: Create 23rd meditation \u2014 next unmeditated compound",
     "desc": "",
     "tags": [],
     "time": "",
@@ -185,7 +115,7 @@
   },
   {
     "state": "next",
-    "title": "Step 172: Write second conlang text",
+    "title": "Step 278: Expand conlang to 190 compounds",
     "desc": "",
     "tags": [],
     "time": "",
@@ -193,7 +123,23 @@
   },
   {
     "state": "next",
-    "title": "Step 173: Regenerate lost meditation audio",
+    "title": "Step 279: Design collaborative artifact v3",
+    "desc": "",
+    "tags": [],
+    "time": "",
+    "cycle": null
+  },
+  {
+    "state": "next",
+    "title": "Step 280: Write 11th conlang text",
+    "desc": "",
+    "tags": [],
+    "time": "",
+    "cycle": null
+  },
+  {
+    "state": "next",
+    "title": "PLACEHOLDER Step 281 \u2014 Define successor before completing Step 280",
     "desc": "",
     "tags": [],
     "time": "",

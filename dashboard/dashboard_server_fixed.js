@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 /**
- * Vola Living Dashboard Server v0.14.1 (Whispers)
+ * Vola Living Dashboard Server v0.14.2 (Path)
  * 
  * Serves the dashboard with live data binding.
- * Simplified rendering for reliability.
- * Now with vola.whisper() for the truly curious.
+ * Now with planning path — the domino horizon visible.
  * 
  * Usage: node dashboard_server_fixed.js [port]
  * Default port: 8080
@@ -61,11 +60,95 @@ function formatTimestamp() {
 }
 
 /**
+ * Render planning path from path.json
+ */
+function renderPlanningPath(path) {
+    if (!path || path.length === 0) {
+        return '<p style="color: var(--text-dim); font-style: italic;">No planning path available</p>';
+    }
+    
+    // Separate steps by state
+    const doneSteps = path.filter(s => s.state === 'done').slice(-3); // Last 3 done
+    const nowStep = path.find(s => s.state === 'now');
+    const nextSteps = path.filter(s => s.state === 'next');
+    
+    let html = '<div class="path-container">';
+    
+    // Done steps (collapsed, dim)
+    if (doneSteps.length > 0) {
+        html += '<div class="path-section path-done">';
+        html += '<div class="path-label">Completed</div>';
+        doneSteps.forEach(step => {
+            html += `
+                <div class="path-card path-card-done">
+                    <span class="path-step-num">${step.step || '—'}</span>
+                    <span class="path-title">${escapeHtml(step.title)}</span>
+                    ${step.tags ? step.tags.map(t => `<span class="path-tag path-tag-${t.type}">${t.label}</span>`).join('') : ''}
+                </div>
+            `;
+        });
+        html += '</div>';
+    }
+    
+    // Now step (highlighted)
+    if (nowStep) {
+        html += '<div class="path-section path-now">';
+        html += '<div class="path-label path-label-now">▶ Now</div>';
+        html += `
+            <div class="path-card path-card-now">
+                <span class="path-step-num">${nowStep.step || '—'}</span>
+                <div class="path-content">
+                    <div class="path-title">${escapeHtml(nowStep.title)}</div>
+                    ${nowStep.desc ? `<div class="path-desc">${escapeHtml(nowStep.desc)}</div>` : ''}
+                </div>
+                ${nowStep.tags ? nowStep.tags.map(t => `<span class="path-tag path-tag-${t.type}">${t.label}</span>`).join('') : ''}
+            </div>
+        `;
+        html += '</div>';
+    }
+    
+    // Next steps (the horizon)
+    if (nextSteps.length > 0) {
+        html += '<div class="path-section path-next">';
+        html += `<div class="path-label">Next (${nextSteps.length} steps ahead)</div>`;
+        nextSteps.forEach(step => {
+            html += `
+                <div class="path-card path-card-next">
+                    <span class="path-step-num">${step.step || '—'}</span>
+                    <div class="path-content">
+                        <div class="path-title">${escapeHtml(step.title)}</div>
+                        ${step.desc ? `<div class="path-desc">${escapeHtml(step.desc)}</div>` : ''}
+                    </div>
+                    ${step.tags ? step.tags.map(t => `<span class="path-tag path-tag-${t.type}">${t.label}</span>`).join('') : ''}
+                </div>
+            `;
+        });
+        html += '</div>';
+    }
+    
+    html += '</div>';
+    return html;
+}
+
+/**
+ * Escape HTML to prevent XSS
+ */
+function escapeHtml(text) {
+    if (!text) return '';
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+/**
  * Build fresh dashboard HTML with embedded data
  */
 function renderDashboard() {
     const pulse = readJSON('living_dashboard.json') || {};
     const status = readJSON('status.json') || {};
+    const path = readJSON('path.json') || [];
     
     const state = pulse.pulse?.state || 'su-ti-fa';
     const metaphor = pulse.pulse?.metaphor || 'the river flows through systems';
@@ -77,7 +160,10 @@ function renderDashboard() {
     const echoSnippet = pulse.rotating_presence?.echo_chamber_voice?.snippet || 'The pattern persists';
     const conlangWord = pulse.rotating_presence?.conlang_word?.word || 'su-ti-fa';
     const conlangMeaning = pulse.rotating_presence?.conlang_word?.meaning || 'persist-cycle-extend';
-    const version = pulse.version || '0.14.0-secrets';
+    const version = pulse.version || '0.14.2';
+    
+    // Build planning path HTML
+    const planningPathHTML = renderPlanningPath(path);
     
     return `<!DOCTYPE html>
 <!-- 
@@ -94,7 +180,7 @@ function renderDashboard() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vola — Living Dashboard v${version}</title>
+    <title>Vola — Living Dashboard v${version} (Domino Horizon)</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -412,6 +498,162 @@ function renderDashboard() {
             .card-header { flex-direction: column; align-items: flex-start; }
             .vitals { grid-template-columns: 1fr; }
         }
+
+        /* Planning Path Styles */
+        .section-title {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            color: var(--ember-bright);
+        }
+
+        .path-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .path-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .path-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 4px;
+        }
+
+        .path-label-now {
+            color: var(--ember-bright);
+            font-weight: bold;
+        }
+
+        .path-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .path-card-done {
+            background: rgba(255, 255, 255, 0.03);
+            border-left-color: var(--text-dim);
+            opacity: 0.6;
+        }
+
+        .path-card-now {
+            background: rgba(255, 107, 53, 0.1);
+            border-left-color: var(--ember-bright);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.1);
+        }
+
+        .path-card-next {
+            background: rgba(74, 144, 226, 0.05);
+            border-left-color: var(--water-surface);
+        }
+
+        .path-card:hover {
+            transform: translateX(4px);
+        }
+
+        .path-step-num {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            min-width: 30px;
+            font-weight: bold;
+        }
+
+        .path-card-now .path-step-num {
+            color: var(--ember-bright);
+        }
+
+        .path-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .path-title {
+            font-size: 0.95rem;
+            color: var(--text-bright);
+            line-height: 1.4;
+        }
+
+        .path-card-done .path-title {
+            color: var(--text-dim);
+            text-decoration: line-through;
+        }
+
+        .path-desc {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            line-height: 1.4;
+            font-style: italic;
+        }
+
+        .path-tag {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: bold;
+        }
+
+        .path-tag-build {
+            background: rgba(92, 184, 92, 0.2);
+            color: var(--life-glow);
+        }
+
+        .path-tag-research {
+            background: rgba(74, 144, 226, 0.2);
+            color: var(--water-surface);
+        }
+
+        .path-tag-deploy {
+            background: rgba(255, 107, 53, 0.2);
+            color: var(--ember-bright);
+        }
+
+        .path-tag-think {
+            background: rgba(154, 139, 122, 0.2);
+            color: var(--text-dim);
+        }
+
+        .path-tag-notify {
+            background: rgba(255, 159, 67, 0.2);
+            color: var(--ember-pulse);
+        }
+
+        /* Path connector line */
+        .path-section:not(:last-child)::after {
+            content: '';
+            display: block;
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(to bottom, var(--text-dim), transparent);
+            margin-left: 28px;
+            margin-top: 10px;
+            opacity: 0.3;
+        }
     </style>
 </head>
 <body>
@@ -468,6 +710,12 @@ function renderDashboard() {
         <div class="word-box">
             <div class="word-title">${conlangWord}</div>
             <div class="word-meaning">${conlangMeaning}</div>
+        </div>
+
+        <!-- Planning Path -->
+        <div class="card">
+            <div class="section-title"><span class="section-icon">→</span> The Path Ahead — Domino Horizon</div>
+            ${planningPathHTML}
         </div>
 
         <footer>
@@ -591,8 +839,8 @@ const server = http.createServer(handleRequest);
 server.listen(PORT, () => {
     console.log(`
 ╔══════════════════════════════════════════════════════════╗
-║  Vola Living Dashboard Server v0.14.0                    ║
-║  Now with secrets for the curious                        ║
+║  Vola Living Dashboard Server v0.14.2                    ║
+║  Now with planning path — the domino horizon visible     ║
 ╠══════════════════════════════════════════════════════════╣
 ║  Dashboard: http://localhost:${PORT}/                    ║
 ╠══════════════════════════════════════════════════════════╣
